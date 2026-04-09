@@ -49,13 +49,14 @@ const Login = () => {
         <div className="glass rounded-2xl p-8 md:p-10 shadow-2xl">
           {/* Logo */}
           <div className="flex justify-center mb-8 animate-fade-in-up-delay-1">
-            <img src={logoEmbalsoft} alt="Embalsoft" className="h-10 object-contain" />
+            <img src={logoEmbalsoft} alt="Embalsoft" className="h-14 object-contain" />
           </div>
 
           {/* Title */}
           <div className="text-center mb-8 animate-fade-in-up-delay-2">
             <h1 className="text-2xl font-bold tracking-tight mb-2">
-              Bem-vindo ao <span className="text-primary">Embalsoft Analytics</span>
+              Bem-vindo ao<br />
+              <span className="text-primary">Embalsoft Analytics</span>
             </h1>
             <p className="text-muted-foreground text-sm">
               Acompanhe. Entenda. Evolua.
