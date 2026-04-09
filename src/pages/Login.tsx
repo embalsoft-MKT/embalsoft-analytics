@@ -77,7 +77,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={() => setTouched((p) => ({ ...p, email: true }))}
-                className={`w-full px-4 py-3 rounded-lg bg-secondary/50 border text-foreground placeholder:text-muted-foreground/50 text-sm transition-all duration-200 outline-none
+                className={`w-full px-4 py-3 rounded-lg bg-[hsl(217,33%,17%)]/50 border text-foreground placeholder:text-muted-foreground/50 text-sm transition-all duration-200 outline-none
                   ${touched.email && !email ? "border-destructive" : "border-border"}
                   focus:border-primary focus:glow-primary`}
               />
@@ -99,7 +99,7 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onBlur={() => setTouched((p) => ({ ...p, password: true }))}
-                  className={`w-full px-4 py-3 pr-12 rounded-lg bg-secondary/50 border text-foreground placeholder:text-muted-foreground/50 text-sm transition-all duration-200 outline-none
+                  className={`w-full px-4 py-3 pr-12 rounded-lg bg-[hsl(217,33%,17%)]/50 border text-foreground placeholder:text-muted-foreground/50 text-sm transition-all duration-200 outline-none
                     ${touched.password && !password ? "border-destructive" : "border-border"}
                     focus:border-primary focus:glow-primary`}
                 />
