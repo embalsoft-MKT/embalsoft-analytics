@@ -89,18 +89,21 @@ const DashboardLayout = () => {
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Navbar */}
-        <header className="h-16 border-b border-border flex items-center justify-between px-4 md:px-6 bg-card/50 backdrop-blur-sm sticky top-0 z-30">
-          <div className="flex items-center gap-3">
+        <header className="h-16 border-b border-border flex items-center px-4 md:px-6 bg-card/50 backdrop-blur-sm sticky top-0 z-30 relative">
+          <div className="flex items-center gap-3 flex-1">
             <button
               onClick={() => setMobileOpen(true)}
               className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-all"
             >
               <Menu size={20} />
             </button>
-            <h2 className="text-lg font-semibold">
-              <span className="text-primary">Embalsoft</span> Analytics
-            </h2>
           </div>
+
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
+            <img src={logoEmbalsoft} alt="Embalsoft Analytics" className="h-10 md:h-12 object-contain" />
+          </div>
+
+          <div className="flex-1 flex justify-end"></div>
         </header>
 
         {/* Content */}
