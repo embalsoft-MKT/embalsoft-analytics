@@ -29,7 +29,7 @@ const DashboardLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navbar at the top for independence */}
-      <header className="h-16 shrink-0 border-b border-border flex items-center px-4 md:px-6 bg-card/50 backdrop-blur-sm sticky top-0 z-50 w-full">
+      <header className="h-16 shrink-0 border-b border-primary/10 flex items-center px-4 md:px-6 bg-card/70 backdrop-blur-md sticky top-0 z-50 w-full shadow-[0_4px_20px_hsl(197_78%_52%/0.05)]">
         <div className="flex items-center gap-3 flex-1">
           <button
             onClick={() => setMobileOpen(true)}
