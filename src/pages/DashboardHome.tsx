@@ -1,4 +1,4 @@
-import { BarChart3, Users, FileText, TrendingUp, CheckCircle2, Clock, AlertTriangle, AlertCircle, Headphones, RotateCcw, Code2, Info } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -8,26 +8,16 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import {
-  AreaChart,
-  Area,
   BarChart,
   Bar,
   XAxis,
   YAxis,
   CartesianGrid,
-  ResponsiveContainer,
   LineChart,
   Line,
 } from "recharts";
 
 // ── Mock Data ──
-
-const stats = [
-  { label: "Receita Total", value: "R$ 124.500", change: "+12.5%", up: true, icon: TrendingUp, tip: "Receita acumulada no período atual" },
-  { label: "Clientes Ativos", value: "1.284", change: "+3.2%", up: true, icon: Users, tip: "Clientes com contrato ativo" },
-  { label: "Relatórios", value: "48", change: "+8", up: true, icon: BarChart3, tip: "Relatórios gerados neste mês" },
-  { label: "Documentos", value: "312", change: "+24", up: true, icon: FileText, tip: "Total de documentos processados" },
-];
 
 const implantacoes = [
   { cliente: "Ind. Nova Era", etapa: "Go-live", progresso: 95, status: "em_dia" as const, responsavel: "Carlos" },
@@ -50,15 +40,6 @@ const progressColor = {
   atrasado: "[&>div]:bg-red-400",
 };
 
-const revenueData = [
-  { month: "Jan", receita: 85000 },
-  { month: "Fev", receita: 92000 },
-  { month: "Mar", receita: 88000 },
-  { month: "Abr", receita: 105000 },
-  { month: "Mai", receita: 112000 },
-  { month: "Jun", receita: 124500 },
-];
-
 const devData = [
   { week: "S1", entregas: 32, retrabalho: 8 },
   { week: "S2", entregas: 40, retrabalho: 5 },
@@ -73,10 +54,6 @@ const supportData = [
   { week: "S4", atendimentos: 158 },
 ];
 
-const revenueChartConfig: ChartConfig = {
-  receita: { label: "Receita", color: "hsl(197 78% 52%)" },
-};
-
 const devChartConfig: ChartConfig = {
   entregas: { label: "Entregas", color: "hsl(197 78% 52%)" },
   retrabalho: { label: "Retrabalho", color: "hsl(0 84% 60%)" },
@@ -86,7 +63,7 @@ const supportChartConfig: ChartConfig = {
   atendimentos: { label: "Atendimentos", color: "hsl(197 78% 52%)" },
 };
 
-// ── Helper ──
+// ── Helpers ──
 
 const InfoTip = ({ text }: { text: string }) => (
   <Tooltip>
@@ -120,57 +97,77 @@ const DashboardHome = () => {
           </p>
         </div>
 
-        {/* ── KPI Cards ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.map((stat, i) => (
-            <div
-              key={stat.label}
-              className={`relative overflow-hidden rounded-xl p-5 transition-all duration-300 group
-                bg-gradient-to-br from-card to-card/80 border border-primary/10 hover:border-primary/40 hover:glow-primary
-                animate-fade-in-up-delay-${i + 1}`}
-            >
-              <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-primary/8 group-hover:bg-primary/15 blur-2xl transition-all duration-500" />
-              <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm text-muted-foreground">{stat.label}</span>
-                    <InfoTip text={stat.tip} />
-                  </div>
-                  <div className="p-2 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors shadow-[0_0_12px_hsl(197_78%_52%/0.15)] group-hover:shadow-[0_0_20px_hsl(197_78%_52%/0.3)]">
-                    <stat.icon size={16} className="text-primary group-hover:scale-110 transition-transform" />
-                  </div>
-                </div>
-                <p className="text-2xl font-bold">{stat.value}</p>
-                <p className={`text-xs mt-1 font-semibold ${stat.up ? "text-emerald-400" : "text-red-400"}`}>
-                  {stat.up ? "↑" : "↓"} {stat.change}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* ── Performance Operacional ── */}
+        <SectionTitle tip="Indicadores de performance das equipes de desenvolvimento e suporte">📊 Performance Operacional</SectionTitle>
 
-        {/* ── Revenue Evolution Chart ── */}
-        <div className="relative overflow-hidden rounded-xl border border-primary/10 p-6 bg-card">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/3" />
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-          <div className="relative z-10">
-            <SectionTitle tip="Evolução da receita nos últimos 6 meses">📈 Evolução da Receita</SectionTitle>
-            <ChartContainer config={revenueChartConfig} className="h-[250px] w-full">
-              <AreaChart data={revenueData}>
-                <defs>
-                  <linearGradient id="gradientReceita" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(197 78% 52%)" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="hsl(197 78% 52%)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(217 19% 18%)" />
-                <XAxis dataKey="month" stroke="hsl(218 11% 60%)" fontSize={12} />
-                <YAxis stroke="hsl(218 11% 60%)" fontSize={12} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Area type="monotone" dataKey="receita" stroke="hsl(197 78% 52%)" strokeWidth={2} fill="url(#gradientReceita)" />
-              </AreaChart>
-            </ChartContainer>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Desenvolvimento */}
+          <div className="relative overflow-hidden rounded-xl border border-primary/10 p-6 bg-card">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/3" />
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-4">
+                <Code2 size={18} className="text-primary" />
+                <h3 className="font-semibold">Desenvolvimento</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="rounded-lg bg-muted/30 border border-primary/10 p-3">
+                  <div className="flex items-center gap-1 mb-1">
+                    <span className="text-xs text-muted-foreground">Entregas realizadas</span>
+                    <InfoTip text="Requisições finalizadas no período" />
+                  </div>
+                  <p className="text-2xl font-bold">155</p>
+                  <p className="text-xs text-emerald-400 font-semibold">↑ +18% vs anterior</p>
+                </div>
+                <div className="rounded-lg bg-muted/30 border border-primary/10 p-3">
+                  <div className="flex items-center gap-1 mb-1">
+                    <span className="text-xs text-muted-foreground">Retrabalho</span>
+                    <InfoTip text="Percentual de tarefas que voltaram para correção" />
+                  </div>
+                  <p className="text-2xl font-bold text-amber-400">8.5%</p>
+                  <p className="text-xs text-emerald-400 font-semibold">↓ -2.1% vs anterior</p>
+                </div>
+              </div>
+              <ChartContainer config={devChartConfig} className="h-[180px] w-full">
+                <BarChart data={devData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(217 19% 18%)" />
+                  <XAxis dataKey="week" stroke="hsl(218 11% 60%)" fontSize={12} />
+                  <YAxis stroke="hsl(218 11% 60%)" fontSize={12} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="entregas" fill="hsl(197 78% 52%)" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="retrabalho" fill="hsl(0 84% 60%)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ChartContainer>
+            </div>
+          </div>
+
+          {/* Suporte */}
+          <div className="relative overflow-hidden rounded-xl border border-primary/10 p-6 bg-card">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/3" />
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-4">
+                <Headphones size={18} className="text-primary" />
+                <h3 className="font-semibold">Suporte</h3>
+              </div>
+              <div className="rounded-lg bg-muted/30 border border-primary/10 p-3 mb-4">
+                <div className="flex items-center gap-1 mb-1">
+                  <span className="text-xs text-muted-foreground">Atendimentos realizados</span>
+                  <InfoTip text="Total de chamados atendidos no período" />
+                </div>
+                <p className="text-2xl font-bold">555</p>
+                <p className="text-xs text-emerald-400 font-semibold">↑ +12% vs anterior</p>
+              </div>
+              <ChartContainer config={supportChartConfig} className="h-[180px] w-full">
+                <LineChart data={supportData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(217 19% 18%)" />
+                  <XAxis dataKey="week" stroke="hsl(218 11% 60%)" fontSize={12} />
+                  <YAxis stroke="hsl(218 11% 60%)" fontSize={12} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Line type="monotone" dataKey="atendimentos" stroke="hsl(197 78% 52%)" strokeWidth={2} dot={{ fill: "hsl(197 78% 52%)", r: 4 }} />
+                </LineChart>
+              </ChartContainer>
+            </div>
           </div>
         </div>
 
@@ -203,7 +200,6 @@ const DashboardHome = () => {
                         <span className="font-bold text-foreground">{item.progresso}%</span>
                       </div>
                     </div>
-                    {/* Timeline steps */}
                     <div className="flex items-center gap-1 mb-3">
                       {etapas.map((etapa, idx) => {
                         const isCompleted = idx <= etapaIndex;
@@ -236,92 +232,6 @@ const DashboardHome = () => {
                   </div>
                 );
               })}
-            </div>
-          </div>
-        </div>
-
-        {/* ── Performance Operacional ── */}
-        <div className="relative z-10">
-          <SectionTitle tip="Indicadores de performance das equipes de desenvolvimento e suporte">📊 Performance Operacional</SectionTitle>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Desenvolvimento */}
-          <div className="relative overflow-hidden rounded-xl border border-primary/10 p-6 bg-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/3" />
-            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-4">
-                <Code2 size={18} className="text-primary" />
-                <h3 className="font-semibold">Desenvolvimento</h3>
-              </div>
-              {/* Dev KPIs */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="rounded-lg bg-muted/30 border border-primary/10 p-3">
-                  <div className="flex items-center gap-1 mb-1">
-                    <span className="text-xs text-muted-foreground">Entregas realizadas</span>
-                    <InfoTip text="Requisições finalizadas no período" />
-                  </div>
-                  <p className="text-2xl font-bold">155</p>
-                  <p className="text-xs text-emerald-400 font-semibold">↑ +18% vs anterior</p>
-                </div>
-                <div className="rounded-lg bg-muted/30 border border-primary/10 p-3">
-                  <div className="flex items-center gap-1 mb-1">
-                    <span className="text-xs text-muted-foreground">Retrabalho</span>
-                    <InfoTip text="Percentual de tarefas que voltaram para correção" />
-                  </div>
-                  <p className="text-2xl font-bold text-amber-400">8.5%</p>
-                  <p className="text-xs text-emerald-400 font-semibold">↓ -2.1% vs anterior</p>
-                </div>
-              </div>
-              {/* Dev Chart */}
-              <ChartContainer config={devChartConfig} className="h-[180px] w-full">
-                <BarChart data={devData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(217 19% 18%)" />
-                  <XAxis dataKey="week" stroke="hsl(218 11% 60%)" fontSize={12} />
-                  <YAxis stroke="hsl(218 11% 60%)" fontSize={12} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="entregas" fill="hsl(197 78% 52%)" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="retrabalho" fill="hsl(0 84% 60%)" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ChartContainer>
-            </div>
-          </div>
-
-          {/* Suporte */}
-          <div className="relative overflow-hidden rounded-xl border border-primary/10 p-6 bg-card">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/3" />
-            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-4">
-                <Headphones size={18} className="text-primary" />
-                <h3 className="font-semibold">Suporte</h3>
-              </div>
-              {/* Support KPI */}
-              <div className="rounded-lg bg-muted/30 border border-primary/10 p-3 mb-4">
-                <div className="flex items-center gap-1 mb-1">
-                  <span className="text-xs text-muted-foreground">Atendimentos realizados</span>
-                  <InfoTip text="Total de chamados atendidos no período" />
-                </div>
-                <p className="text-2xl font-bold">555</p>
-                <p className="text-xs text-emerald-400 font-semibold">↑ +12% vs anterior</p>
-              </div>
-              {/* Support Chart */}
-              <ChartContainer config={supportChartConfig} className="h-[180px] w-full">
-                <LineChart data={supportData}>
-                  <defs>
-                    <linearGradient id="gradientSupport" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(197 78% 52%)" stopOpacity={0.3} />
-                      <stop offset="100%" stopColor="hsl(197 78% 52%)" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(217 19% 18%)" />
-                  <XAxis dataKey="week" stroke="hsl(218 11% 60%)" fontSize={12} />
-                  <YAxis stroke="hsl(218 11% 60%)" fontSize={12} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line type="monotone" dataKey="atendimentos" stroke="hsl(197 78% 52%)" strokeWidth={2} dot={{ fill: "hsl(197 78% 52%)", r: 4 }} />
-                </LineChart>
-              </ChartContainer>
             </div>
           </div>
         </div>
