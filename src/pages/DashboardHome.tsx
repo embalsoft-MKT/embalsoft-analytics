@@ -14,11 +14,8 @@ const DashboardHome = () => {
       <div className="relative">
         <div className="absolute -top-4 -left-4 w-32 h-32 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
         <div className="relative z-10">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-primary via-primary to-blue-400 bg-clip-text text-transparent">
-            Embalsoft Analytics
-          </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Visão geral dos seus indicadores
+            Visão geral dos indicadores
           </p>
         </div>
       </div>
