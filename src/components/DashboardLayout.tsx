@@ -72,17 +72,7 @@ const DashboardLayout = () => {
           `}
         >
           {/* Collapse Button (Logo removed since it's in Navbar now) */}
-          <div className="h-16 flex items-center justify-end px-4 border-b border-border">
-            <button
-              onClick={() => {
-                setCollapsed(!collapsed);
-                setMobileOpen(false);
-              }}
-              className="hidden md:flex p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-all"
-            >
-              {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-            </button>
-          </div>
+          <div className="h-16 border-b border-border" />
 
           {/* Nav */}
           <nav className="flex-1 py-4 px-3 space-y-1">
