@@ -43,13 +43,13 @@ const DashboardLayout = () => {
           >
             <Menu size={20} />
           </button>
-          <img src={logoEmbalsoft} alt="Embalsoft" className="h-10 md:h-14 object-contain" />
-        </div>
-
-        <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
           <span className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent tracking-wide">
             Embalsoft Analyze
           </span>
+        </div>
+
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
+          <img src={logoEmbalsoft} alt="Embalsoft" className="h-10 md:h-14 object-contain" />
         </div>
 
         <div className="flex-1 flex justify-end"></div>
