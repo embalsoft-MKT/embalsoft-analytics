@@ -50,7 +50,7 @@ const Login = () => {
           <div className="text-left md:text-center mb-10">
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-2 text-foreground">
               Bem-vindo ao<br />
-              <span className="text-primary">Universo Embalsoft</span>
+              <span className="text-primary">Embalsoft Analyze</span>
             </h1>
             <p className="text-muted-foreground text-sm">
               Todos os sistemas. Um ecossistema integrado.
