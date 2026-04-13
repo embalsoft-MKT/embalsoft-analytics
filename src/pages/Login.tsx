@@ -4,47 +4,6 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import logoEmbalsoft from "@/assets/logo-embalsoft.png";
 import OrbitalBackground from "@/components/OrbitalBackground";
 
-const EcosystemOrbits = () => {
-  return (
-    <div className="relative w-full h-full flex items-center justify-center opacity-70">
-      {/* Center Core */}
-      <div className="absolute w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center glow-primary border border-primary/20 z-10 backdrop-blur-sm">
-        <div className="w-3 h-3 rounded-full bg-primary animate-pulse shadow-[0_0_20px_#27ABE2]" />
-      </div>
-
-      {/* Orbit 1: WMS (#38b6ff) */}
-      <div className="absolute w-[300px] h-[300px] rounded-full border border-[#38b6ff]/20">
-        <div className="w-full h-full animate-[spin_15s_linear_infinite]">
-          <div className="absolute top-0 left-1/2 w-3 h-3 -ml-1.5 -mt-1.5 rounded-full bg-[#38b6ff] shadow-[0_0_12px_#38b6ff]" />
-        </div>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-3 py-1 text-[#38b6ff] text-xs font-semibold tracking-widest bg-background/80 backdrop-blur-md rounded-full border border-[#38b6ff]/30 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-          WMS
-        </div>
-      </div>
-
-      {/* Orbit 2: CRM (#a7c64f) */}
-      <div className="absolute w-[460px] h-[460px] rounded-full border border-[#a7c64f]/20">
-        <div className="w-full h-full animate-[spin_25s_linear_infinite]" style={{ animationDirection: 'reverse' }}>
-          <div className="absolute top-1/2 right-0 w-3 h-3 -mt-1.5 -mr-1.5 rounded-full bg-[#a7c64f] shadow-[0_0_12px_#a7c64f]" />
-        </div>
-        <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 px-3 py-1 text-[#a7c64f] text-xs font-semibold tracking-widest bg-background/80 backdrop-blur-md rounded-full border border-[#a7c64f]/30 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-          CRM
-        </div>
-      </div>
-
-      {/* Orbit 3: ERP (#f48121) */}
-      <div className="absolute w-[620px] h-[620px] rounded-full border border-[#f48121]/20">
-        <div className="w-full h-full animate-[spin_35s_linear_infinite]">
-          <div className="absolute bottom-0 left-1/2 w-3 h-3 -ml-1.5 -mb-1.5 rounded-full bg-[#f48121] shadow-[0_0_12px_#f48121]" />
-        </div>
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 px-3 py-1 text-[#f48121] text-xs font-semibold tracking-widest bg-background/80 backdrop-blur-md rounded-full border border-[#f48121]/30 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-          ERP
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -187,11 +146,9 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Lado Direito - Background Ecossistema Exclusivo (Hidden on mobile) */}
-      <div className="hidden md:flex flex-1 relative bg-background/90 items-center justify-center">
-        {/* Subtle radial gradient to frame the ecosystem */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-background to-background pointer-events-none" />
-        <EcosystemOrbits />
+      {/* Lado Direito - Fundo Espacial Original (Hidden on mobile) */}
+      <div className="hidden md:block flex-1 relative">
+        <OrbitalBackground />
       </div>
     </div>
   );

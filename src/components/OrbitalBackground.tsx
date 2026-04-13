@@ -19,8 +19,8 @@ const planets: Planet[] = [
     size: 38,
     duration: 30,
     startAngle: 0,
-    color: "hsl(197, 78%, 52%)",
-    glowColor: "hsl(197, 78%, 52%)",
+    color: "#f48121",
+    glowColor: "#f48121",
   },
   {
     id: "crm",
@@ -29,8 +29,8 @@ const planets: Planet[] = [
     size: 32,
     duration: 45,
     startAngle: 120,
-    color: "hsl(170, 70%, 45%)",
-    glowColor: "hsl(170, 70%, 45%)",
+    color: "#a7c64f",
+    glowColor: "#a7c64f",
   },
   {
     id: "wms",
@@ -39,18 +39,8 @@ const planets: Planet[] = [
     size: 28,
     duration: 60,
     startAngle: 240,
-    color: "hsl(260, 60%, 55%)",
-    glowColor: "hsl(260, 60%, 55%)",
-  },
-  {
-    id: "bi",
-    label: "BI",
-    orbitRadius: 370,
-    size: 24,
-    duration: 75,
-    startAngle: 60,
-    color: "hsl(45, 80%, 55%)",
-    glowColor: "hsl(45, 80%, 55%)",
+    color: "#38b6ff",
+    glowColor: "#38b6ff",
   },
 ];
 
