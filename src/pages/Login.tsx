@@ -53,7 +53,7 @@ const Login = () => {
               <span className="text-primary">Embalsoft Analyze</span>
             </h1>
             <p className="text-muted-foreground text-sm">
-              Todos os sistemas. Um ecossistema integrado.
+              Um ecossistema para decisões melhores.
             </p>
           </div>
 
