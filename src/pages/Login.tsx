@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import bgLogin from "@/assets/bg-login.png";
 import logoEmbalsoft from "@/assets/logo-embalsoft.png";
+import OrbitalBackground from "@/components/OrbitalBackground";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,7 +30,6 @@ const Login = () => {
     }
 
     setLoading(true);
-    // Simulate auth
     await new Promise((r) => setTimeout(r, 1500));
     setLoading(false);
     navigate("/dashboard");
@@ -38,11 +37,8 @@ const Login = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0">
-        <img src={bgLogin} alt="" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-background/70" />
-      </div>
+      {/* Orbital animated background */}
+      <OrbitalBackground />
 
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-md mx-4 animate-fade-in-up">
@@ -56,10 +52,10 @@ const Login = () => {
           <div className="text-center mb-8 animate-fade-in-up-delay-2">
             <h1 className="text-2xl font-bold tracking-tight mb-2">
               Bem-vindo ao<br />
-              <span className="text-primary">Embalsoft Analytics</span>
+              <span className="text-primary">Universo Embalsoft</span>
             </h1>
             <p className="text-muted-foreground text-sm">
-              Acompanhe. Entenda. Evolua.
+              Todos os sistemas. Um ecossistema integrado.
             </p>
           </div>
 
