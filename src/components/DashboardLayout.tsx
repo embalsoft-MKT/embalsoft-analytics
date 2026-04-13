@@ -26,6 +26,8 @@ const navItems = [
 const DashboardLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState("ÚLTIMOS 30 DIAS");
   const navigate = useNavigate();
 
   return (
@@ -54,13 +56,34 @@ const DashboardLayout = () => {
           <img src={logoEmbalsoft} alt="Embalsoft" className="h-10 md:h-14 object-contain" />
         </div>
 
-        <div className="flex-1 flex justify-end">
-          {/* Tech HUD Date Filter */}
-          <button className="hidden sm:flex items-center gap-2 bg-black/40 border border-white/10 hover:border-[#38b6ff]/50 hover:bg-[#38b6ff]/10 text-muted-foreground hover:text-white px-3 py-1.5 rounded-md transition-all duration-300 shadow-[0_0_10px_rgba(0,0,0,0.3)] hover:shadow-[0_0_15px_rgba(56,182,255,0.2)]">
-            <Calendar size={14} className="text-[#38b6ff]" />
-            <span className="text-xs font-mono tracking-wider">ÚLTIMOS 30 DIAS</span>
-            <ChevronDown size={14} className="opacity-50 ml-1" />
+        <div className="flex-1 flex justify-end relative">
+          {/* Tech HUD Date Filter - Chamativo e Funcional */}
+          <button 
+            onClick={() => setFilterOpen(!filterOpen)}
+            className="hidden sm:flex items-center gap-2 bg-black/60 border-2 border-[#38b6ff]/40 hover:border-[#38b6ff] shadow-[0_0_15px_rgba(56,182,255,0.2)] hover:shadow-[0_0_20px_rgba(56,182,255,0.4)] hover:bg-[#38b6ff]/10 text-white font-bold px-4 py-2 rounded-md transition-all duration-300">
+            <Calendar size={16} className="text-[#38b6ff] drop-shadow-[0_0_5px_rgba(56,182,255,0.8)]" />
+            <span className="text-sm font-sans uppercase tracking-widest leading-none mt-0.5">{selectedFilter}</span>
+            <ChevronDown size={16} className={`text-[#38b6ff] transition-transform duration-300 ${filterOpen ? 'rotate-180' : ''}`} />
           </button>
+
+          {/* Dropdown Funcional */}
+          {filterOpen && (
+            <div className="absolute top-[120%] right-0 w-60 bg-card/95 backdrop-blur-xl border-2 border-[#38b6ff]/30 shadow-[0_15px_40px_rgba(0,0,0,0.9)] rounded-md flex flex-col p-1.5 z-50 animate-fade-in">
+               {["HOJE", "ÚLTIMOS 7 DIAS", "ÚLTIMOS 30 DIAS", "ESTE ANO"].map(option => (
+                 <button
+                   key={option}
+                   onClick={() => { setSelectedFilter(option); setFilterOpen(false); }}
+                   className={`text-left px-4 py-3 text-sm font-bold font-sans uppercase tracking-wider rounded transition-all hover:bg-[#38b6ff]/20 hover:text-[#38b6ff] ${
+                     selectedFilter === option 
+                      ? 'bg-[#38b6ff]/10 text-[#38b6ff] border-l-4 border-[#38b6ff]' 
+                      : 'text-white/80 border-l-4 border-transparent'
+                   }`}
+                 >
+                   {option}
+                 </button>
+               ))}
+            </div>
+          )}
         </div>
       </header>
 
