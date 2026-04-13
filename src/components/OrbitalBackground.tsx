@@ -149,12 +149,20 @@ const OrbitalBackground = () => {
           );
         })}
 
-        {/* Core circle */}
-        <circle cx={cx} cy={cy} r="2.5" fill="hsl(222, 47%, 8%)" stroke="hsl(197, 78%, 52%)" strokeWidth="0.15" strokeOpacity="0.6" />
-        <circle cx={cx} cy={cy} r="1.8" fill="hsl(197, 78%, 52%)" fillOpacity="0.15" filter="url(#coreFilter)" />
-        <text x={cx} y={cy + 0.5} textAnchor="middle" fill="hsl(197, 78%, 52%)" fontSize="1.2" fontFamily="Inter, sans-serif" fontWeight="700" opacity="0.9">
-          E
-        </text>
+        {/* Core circle glow base */}
+        <circle cx={cx} cy={cy} r="3" fill="hsl(197, 78%, 52%)" fillOpacity="0.2" filter="url(#coreFilter)" />
+        <circle cx={cx} cy={cy} r="2" fill="hsl(197, 78%, 52%)" fillOpacity="0.4" filter="url(#coreFilter)" />
+        
+        {/* The Icon Image */}
+        <image
+          x={cx - 2.2}
+          y={cy - 2.2}
+          width="4.4"
+          height="4.4"
+          href="/icon-e.png"
+          preserveAspectRatio="xMidYMid meet"
+          style={{ opacity: 0.95 }}
+        />
 
         {/* Planets */}
         {planets.map((p) => {
