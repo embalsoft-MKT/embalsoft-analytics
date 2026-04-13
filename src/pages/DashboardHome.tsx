@@ -94,7 +94,7 @@ const DashboardHome = () => {
               <div className="absolute top-0 right-0 w-24 h-24 bg-[#f48121]/20 blur-2xl rounded-full pointer-events-none" />
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-2 h-6 bg-[#f48121] rounded-sm shadow-[0_0_12px_#f48121]" />
-                <h3 className="font-mono text-base font-bold tracking-[0.2em] text-[#f48121] uppercase drop-shadow-md">PAINEL COMERCIAL</h3>
+                <h3 className="font-sans text-base font-bold tracking-[0.2em] text-[#f48121] uppercase drop-shadow-md">PAINEL COMERCIAL</h3>
               </div>
               
               <div className="grid grid-cols-2 gap-4 flex-1">
@@ -104,10 +104,10 @@ const DashboardHome = () => {
                     <svg className="w-5 h-5 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M4 4h16v16H4z"/></svg>
                   </div>
                   <div>
-                    <span className="text-sm font-bold font-mono text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">Novos Clientes ERP</span>
+                    <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">Novos Clientes ERP</span>
                     <div className="flex items-baseline gap-3 mt-4">
                       <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{comercialData.novosERP.count}</span>
-                      <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-mono p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{comercialData.novosERP.growth}</span>
+                      <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-sans p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{comercialData.novosERP.growth}</span>
                     </div>
                   </div>
                 </div>
@@ -117,10 +117,10 @@ const DashboardHome = () => {
                     <svg className="w-5 h-5 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M4 20h16v-16H4z"/></svg>
                   </div>
                   <div>
-                    <span className="text-sm font-bold font-mono text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">Fábrica de Software</span>
+                    <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">Fábrica de Software</span>
                     <div className="flex items-baseline gap-3 mt-4">
                       <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{comercialData.novosFabrica.count}</span>
-                      <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-mono p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{comercialData.novosFabrica.growth}</span>
+                      <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-sans p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{comercialData.novosFabrica.growth}</span>
                     </div>
                   </div>
                 </div>
@@ -132,15 +132,15 @@ const DashboardHome = () => {
               <div className="absolute bottom-0 right-0 w-24 h-24 bg-[#a7c64f]/20 blur-2xl rounded-full pointer-events-none" />
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-2 h-6 bg-[#a7c64f] rounded-sm shadow-[0_0_12px_#a7c64f]" />
-                <h3 className="font-mono text-base font-bold tracking-[0.2em] text-[#a7c64f] uppercase drop-shadow-md">AVANÇOS E CONQUISTAS</h3>
+                <h3 className="font-sans text-base font-bold tracking-[0.2em] text-[#a7c64f] uppercase drop-shadow-md">AVANÇOS E CONQUISTAS</h3>
               </div>
 
               <div className="space-y-6 flex-1 flex flex-col justify-center">
                 {avancosData.map((avanco, idx) => (
                   <div key={idx} className="relative z-10 w-full">
                     <div className="flex justify-between items-baseline mb-2">
-                      <span className="text-sm lg:text-base font-bold font-mono text-white tracking-wider drop-shadow-md">{avanco.projeto}</span>
-                      <span className="text-base font-bold font-mono text-white/90">{avanco.progresso}%</span>
+                      <span className="text-sm lg:text-base font-bold font-sans text-white tracking-wider drop-shadow-md">{avanco.projeto}</span>
+                      <span className="text-base font-bold font-sans text-white/90">{avanco.progresso}%</span>
                     </div>
                     <div className="h-4 w-full bg-black/60 rounded-full overflow-hidden border border-white/20 shadow-inner">
                       <div 
@@ -160,23 +160,20 @@ const DashboardHome = () => {
           {/* ── Linha 2: Operacional ── */}
           <div className="flex items-center gap-3 mt-10 mb-6">
             <div className="w-2 h-6 bg-[#38b6ff] rounded-sm shadow-[0_0_12px_#38b6ff]" />
-            <h3 className="font-mono text-base font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">PERFORMANCE OPERACIONAL</h3>
+            <h3 className="font-sans text-base font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">PERFORMANCE OPERACIONAL</h3>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
             {/* Desenvolvimento */}
             <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300">
-              <div className="absolute top-0 right-0 p-4 opacity-20 drop-shadow-lg">
-                <Code2 size={60} className="text-white" />
-              </div>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="rounded-lg bg-black/60 border border-white/10 p-5 flex flex-col justify-center">
-                  <span className="text-xs font-bold font-mono text-white/90 uppercase tracking-widest drop-shadow-md">Entregas Realizadas</span>
+                  <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">Entregas Realizadas</span>
                   <p className="text-5xl font-bold text-white mt-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">155</p>
                 </div>
                 <div className="rounded-lg bg-black/60 border border-white/10 p-5 flex flex-col justify-center relative overflow-hidden">
                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#f48121] to-transparent shadow-[0_0_10px_#f48121]" />
-                  <span className="text-xs font-bold font-mono text-white/90 uppercase tracking-widest drop-shadow-md">Retrabalho</span>
+                  <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">Retrabalho</span>
                   <p className="text-5xl font-bold text-[#f48121] mt-3 drop-shadow-[0_0_15px_rgba(244,129,33,0.7)]">8.5%</p>
                 </div>
               </div>
@@ -194,11 +191,8 @@ const DashboardHome = () => {
 
             {/* Suporte */}
             <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#b955a0]/80 transition-all duration-300">
-              <div className="absolute top-0 right-0 p-4 opacity-20 drop-shadow-lg">
-                <Headphones size={60} className="text-white" />
-              </div>
               <div className="rounded-lg bg-black/60 border border-white/10 p-5 mb-6 inline-block pr-16 shadow-lg">
-                <span className="text-xs font-bold font-mono text-white/90 uppercase tracking-widest drop-shadow-md block mb-3">Chamados Atendidos</span>
+                <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md block mb-3">Chamados Atendidos</span>
                 <p className="text-5xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] flex items-baseline gap-4">
                   555 
                   <span className="text-lg font-bold text-[#a7c64f] p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">↑12%</span>
@@ -220,7 +214,7 @@ const DashboardHome = () => {
           <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] mt-10 group hover:border-white/40 transition-all duration-300">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-2 h-6 bg-white/90 rounded-sm shadow-[0_0_12px_rgba(255,255,255,0.6)]" />
-              <h3 className="font-mono text-base font-bold tracking-[0.2em] text-white uppercase drop-shadow-md">IMPLANTAÇÕES ATIVAS</h3>
+              <h3 className="font-sans text-base font-bold tracking-[0.2em] text-white uppercase drop-shadow-md">IMPLANTAÇÕES ATIVAS</h3>
             </div>
             
             <div className="space-y-5">
@@ -237,12 +231,12 @@ const DashboardHome = () => {
                     <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6 pl-3">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <StatusIcon size={20} className={s.color} />
-                        <span className="font-mono text-lg font-bold tracking-wide text-white truncate drop-shadow-sm">{item.cliente}</span>
-                        <span className={`text-xs uppercase font-bold font-mono px-3 py-1 rounded border-2 ${s.border} ${s.color} shadow-sm`}>
+                        <span className="font-sans text-lg font-bold tracking-wide text-white truncate drop-shadow-sm">{item.cliente}</span>
+                        <span className={`text-xs uppercase font-bold font-sans px-3 py-1 rounded border-2 ${s.border} ${s.color} shadow-sm`}>
                           {s.label}
                         </span>
                       </div>
-                      <div className="flex items-center gap-6 text-sm font-bold font-mono text-white/90">
+                      <div className="flex items-center gap-6 text-sm font-bold font-sans text-white/90">
                         <span className="uppercase tracking-widest bg-white/10 px-3 py-1 rounded-sm border border-white/10">RESP: {item.responsavel}</span>
                         <span className="text-xl text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">{item.progresso}%</span>
                       </div>
@@ -268,7 +262,7 @@ const DashboardHome = () => {
                                 <div className="absolute left-4 right-0 h-1 z-0 shadow-[0_0_8px_currentColor] rounded-full" style={{ backgroundColor: mainColor }} />
                                )}
                             </div>
-                            <span className={`text-xs uppercase font-bold font-mono whitespace-nowrap -ml-2 drop-shadow-sm ${isCurrent ? 'text-white' : 'text-white/60'}`}>
+                            <span className={`text-xs uppercase font-bold font-sans whitespace-nowrap -ml-2 drop-shadow-sm ${isCurrent ? 'text-white' : 'text-white/60'}`}>
                               {etapa}
                             </span>
                           </div>
