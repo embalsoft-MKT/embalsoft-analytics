@@ -11,7 +11,7 @@ const DashboardHome = () => {
   return (
     <div className="space-y-6 animate-fade-in-up">
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Embalsoft Analytics</h1>
         <p className="text-muted-foreground text-sm mt-1">
           Visão geral dos seus indicadores
         </p>
