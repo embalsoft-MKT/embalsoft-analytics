@@ -39,8 +39,8 @@ const planets: Planet[] = [
     size: 28,
     duration: 60,
     startAngle: 240,
-    color: "#38b6ff",
-    glowColor: "#38b6ff",
+    color: "#b955a0",
+    glowColor: "#b955a0",
   },
 ];
 
