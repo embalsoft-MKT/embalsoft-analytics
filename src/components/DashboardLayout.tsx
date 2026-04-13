@@ -10,6 +10,8 @@ import {
   ChevronRight,
   LogOut,
   Menu,
+  Calendar,
+  ChevronDown
 } from "lucide-react";
 import logoEmbalsoft from "@/assets/logo-embalsoft.png";
 
@@ -52,7 +54,14 @@ const DashboardLayout = () => {
           <img src={logoEmbalsoft} alt="Embalsoft" className="h-10 md:h-14 object-contain" />
         </div>
 
-        <div className="flex-1 flex justify-end"></div>
+        <div className="flex-1 flex justify-end">
+          {/* Tech HUD Date Filter */}
+          <button className="hidden sm:flex items-center gap-2 bg-black/40 border border-white/10 hover:border-[#38b6ff]/50 hover:bg-[#38b6ff]/10 text-muted-foreground hover:text-white px-3 py-1.5 rounded-md transition-all duration-300 shadow-[0_0_10px_rgba(0,0,0,0.3)] hover:shadow-[0_0_15px_rgba(56,182,255,0.2)]">
+            <Calendar size={14} className="text-[#38b6ff]" />
+            <span className="text-xs font-mono tracking-wider">ÚLTIMOS 30 DIAS</span>
+            <ChevronDown size={14} className="opacity-50 ml-1" />
+          </button>
+        </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden relative">
