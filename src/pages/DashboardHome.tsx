@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -29,7 +29,7 @@ const comercialData = {
 const avancosData = [
   { projeto: "CRM 2.0", progresso: 80, cor: "bg-[#a7c64f]" },
   { projeto: "Novo App WMS", progresso: 65, cor: "bg-[#38b6ff]" },
-  { projeto: "Integração B2B", progresso: 40, cor: "bg-[#b955a0]" },
+  { projeto: "Integração B2B", progresso: 40, cor: "bg-[#38b6ff]" },
 ];
 
 const implantacoes = [
@@ -67,7 +67,7 @@ const devChartConfig: ChartConfig = {
 };
 
 const supportChartConfig: ChartConfig = {
-  atendimentos: { label: "Atendimentos", color: "#b955a0" },
+  atendimentos: { label: "Atendimentos", color: "#38b6ff" },
 };
 
 // ── Component ──
@@ -158,9 +158,15 @@ const DashboardHome = () => {
           </div>
 
           {/* ── Linha 2: Operacional ── */}
-          <div className="flex items-center gap-3 mt-10 mb-6">
-            <div className="w-2 h-6 bg-[#38b6ff] rounded-sm shadow-[0_0_12px_#38b6ff]" />
-            <h3 className="font-sans text-base font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">PERFORMANCE OPERACIONAL</h3>
+          <div className="flex items-center justify-between mt-10 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-6 bg-[#38b6ff] rounded-sm shadow-[0_0_12px_#38b6ff]" />
+              <h3 className="font-mono text-base font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">PERFORMANCE OPERACIONAL</h3>
+            </div>
+            <button className="flex items-center gap-2 text-xs font-sans font-bold text-white bg-black/50 border border-white/20 hover:border-[#38b6ff]/60 hover:bg-[#38b6ff]/20 px-3 py-2 rounded-md transition-all duration-300 shadow-[0_0_10px_rgba(0,0,0,0.5)] cursor-pointer">
+               <Download size={14} className="text-[#38b6ff]" />
+               BAIXAR RELATÓRIO
+            </button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
@@ -190,7 +196,7 @@ const DashboardHome = () => {
             </div>
 
             {/* Suporte */}
-            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#b955a0]/80 transition-all duration-300">
+            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300">
               <div className="rounded-lg bg-black/60 border border-white/10 p-5 mb-6 inline-block pr-16 shadow-lg">
                 <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md block mb-3">Chamados Atendidos</span>
                 <p className="text-5xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] flex items-baseline gap-4">
@@ -204,7 +210,7 @@ const DashboardHome = () => {
                   <XAxis dataKey="week" stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
                   <YAxis stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line type="monotone" dataKey="atendimentos" stroke="#b955a0" strokeWidth={5} dot={{ fill: "#b955a0", r: 6, strokeWidth: 2, stroke: "#fff" }} activeDot={{ r: 9, fill: "#fff", stroke: "#b955a0", strokeWidth: 3 }} />
+                  <Line type="monotone" dataKey="atendimentos" stroke="#38b6ff" strokeWidth={5} dot={{ fill: "#38b6ff", r: 6, strokeWidth: 2, stroke: "#fff" }} activeDot={{ r: 9, fill: "#fff", stroke: "#38b6ff", strokeWidth: 3 }} />
                 </LineChart>
               </ChartContainer>
             </div>
@@ -212,9 +218,15 @@ const DashboardHome = () => {
 
           {/* ── Implantações em Andamento ── */}
           <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] mt-10 group hover:border-white/40 transition-all duration-300">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-2 h-6 bg-white/90 rounded-sm shadow-[0_0_12px_rgba(255,255,255,0.6)]" />
-              <h3 className="font-sans text-base font-bold tracking-[0.2em] text-white uppercase drop-shadow-md">IMPLANTAÇÕES ATIVAS</h3>
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-6 bg-white/90 rounded-sm shadow-[0_0_12px_rgba(255,255,255,0.6)]" />
+                <h3 className="font-mono text-base font-bold tracking-[0.2em] text-white uppercase drop-shadow-md">IMPLANTAÇÕES ATIVAS</h3>
+              </div>
+              <button className="flex items-center gap-2 text-xs font-sans font-bold text-white bg-black/50 border border-white/20 hover:border-[#38b6ff]/60 hover:bg-[#38b6ff]/20 px-3 py-2 rounded-md transition-all duration-300 shadow-[0_0_10px_rgba(0,0,0,0.5)] cursor-pointer">
+                 <Download size={14} className="text-[#38b6ff]" />
+                 BAIXAR RELATÓRIO
+              </button>
             </div>
             
             <div className="space-y-5">

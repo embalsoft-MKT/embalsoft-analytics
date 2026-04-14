@@ -46,7 +46,7 @@ const DashboardLayout = () => {
                 setCollapsed(!collapsed);
               }
             }}
-            className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-all"
+            className="p-2 rounded-lg text-muted-foreground hover:text-[#38b6ff] hover:bg-[#38b6ff]/10 hover:shadow-[0_0_15px_rgba(56,182,255,0.4)] transition-all"
           >
             <Menu size={20} />
           </button>

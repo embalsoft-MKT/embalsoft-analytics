@@ -9,7 +9,7 @@ const categoryConfig: Record<Category | 'Todas', { color: string, border: string
   'Comunicado': { color: 'text-[#38b6ff]', border: 'border-[#38b6ff]/30', bg: 'bg-[#38b6ff]/10', tag: 'text-[#38b6ff] bg-[#38b6ff]/10 border-[#38b6ff]/30' },
   'Boas práticas': { color: 'text-[#a7c64f]', border: 'border-[#a7c64f]/30', bg: 'bg-[#a7c64f]/10', tag: 'text-[#a7c64f] bg-[#a7c64f]/10 border-[#a7c64f]/30' },
   'Aniversário': { color: 'text-[#f48121]', border: 'border-[#f48121]/30', bg: 'bg-[#f48121]/10', tag: 'text-[#f48121] bg-[#f48121]/10 border-[#f48121]/30' },
-  'Feriado': { color: 'text-[#b955a0]', border: 'border-[#b955a0]/30', bg: 'bg-[#b955a0]/10', tag: 'text-[#b955a0] bg-[#b955a0]/10 border-[#b955a0]/30' },
+  'Feriado': { color: 'text-[#38b6ff]', border: 'border-[#38b6ff]/30', bg: 'bg-[#38b6ff]/10', tag: 'text-[#38b6ff] bg-[#38b6ff]/10 border-[#38b6ff]/30' },
   'Links úteis': { color: 'text-muted-foreground', border: 'border-white/20', bg: 'bg-white/5', tag: 'text-white bg-white/10 border-white/20' }
 };
 

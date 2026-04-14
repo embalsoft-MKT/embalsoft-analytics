@@ -32,16 +32,6 @@ const planets: Planet[] = [
     color: "#a7c64f",
     glowColor: "#a7c64f",
   },
-  {
-    id: "wms",
-    label: "WMS",
-    orbitRadius: 300,
-    size: 28,
-    duration: 60,
-    startAngle: 240,
-    color: "#b955a0",
-    glowColor: "#b955a0",
-  },
 ];
 
 const stars = Array.from({ length: 80 }, (_, i) => ({
