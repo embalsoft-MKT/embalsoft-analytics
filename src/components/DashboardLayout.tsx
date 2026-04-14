@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import { useUpdates } from "../contexts/UpdatesContext";
 import {
   LayoutDashboard,
   BarChart3,
@@ -30,6 +31,7 @@ const DashboardLayout = () => {
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("ÚLTIMOS 30 DIAS");
   const navigate = useNavigate();
+  const { unreadCount } = useUpdates();
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -117,14 +119,27 @@ const DashboardLayout = () => {
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative
                   ${item.disabled 
                     ? "opacity-40 cursor-not-allowed text-muted-foreground bg-transparent border-transparent" 
-                    : item.path === "/dashboard"
+                    : item.path === window.location.pathname
                       ? "bg-[#38b6ff]/10 text-[#38b6ff] border border-[#38b6ff]/30 shadow-[0_0_10px_rgba(56,182,255,0.1)]"
                       : "text-muted-foreground hover:text-foreground hover:bg-white/5 cursor-pointer border border-transparent hover:border-white/10"
                   }
                 `}
               >
-                <item.icon size={20} className="shrink-0" />
+                <div className="relative">
+                  <item.icon size={20} className="shrink-0" />
+                  {item.path === '/dashboard/updates' && unreadCount > 0 && collapsed && (
+                     <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[#f48121] rounded-full shadow-[0_0_8px_#f48121] animate-pulse" />
+                  )}
+                </div>
                 {!collapsed && <span>{item.label}</span>}
+                
+                {/* Badge Number (non-collapsed) */}
+                {item.path === '/dashboard/updates' && unreadCount > 0 && !collapsed && (
+                   <span className="ml-auto flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[10px] font-bold bg-[#f48121]/20 text-[#f48121] border border-[#f48121]/50 rounded-full shadow-[0_0_10px_rgba(244,129,33,0.4)] animate-pulse">
+                     {unreadCount}
+                   </span>
+                )}
+
                 {item.disabled && !collapsed && (
                   <span className="ml-auto text-[9px] uppercase font-bold tracking-widest text-muted-foreground/60 border border-muted-foreground/20 px-1.5 py-0.5 rounded">Em breve</span>
                 )}
@@ -144,7 +159,7 @@ const DashboardLayout = () => {
         {/* Main */}
         <div className="flex-1 flex flex-col min-w-0 overflow-y-auto w-full">
           {/* Content */}
-          <main className="flex-1 p-4 md:p-6">
+          <main className="flex-1 p-4 md:p-6 relative z-10">
             <Outlet />
           </main>
         </div>
