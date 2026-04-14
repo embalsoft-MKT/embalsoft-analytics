@@ -11,16 +11,17 @@ import {
   LogOut,
   Menu,
   Calendar,
-  ChevronDown
+  ChevronDown,
+  RefreshCw
 } from "lucide-react";
 import logoEmbalsoft from "@/assets/logo-embalsoft.png";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
-  { icon: BarChart3, label: "Relatórios", path: "/dashboard/reports" },
-  { icon: Users, label: "Clientes", path: "/dashboard/clients" },
-  { icon: FileText, label: "Documentos", path: "/dashboard/docs" },
-  { icon: Settings, label: "Configurações", path: "/dashboard/settings" },
+  { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", disabled: false },
+  { icon: RefreshCw, label: "Atualizações", path: "/dashboard/updates", disabled: false },
+  { icon: BarChart3, label: "Relatórios", path: "/dashboard/reports", disabled: true },
+  { icon: FileText, label: "Documentos", path: "/dashboard/docs", disabled: true },
+  { icon: Settings, label: "Configurações", path: "/dashboard/settings", disabled: true },
 ];
 
 const DashboardLayout = () => {
@@ -110,15 +111,23 @@ const DashboardLayout = () => {
             {navItems.map((item) => (
               <button
                 key={item.path}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200
-                  ${item.path === "/dashboard"
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                disabled={item.disabled}
+                onClick={() => !item.disabled && navigate(item.path)}
+                title={item.disabled ? "Em breve" : undefined}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative
+                  ${item.disabled 
+                    ? "opacity-40 cursor-not-allowed text-muted-foreground bg-transparent border-transparent" 
+                    : item.path === "/dashboard"
+                      ? "bg-[#38b6ff]/10 text-[#38b6ff] border border-[#38b6ff]/30 shadow-[0_0_10px_rgba(56,182,255,0.1)]"
+                      : "text-muted-foreground hover:text-foreground hover:bg-white/5 cursor-pointer border border-transparent hover:border-white/10"
                   }
                 `}
               >
                 <item.icon size={20} className="shrink-0" />
                 {!collapsed && <span>{item.label}</span>}
+                {item.disabled && !collapsed && (
+                  <span className="ml-auto text-[9px] uppercase font-bold tracking-widest text-muted-foreground/60 border border-muted-foreground/20 px-1.5 py-0.5 rounded">Em breve</span>
+                )}
               </button>
             ))}
           </nav>
