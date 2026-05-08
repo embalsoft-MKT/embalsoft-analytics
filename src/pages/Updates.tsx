@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUpdates, Category, UpdateItem } from "../contexts/UpdatesContext";
-import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Configurations for HUD aesthetics by category
@@ -101,14 +101,65 @@ const Updates = () => {
   const filteredUpdates = updates.filter(u => filter === 'Todas' || u.category === filter);
 
   return (
-    <div className="w-full max-w-6xl mx-auto pb-12 animate-fade-in-up">
+    <div className="w-full max-w-7xl mx-auto pb-12 animate-fade-in-up flex flex-col lg:flex-row gap-8">
+      {/* Sidebar Links Úteis */}
+      <aside className="lg:w-72 shrink-0 lg:sticky lg:top-24 self-start w-full">
+        <div className="rounded-xl border-2 border-[#38b6ff]/30 bg-card/60 backdrop-blur-md p-5 shadow-[0_0_20px_rgba(56,182,255,0.1)]">
+          <div className="flex items-center gap-2 mb-5 pb-3 border-b border-white/10">
+            <Link2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_5px_rgba(56,182,255,0.8)]" />
+            <h2 className="text-sm font-mono font-bold uppercase tracking-widest text-white">Links úteis</h2>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-black/40 border border-white/5">
+              <Phone size={16} className="text-[#a7c64f] shrink-0" />
+              <div className="flex flex-col">
+                <span className="text-[10px] uppercase font-mono text-muted-foreground tracking-wider">Telefone Voip</span>
+                <span className="text-sm text-white font-bold">(51) 2165-6886</span>
+              </div>
+            </div>
+
+            {[
+              { icon: GraduationCap, label: "Embalsoft Academia", href: "#" },
+              { icon: BookOpen, label: "Wiki Antiga", href: "#" },
+              { icon: Book, label: "Wiki Nova", href: "#" },
+            ].map((l) => (
+              <a key={l.label} href={l.href} target="_blank" rel="noreferrer"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-[#38b6ff] hover:bg-[#38b6ff]/10 border border-transparent hover:border-[#38b6ff]/30 transition-all group">
+                <l.icon size={16} className="shrink-0 text-muted-foreground group-hover:text-[#38b6ff]" />
+                <span className="flex-1">{l.label}</span>
+                <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              </a>
+            ))}
+
+            <div className="my-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+            {[
+              { icon: ImageIcon, label: "Fundo Teams 2026", href: "#" },
+              { icon: Linkedin, label: "Capa LinkedIn p/ colaboradores", href: "#" },
+              { icon: Mail, label: "Assinaturas de email", href: "#" },
+              { icon: Cake, label: "Aniversariantes do mês", href: "#" },
+            ].map((l) => (
+              <a key={l.label} href={l.href} target="_blank" rel="noreferrer"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-[#f48121] hover:bg-[#f48121]/10 border border-transparent hover:border-[#f48121]/30 transition-all group">
+                <l.icon size={16} className="shrink-0 text-muted-foreground group-hover:text-[#f48121]" />
+                <span className="flex-1">{l.label}</span>
+                <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Feed */}
+      <div className="flex-1 min-w-0">
       {/* Header Central HUD */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 mt-4">
         <div>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-2 h-8 bg-white rounded-sm shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
             <h1 className="text-3xl md:text-5xl font-mono font-bold tracking-tight text-white drop-shadow-lg flex items-center gap-4">
-              ATUALIZAÇÕES
+              INFORMATIVOS
               {unreadCount > 0 && (
                 <span className="bg-[#38b6ff] text-secondary-foreground text-sm px-3 py-1 rounded-full font-bold shadow-[0_0_15px_#38b6ff] flex items-center justify-center">
                   {unreadCount}
@@ -169,6 +220,7 @@ const Updates = () => {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 };
