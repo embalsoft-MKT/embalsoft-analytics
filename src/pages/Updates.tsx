@@ -101,7 +101,7 @@ const Updates = () => {
   const filteredUpdates = updates.filter(u => filter === 'Todas' || u.category === filter);
 
   return (
-    <div className="w-full max-w-7xl mx-auto pb-12 animate-fade-in-up flex flex-col lg:flex-row gap-8">
+    <div className="w-full max-w-7xl mx-auto pb-12 animate-fade-in-up flex flex-col lg:flex-row-reverse gap-8">
       {/* Sidebar Links Úteis */}
       <aside className="lg:w-72 shrink-0 lg:sticky lg:top-24 self-start w-full">
         <div className="rounded-xl border-2 border-[#38b6ff]/30 bg-card/60 backdrop-blur-md p-5 shadow-[0_0_20px_rgba(56,182,255,0.1)]">
