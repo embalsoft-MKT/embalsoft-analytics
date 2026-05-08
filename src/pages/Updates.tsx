@@ -138,7 +138,6 @@ const Updates = () => {
               { icon: ImageIcon, label: "Fundo Teams 2026", href: "#" },
               { icon: Linkedin, label: "Capa LinkedIn p/ colaboradores", href: "#" },
               { icon: Mail, label: "Assinaturas de email", href: "#" },
-              { icon: Cake, label: "Aniversariantes do mês", href: "#" },
             ].map((l) => (
               <a key={l.label} href={l.href} target="_blank" rel="noreferrer"
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-[#f48121] hover:bg-[#f48121]/10 border border-transparent hover:border-[#f48121]/30 transition-all group">
