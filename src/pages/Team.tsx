@@ -20,9 +20,9 @@ const sections: TeamSection[] = [
     color: "#f48121",
     highlighted: true,
     members: [
-      { name: "Sócio 1", role: "Diretor" },
-      { name: "Sócio 2", role: "Diretor" },
-      { name: "Sócio 3", role: "Diretor" },
+      { name: "Júnior Muck", role: "CEO" },
+      { name: "Rose Muck", role: "Cofundadora" },
+      { name: "Gerson Muck", role: "Cofundador" },
     ],
   },
   {
@@ -30,8 +30,9 @@ const sections: TeamSection[] = [
     icon: Briefcase,
     color: "#38b6ff",
     members: [
-      { name: "Membro ADM 1", role: "Administrativo" },
-      { name: "Membro ADM 2", role: "Financeiro" },
+      { name: "Gisele Muck", role: "Financeiro (Supervisora Setor ADM)" },
+      { name: "Juliana Charão", role: "Recursos Humanos" },
+      { name: "Patricia Fernandes", role: "Marketing/Design" },
     ],
   },
   {
