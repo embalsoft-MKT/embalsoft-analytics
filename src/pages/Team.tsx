@@ -1,4 +1,4 @@
-import { Crown, Briefcase, Headphones, TrendingUp, Code2, User } from "lucide-react";
+import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle } from "lucide-react";
 
 interface Member {
   name: string;
@@ -52,8 +52,10 @@ const sections: TeamSection[] = [
     icon: TrendingUp,
     color: "#38b6ff",
     members: [
-      { name: "Membro Comercial 1", role: "Consultor de Vendas" },
-      { name: "Membro Comercial 2", role: "Consultor de Vendas" },
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
+      { name: "Cintia Villar", role: "Consultor de Vendas" },
+      { name: "Jacqueline Fontoura", role: "Consultor de Vendas" },
+      { name: "Luiz Fagam", role: "Consultor de Vendas" },
     ],
   },
   {
@@ -61,9 +63,34 @@ const sections: TeamSection[] = [
     icon: Code2,
     color: "#38b6ff",
     members: [
-      { name: "Dev 1", role: "Desenvolvedor" },
-      { name: "Dev 2", role: "Desenvolvedor" },
-      { name: "Dev 3", role: "QA" },
+      { name: "Ismael Hahn", role: "Coordenador", isLeader: true },
+      { name: "Pedro Lemos", role: "Tech Lead", isLeader: true },
+      { name: "Marcelo Luvizotto", role: "Desenvolvedor" },
+      { name: "Éverton dos Santos", role: "Desenvolvedor" },
+      { name: "Douglas Santos", role: "Desenvolvedor" },
+      { name: "João Roberto", role: "Desenvolvedor" },
+      { name: "Fernanda Spier", role: "Desenvolvedor" },
+      { name: "Vinícius Martins", role: "Desenvolvedor" },
+    ],
+  },
+  {
+    title: "Implantação",
+    icon: Settings,
+    color: "#38b6ff",
+    members: [
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
+      { name: "Marcos Becker", role: "Analista de Implantação" },
+      { name: "Renan Pires", role: "Analista de Implantação" },
+    ],
+  },
+  {
+    title: "Qualidade",
+    icon: CheckCircle,
+    color: "#38b6ff",
+    members: [
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
+      { name: "Gabriel Justin", role: "Analista de Qualidade" },
+      { name: "Tatiane", role: "Analista de Qualidade" },
     ],
   },
 ];
