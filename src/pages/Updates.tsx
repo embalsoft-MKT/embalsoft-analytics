@@ -101,7 +101,7 @@ const Updates = () => {
   const filteredUpdates = updates.filter(u => filter === 'Todas' || u.category === filter);
 
   return (
-    <div className="w-full max-w-7xl mx-auto pb-12 animate-fade-in-up flex flex-col lg:flex-row gap-8">
+    <div className="w-full max-w-7xl mx-auto pb-12 animate-fade-in-up flex flex-col lg:flex-row-reverse gap-8">
       {/* Sidebar Links Úteis */}
       <aside className="lg:w-72 shrink-0 lg:sticky lg:top-24 self-start w-full">
         <div className="rounded-xl border-2 border-[#38b6ff]/30 bg-card/60 backdrop-blur-md p-5 shadow-[0_0_20px_rgba(56,182,255,0.1)]">
@@ -138,7 +138,6 @@ const Updates = () => {
               { icon: ImageIcon, label: "Fundo Teams 2026", href: "#" },
               { icon: Linkedin, label: "Capa LinkedIn p/ colaboradores", href: "#" },
               { icon: Mail, label: "Assinaturas de email", href: "#" },
-              { icon: Cake, label: "Aniversariantes do mês", href: "#" },
             ].map((l) => (
               <a key={l.label} href={l.href} target="_blank" rel="noreferrer"
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-[#f48121] hover:bg-[#f48121]/10 border border-transparent hover:border-[#f48121]/30 transition-all group">
