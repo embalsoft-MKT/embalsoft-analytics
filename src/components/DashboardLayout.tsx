@@ -4,7 +4,6 @@ import { useUpdates } from "../contexts/UpdatesContext";
 import {
   LayoutDashboard,
   BarChart3,
-  Settings,
   Users,
   FileText,
   ChevronLeft,
@@ -19,14 +18,14 @@ import logoEmbalsoft from "@/assets/logo-embalsoft.png";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", disabled: false },
-  { icon: RefreshCw, label: "Atualizações", path: "/dashboard/updates", disabled: false },
+  { icon: RefreshCw, label: "Informativos", path: "/dashboard/updates", disabled: false },
+  { icon: Users, label: "Equipe", path: "/dashboard/team", disabled: true },
   { icon: BarChart3, label: "Relatórios", path: "/dashboard/reports", disabled: true },
   { icon: FileText, label: "Documentos", path: "/dashboard/docs", disabled: true },
-  { icon: Settings, label: "Configurações", path: "/dashboard/settings", disabled: true },
 ];
 
 const DashboardLayout = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("ÚLTIMOS 30 DIAS");
