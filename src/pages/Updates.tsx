@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUpdates, Category, UpdateItem } from "../contexts/UpdatesContext";
-import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Configurations for HUD aesthetics by category
