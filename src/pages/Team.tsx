@@ -138,10 +138,14 @@ const Team = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {section.members.map((member, idx) => (
+              {section.members.map((member, idx) => {
+                const isSupervisor = member.role === "Supervisor";
+                return (
                 <div
                   key={idx}
-                  className={`group relative bg-card/60 backdrop-blur-sm border rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 ${
+                  className={`group relative bg-card/60 backdrop-blur-sm border transition-all duration-300 hover:-translate-y-1 ${
+                    isSupervisor ? "rounded-lg p-3" : "rounded-xl p-5"
+                  } ${
                     section.highlighted
                       ? "border-[#f48121]/30 hover:border-[#f48121] hover:shadow-[0_0_25px_rgba(244,129,33,0.25)]"
                       : member.isLeader
@@ -149,28 +153,28 @@ const Team = () => {
                       : "border-white/10 hover:border-[#38b6ff]/50 hover:shadow-[0_0_25px_rgba(56,182,255,0.2)]"
                   }`}
                 >
-                  <div className="flex items-center gap-4">
+                  <div className={`flex items-center ${isSupervisor ? "gap-3" : "gap-4"}`}>
                     <div
-                      className="w-14 h-14 rounded-full flex items-center justify-center border-2 shrink-0"
+                      className={`${isSupervisor ? "w-10 h-10 border" : "w-14 h-14 border-2"} rounded-full flex items-center justify-center shrink-0`}
                       style={{
                         borderColor: `${section.color}50`,
                         background: `linear-gradient(135deg, ${section.color}25, transparent)`,
                       }}
                     >
-                      <User size={24} style={{ color: section.color }} />
+                      <User size={isSupervisor ? 16 : 24} style={{ color: section.color }} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-white font-semibold flex items-center gap-2">
+                      <h3 className={`text-white font-semibold flex items-center gap-2 ${isSupervisor ? "text-[13px]" : ""}`}>
                         <span className="truncate">{member.name}</span>
-                        {member.isLeader && <Crown size={14} className="text-yellow-400 shrink-0" />}
+                        {member.isLeader && <Crown size={isSupervisor ? 12 : 14} className="text-yellow-400 shrink-0" />}
                       </h3>
-                      <p className="text-xs text-muted-foreground truncate mt-0.5">
+                      <p className={`text-muted-foreground truncate mt-0.5 ${isSupervisor ? "text-[10px]" : "text-xs"}`}>
                         {member.role}
                       </p>
                     </div>
                   </div>
                 </div>
-              ))}
+              )})}
             </div>
           </section>
         );
