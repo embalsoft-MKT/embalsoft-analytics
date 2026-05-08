@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 
 import { UpdatesProvider } from "./contexts/UpdatesContext";
 import Updates from "./pages/Updates";
+import Team from "./pages/Team";
 
 const queryClient = new QueryClient();
 
