@@ -3,6 +3,7 @@ import { Crown, Briefcase, Headphones, TrendingUp, Code2, User } from "lucide-re
 interface Member {
   name: string;
   role: string;
+  isLeader?: boolean;
 }
 
 interface TeamSection {
@@ -30,7 +31,7 @@ const sections: TeamSection[] = [
     icon: Briefcase,
     color: "#38b6ff",
     members: [
-      { name: "Gisele Muck", role: "Financeiro (Supervisora Setor ADM)" },
+      { name: "Gisele Muck", role: "Financeiro (Supervisora Setor ADM)", isLeader: true },
       { name: "Juliana Charão", role: "Recursos Humanos" },
       { name: "Patricia Fernandes", role: "Marketing/Design" },
     ],
@@ -40,9 +41,10 @@ const sections: TeamSection[] = [
     icon: Headphones,
     color: "#38b6ff",
     members: [
-      { name: "Membro Suporte 1", role: "Analista de Suporte" },
-      { name: "Membro Suporte 2", role: "Analista de Suporte" },
-      { name: "Membro Suporte 3", role: "Analista de Suporte" },
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
+      { name: "Luis Fernando", role: "Analista de Suporte" },
+      { name: "Casiana Braga", role: "Analista de Suporte" },
+      { name: "Gabriel Lazarin", role: "Analista de Suporte" },
     ],
   },
   {
@@ -115,6 +117,8 @@ const Team = () => {
                   className={`group relative bg-card/60 backdrop-blur-sm border rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 ${
                     section.highlighted
                       ? "border-[#f48121]/30 hover:border-[#f48121] hover:shadow-[0_0_25px_rgba(244,129,33,0.25)]"
+                      : member.isLeader
+                      ? "border-yellow-400/40 hover:border-yellow-400 hover:shadow-[0_0_25px_rgba(250,204,21,0.25)] bg-gradient-to-r from-yellow-400/5 to-transparent"
                       : "border-white/10 hover:border-[#38b6ff]/50 hover:shadow-[0_0_25px_rgba(56,182,255,0.2)]"
                   }`}
                 >
@@ -129,7 +133,10 @@ const Team = () => {
                       <User size={24} style={{ color: section.color }} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-white font-semibold truncate">{member.name}</h3>
+                      <h3 className="text-white font-semibold flex items-center gap-2">
+                        <span className="truncate">{member.name}</span>
+                        {member.isLeader && <Crown size={14} className="text-yellow-400 shrink-0" />}
+                      </h3>
                       <p className="text-xs text-muted-foreground truncate mt-0.5">
                         {member.role}
                       </p>
