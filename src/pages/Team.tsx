@@ -1,9 +1,13 @@
-import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle } from "lucide-react";
+import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle, MapPin, Calendar, Clock, Cake } from "lucide-react";
 
 interface Member {
   name: string;
   role: string;
   isLeader?: boolean;
+  sede?: string;
+  admissao?: string;
+  tempo?: string;
+  aniversario?: string;
 }
 
 interface TeamSection {
@@ -21,7 +25,7 @@ const sections: TeamSection[] = [
     color: "#f48121",
     highlighted: true,
     members: [
-      { name: "Júnior Muck", role: "CEO" },
+      { name: "Júnior Muck", role: "CEO", sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/2023" },
       { name: "Rose Muck", role: "Cofundadora" },
       { name: "Gerson Muck", role: "Cofundador" },
     ],
@@ -31,9 +35,9 @@ const sections: TeamSection[] = [
     icon: Briefcase,
     color: "#38b6ff",
     members: [
-      { name: "Gisele Muck", role: "Financeiro (Supervisora Setor ADM)", isLeader: true },
-      { name: "Juliana Charão", role: "Recursos Humanos" },
-      { name: "Patricia Fernandes", role: "Marketing/Design" },
+      { name: "Gisele Muck", role: "Gerente Financeiro (Supervisora Setor ADM)", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1980" },
+      { name: "Juliana de Oliveira Dias Charão", role: "Generalista de RH", sede: "RS", admissao: "01/03/2022", tempo: "4 anos, 2 meses e 8 dias", aniversario: "26/10/1982" },
+      { name: "Patricia Fernandes Barbosa Andrade", role: "Auxiliar de Marketing", sede: "RS", admissao: "18/09/2023", tempo: "2 anos, 7 meses e 21 dias", aniversario: "23/04/1999" },
     ],
   },
   {
@@ -41,10 +45,10 @@ const sections: TeamSection[] = [
     icon: Headphones,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
-      { name: "Luis Fernando", role: "Analista de Suporte" },
-      { name: "Casiana Braga", role: "Analista de Suporte" },
-      { name: "Gabriel Lazarin", role: "Analista de Suporte" },
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true, sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/2023" },
+      { name: "Luís Fernando Teixeira da Silva", role: "Analista de Suporte (PJ)", sede: "RS", admissao: "01/04/2012", tempo: "14 anos, 1 mês e 8 dias", aniversario: "10/11/1963" },
+      { name: "Casiana Walter Braga", role: "Analista de Suporte de Produto Pleno N1", sede: "RS", admissao: "01/04/2013", tempo: "13 anos, 1 mês e 8 dias", aniversario: "31/01/1985" },
+      { name: "Gabriel Pereira Lazarin", role: "Analista de Suporte de Produto Pleno N1", sede: "SP", admissao: "28/08/2023", tempo: "2 anos, 8 meses e 11 dias", aniversario: "19/03/1997" },
     ],
   },
   {
@@ -52,8 +56,8 @@ const sections: TeamSection[] = [
     icon: TrendingUp,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
-      { name: "Cintia Villar", role: "Consultor de Vendas" },
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true, sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/2023" },
+      { name: "Cíntia Villar", role: "Consultor de Vendas (PJ)", sede: "RS", admissao: "01/09/2021", tempo: "4 anos, 8 meses e 8 dias", aniversario: "10/05/2023" },
       { name: "Jacqueline Fontoura", role: "Consultor de Vendas" },
       { name: "Luiz Fagam", role: "Consultor de Vendas" },
     ],
@@ -63,13 +67,13 @@ const sections: TeamSection[] = [
     icon: Code2,
     color: "#38b6ff",
     members: [
-      { name: "Ismael Hahn", role: "Coordenador", isLeader: true },
-      { name: "Pedro Lemos", role: "Tech Lead", isLeader: true },
-      { name: "Marcelo Luvizotto", role: "Desenvolvedor" },
-      { name: "Éverton dos Santos", role: "Desenvolvedor" },
-      { name: "Douglas Santos", role: "Desenvolvedor" },
-      { name: "João Roberto", role: "Desenvolvedor" },
-      { name: "Fernanda Spier", role: "Desenvolvedor" },
+      { name: "Ismael Barth Hahn", role: "Coordenador Desenvolvimento", isLeader: true, sede: "RS", admissao: "01/06/2005", tempo: "20 anos, 11 meses e 8 dias", aniversario: "09/06/1981" },
+      { name: "Pedro Henrique Lemos", role: "Programador Sênior N1 / Tech Lead", isLeader: true, sede: "RS", admissao: "01/06/2007", tempo: "18 anos, 11 meses e 8 dias", aniversario: "03/06/1987" },
+      { name: "Marcelo Luvizotto", role: "Programador Pleno N1", sede: "SP", admissao: "01/06/2023", tempo: "2 anos, 11 meses e 8 dias", aniversario: "11/03/1965" },
+      { name: "Éverton Cristiano dos Santos", role: "Programador Web Júnior N2", sede: "RS", admissao: "27/01/2025", tempo: "1 ano, 3 meses e 12 dias", aniversario: "06/05/2025" },
+      { name: "Douglas Gnutzmann Santos", role: "Programador Pleno N2", sede: "RS", admissao: "08/11/2021", tempo: "4 anos, 6 meses e 1 dia", aniversario: "24/05/1985" },
+      { name: "João Roberto Teixeira Lopes", role: "Programador Júnior N1", sede: "SP", admissao: "01/03/2023", tempo: "3 anos, 2 meses e 8 dias", aniversario: "03/06/1986" },
+      { name: "Fernanda Spier", role: "Programadora (PJ)", sede: "RS", admissao: "01/01/2025", aniversario: "15/08/1985" },
       { name: "Vinícius Martins", role: "Desenvolvedor" },
     ],
   },
@@ -78,9 +82,9 @@ const sections: TeamSection[] = [
     icon: Settings,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
-      { name: "Marcos Becker", role: "Analista de Implantação" },
-      { name: "Renan Pires", role: "Analista de Implantação" },
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true, sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/2023" },
+      { name: "Marcos Becker", role: "Analista de Implantação (PJ)", sede: "RS", admissao: "01/04/2019", tempo: "7 anos, 1 mês e 8 dias", aniversario: "18/02/1982" },
+      { name: "Renan Pires", role: "Consultor de Implantação (PJ)", sede: "SP", admissao: "03/06/2024", tempo: "1 ano, 11 meses e 6 dias", aniversario: "25/10/1988" },
     ],
   },
   {
@@ -88,8 +92,8 @@ const sections: TeamSection[] = [
     icon: CheckCircle,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
-      { name: "Gabriel Justin", role: "Analista de Qualidade" },
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true, sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/2023" },
+      { name: "Gabriel Rodrigues Justin", role: "Analista de Testes Júnior N1", sede: "RS", admissao: "18/03/2024", tempo: "2 anos, 1 mês e 21 dias", aniversario: "19/08/1995" },
       { name: "Tatiane", role: "Analista de Qualidade" },
     ],
   },
@@ -145,12 +149,10 @@ const Team = () => {
                   .map((member, idx) => (
                     <div
                       key={`leader-${idx}`}
-                      className="group relative border rounded-lg p-3 transition-all duration-300 hover:-translate-y-1 border-[#38b6ff] bg-[#38b6ff]/80 hover:bg-[#38b6ff] shadow-[0_0_15px_rgba(56,182,255,0.3)] max-w-[240px]"
+                      className="group relative border rounded-lg p-3 transition-all duration-300 hover:-translate-y-1 border-[#38b6ff] bg-[#38b6ff]/80 hover:bg-[#38b6ff] shadow-[0_0_15px_rgba(56,182,255,0.3)] max-w-[280px]"
                     >
                       <div className="flex items-center gap-3">
-                        <div
-                          className="w-10 h-10 rounded-full flex items-center justify-center border-2 shrink-0 bg-white/20 border-white/40"
-                        >
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 shrink-0 bg-white/20 border-white/40">
                           <User size={20} className="text-white" />
                         </div>
                         <div className="min-w-0 flex-1">
@@ -163,6 +165,34 @@ const Team = () => {
                           </p>
                         </div>
                       </div>
+                      {(member.sede || member.admissao || member.tempo || member.aniversario) && (
+                        <div className="mt-3 pt-3 border-t border-white/20 space-y-1.5 text-[11px] text-white/90">
+                          {member.sede && (
+                            <div className="flex items-center gap-1.5">
+                              <MapPin size={12} className="text-white/70 shrink-0" />
+                              <span>Sede: {member.sede}</span>
+                            </div>
+                          )}
+                          {member.admissao && (
+                            <div className="flex items-center gap-1.5">
+                              <Calendar size={12} className="text-white/70 shrink-0" />
+                              <span>Admissão: {member.admissao}</span>
+                            </div>
+                          )}
+                          {member.tempo && (
+                            <div className="flex items-center gap-1.5">
+                              <Clock size={12} className="text-white/70 shrink-0" />
+                              <span className="truncate">{member.tempo}</span>
+                            </div>
+                          )}
+                          {member.aniversario && (
+                            <div className="flex items-center gap-1.5">
+                              <Cake size={12} className="text-white/70 shrink-0" />
+                              <span>Aniversário: {member.aniversario}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
               </div>
@@ -192,14 +222,42 @@ const Team = () => {
                         <User size={24} style={{ color: section.color }} />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-white font-semibold flex items-center gap-2">
-                          <span className="truncate">{member.name}</span>
+                        <h3 className="text-white font-semibold truncate">
+                          {member.name}
                         </h3>
                         <p className="text-xs text-muted-foreground truncate mt-0.5">
                           {member.role}
                         </p>
                       </div>
                     </div>
+                    {(member.sede || member.admissao || member.tempo || member.aniversario) && (
+                      <div className="mt-3 pt-3 border-t border-white/10 space-y-1.5 text-[11px] text-muted-foreground">
+                        {member.sede && (
+                          <div className="flex items-center gap-1.5">
+                            <MapPin size={12} style={{ color: section.color }} className="shrink-0" />
+                            <span>Sede: <span className="text-white/90">{member.sede}</span></span>
+                          </div>
+                        )}
+                        {member.admissao && (
+                          <div className="flex items-center gap-1.5">
+                            <Calendar size={12} style={{ color: section.color }} className="shrink-0" />
+                            <span>Admissão: <span className="text-white/90">{member.admissao}</span></span>
+                          </div>
+                        )}
+                        {member.tempo && (
+                          <div className="flex items-center gap-1.5">
+                            <Clock size={12} style={{ color: section.color }} className="shrink-0" />
+                            <span className="truncate text-white/90">{member.tempo}</span>
+                          </div>
+                        )}
+                        {member.aniversario && (
+                          <div className="flex items-center gap-1.5">
+                            <Cake size={12} style={{ color: section.color }} className="shrink-0" />
+                            <span>Aniversário: <span className="text-white/90">{member.aniversario}</span></span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
             </div>
