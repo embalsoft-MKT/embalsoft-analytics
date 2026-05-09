@@ -139,13 +139,13 @@ const Team = () => {
 
             {/* Líderes / Coordenadores */}
             {section.members.some((m) => m.isLeader) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
                 {section.members
                   .filter((m) => m.isLeader)
                   .map((member, idx) => (
                     <div
                       key={`leader-${idx}`}
-                      className="group relative border rounded-lg p-3 transition-all duration-300 hover:-translate-y-1 border-[#38b6ff] bg-[#38b6ff]/80 hover:bg-[#38b6ff] shadow-[0_0_15px_rgba(56,182,255,0.3)]"
+                      className="group relative border rounded-lg p-3 transition-all duration-300 hover:-translate-y-1 border-[#38b6ff] bg-[#38b6ff]/80 hover:bg-[#38b6ff] shadow-[0_0_15px_rgba(56,182,255,0.3)] max-w-[240px]"
                     >
                       <div className="flex items-center gap-3">
                         <div
