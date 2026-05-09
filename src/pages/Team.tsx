@@ -145,24 +145,20 @@ const Team = () => {
                   .map((member, idx) => (
                     <div
                       key={`leader-${idx}`}
-                      className="group relative bg-card/60 backdrop-blur-sm border rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 border-yellow-400/40 hover:border-yellow-400 hover:shadow-[0_0_25px_rgba(250,204,21,0.25)] bg-gradient-to-r from-yellow-400/5 to-transparent"
+                      className="group relative border rounded-lg p-3 transition-all duration-300 hover:-translate-y-1 border-[#38b6ff] bg-[#38b6ff]/80 hover:bg-[#38b6ff] shadow-[0_0_15px_rgba(56,182,255,0.3)]"
                     >
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3">
                         <div
-                          className="w-14 h-14 rounded-full flex items-center justify-center border-2 shrink-0"
-                          style={{
-                            borderColor: `${section.color}50`,
-                            background: `linear-gradient(135deg, ${section.color}25, transparent)`,
-                          }}
+                          className="w-10 h-10 rounded-full flex items-center justify-center border-2 shrink-0 bg-white/20 border-white/40"
                         >
-                          <User size={24} style={{ color: section.color }} />
+                          <User size={20} className="text-white" />
                         </div>
                         <div className="min-w-0 flex-1">
                           <h3 className="text-white font-semibold flex items-center gap-2">
                             <span className="truncate">{member.name}</span>
-                            <Crown size={14} className="text-yellow-400 shrink-0" />
+                            <Crown size={14} className="text-yellow-300 shrink-0" />
                           </h3>
-                          <p className="text-xs text-muted-foreground truncate mt-0.5">
+                          <p className="text-xs text-white/80 truncate mt-0.5">
                             {member.role}
                           </p>
                         </div>
