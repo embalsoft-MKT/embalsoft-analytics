@@ -45,7 +45,7 @@ const sections: TeamSection[] = [
     icon: Headphones,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true, sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/2023" },
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
       { name: "Luís Fernando Teixeira da Silva", role: "Analista de Suporte (PJ)", sede: "RS", admissao: "01/04/2012", tempo: "14 anos, 1 mês e 8 dias", aniversario: "10/11/1963" },
       { name: "Casiana Walter Braga", role: "Analista de Suporte de Produto Pleno N1", sede: "RS", admissao: "01/04/2013", tempo: "13 anos, 1 mês e 8 dias", aniversario: "31/01/1985" },
       { name: "Gabriel Pereira Lazarin", role: "Analista de Suporte de Produto Pleno N1", sede: "SP", admissao: "28/08/2023", tempo: "2 anos, 8 meses e 11 dias", aniversario: "19/03/1997" },
@@ -56,7 +56,7 @@ const sections: TeamSection[] = [
     icon: TrendingUp,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true, sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/2023" },
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
       { name: "Cíntia Villar", role: "Consultor de Vendas (PJ)", sede: "RS", admissao: "01/09/2021", tempo: "4 anos, 8 meses e 8 dias", aniversario: "10/05/2023" },
       { name: "Jacqueline Fontoura", role: "Consultor de Vendas" },
       { name: "Luiz Fagam", role: "Consultor de Vendas" },
@@ -82,7 +82,7 @@ const sections: TeamSection[] = [
     icon: Settings,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true, sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/2023" },
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
       { name: "Marcos Becker", role: "Analista de Implantação (PJ)", sede: "RS", admissao: "01/04/2019", tempo: "7 anos, 1 mês e 8 dias", aniversario: "18/02/1982" },
       { name: "Renan Pires", role: "Consultor de Implantação (PJ)", sede: "SP", admissao: "03/06/2024", tempo: "1 ano, 11 meses e 6 dias", aniversario: "25/10/1988" },
     ],
@@ -92,7 +92,7 @@ const sections: TeamSection[] = [
     icon: CheckCircle,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true, sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/2023" },
+      { name: "Júnior Muck", role: "Supervisor", isLeader: true },
       { name: "Gabriel Rodrigues Justin", role: "Analista de Testes Júnior N1", sede: "RS", admissao: "18/03/2024", tempo: "2 anos, 1 mês e 21 dias", aniversario: "19/08/1995" },
       { name: "Tatiane", role: "Analista de Qualidade" },
     ],
