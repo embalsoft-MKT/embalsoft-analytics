@@ -8,6 +8,7 @@ interface Member {
   admissao?: string;
   tempo?: string;
   aniversario?: string;
+  image?: string;
 }
 
 interface TeamSection {
@@ -27,7 +28,7 @@ const sections: TeamSection[] = [
     members: [
       { name: "Júnior Muck", role: "CEO", sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/2023" },
       { name: "Rose Muck", role: "Cofundadora" },
-      { name: "Gerson Muck", role: "Cofundador" },
+      { name: "Gerson Muck", role: "Cofundador", image: "/team/gerson.png" },
     ],
   },
   {
@@ -37,7 +38,7 @@ const sections: TeamSection[] = [
     members: [
       { name: "Gisele Muck", role: "Gerente Financeiro (Supervisora Setor ADM)", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1980" },
       { name: "Juliana de Oliveira Dias Charão", role: "Generalista de RH", sede: "RS", admissao: "01/03/2022", tempo: "4 anos, 2 meses e 8 dias", aniversario: "26/10/1982" },
-      { name: "Patricia Fernandes Barbosa", role: "Marketing", sede: "RS", admissao: "18/09/2023", tempo: "2 anos, 7 meses e 21 dias", aniversario: "23/04/1999" },
+      { name: "Patricia Fernandes Barbosa", role: "Marketing", sede: "RS", admissao: "18/09/2023", tempo: "2 anos, 7 meses e 21 dias", aniversario: "23/04/1999", image: "/team/patricia.png" },
     ],
   },
   {
@@ -57,7 +58,7 @@ const sections: TeamSection[] = [
     color: "#38b6ff",
     members: [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true },
-      { name: "Cíntia Villar", role: "Consultor de Vendas (PJ)", sede: "RS", admissao: "01/09/2021", tempo: "4 anos, 8 meses e 8 dias", aniversario: "10/05/2023" },
+      { name: "Cíntia Villar", role: "Consultor de Vendas (PJ)", sede: "RS", admissao: "01/09/2021", tempo: "4 anos, 8 meses e 8 dias", aniversario: "10/05/2023", image: "/team/cintia.png" },
       { name: "Jacqueline Fontoura", role: "Consultor de Vendas" },
       { name: "Luiz Fagam", role: "Consultor de Vendas" },
     ],
@@ -72,7 +73,7 @@ const sections: TeamSection[] = [
       { name: "Marcelo Luvizotto", role: "Programador", sede: "SP", admissao: "01/06/2023", tempo: "2 anos, 11 meses e 8 dias", aniversario: "11/03/1965" },
       { name: "Éverton Cristiano dos Santos", role: "Programador Web", sede: "RS", admissao: "27/01/2025", tempo: "1 ano, 3 meses e 12 dias", aniversario: "06/05/2025" },
       { name: "Douglas Gnutzmann Santos", role: "Programador", sede: "RS", admissao: "08/11/2021", tempo: "4 anos, 6 meses e 1 dia", aniversario: "24/05/1985" },
-      { name: "João Roberto Teixeira Lopes", role: "Programador", sede: "SP", admissao: "01/03/2023", tempo: "3 anos, 2 meses e 8 dias", aniversario: "03/06/1986" },
+      { name: "João Roberto Teixeira Lopes", role: "Programador", sede: "SP", admissao: "01/03/2023", tempo: "3 anos, 2 meses e 8 dias", aniversario: "03/06/1986", image: "/team/joao.png" },
       { name: "Fernanda Spier", role: "Programadora (PJ)", sede: "RS", admissao: "01/01/2025", aniversario: "15/08/1985" },
       { name: "Vinícius Martins", role: "Desenvolvedor" },
     ],
@@ -152,8 +153,12 @@ const Team = () => {
                       className="group relative border rounded-lg p-3 transition-all duration-300 hover:-translate-y-1 border-[#38b6ff] bg-[#38b6ff]/80 hover:bg-[#38b6ff] shadow-[0_0_15px_rgba(56,182,255,0.3)] max-w-[280px]"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 shrink-0 bg-white/20 border-white/40">
-                          <User size={20} className="text-white" />
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 shrink-0 bg-white/20 border-white/40 overflow-hidden">
+                          {member.image ? (
+                            <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <User size={20} className="text-white" />
+                          )}
                         </div>
                         <div className="min-w-0 flex-1">
                           <h3 className="text-white font-semibold flex items-center gap-2">
@@ -213,13 +218,17 @@ const Team = () => {
                   >
                     <div className="flex items-center gap-4">
                       <div
-                        className="w-14 h-14 rounded-full flex items-center justify-center border-2 shrink-0"
+                        className="w-14 h-14 rounded-full flex items-center justify-center border-2 shrink-0 overflow-hidden"
                         style={{
                           borderColor: `${section.color}50`,
                           background: `linear-gradient(135deg, ${section.color}25, transparent)`,
                         }}
                       >
-                        <User size={24} style={{ color: section.color }} />
+                        {member.image ? (
+                          <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <User size={24} style={{ color: section.color }} />
+                        )}
                       </div>
                       <div className="min-w-0 flex-1">
                         <h3 className="text-white font-semibold truncate">
