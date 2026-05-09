@@ -139,7 +139,7 @@ const Team = () => {
 
             {/* Líderes / Coordenadores */}
             {section.members.some((m) => m.isLeader) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
                 {section.members
                   .filter((m) => m.isLeader)
                   .map((member, idx) => (
