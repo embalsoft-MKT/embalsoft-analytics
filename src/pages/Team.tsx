@@ -37,7 +37,7 @@ const sections: TeamSection[] = [
     members: [
       { name: "Gisele Muck", role: "Gerente Financeiro (Supervisora Setor ADM)", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1980" },
       { name: "Juliana de Oliveira Dias Charão", role: "Generalista de RH", sede: "RS", admissao: "01/03/2022", tempo: "4 anos, 2 meses e 8 dias", aniversario: "26/10/1982" },
-      { name: "Patricia Fernandes Barbosa Andrade", role: "Auxiliar de Marketing", sede: "RS", admissao: "18/09/2023", tempo: "2 anos, 7 meses e 21 dias", aniversario: "23/04/1999" },
+      { name: "Patricia Fernandes Barbosa", role: "Marketing", sede: "RS", admissao: "18/09/2023", tempo: "2 anos, 7 meses e 21 dias", aniversario: "23/04/1999" },
     ],
   },
   {
@@ -47,8 +47,8 @@ const sections: TeamSection[] = [
     members: [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true },
       { name: "Luís Fernando Teixeira da Silva", role: "Analista de Suporte (PJ)", sede: "RS", admissao: "01/04/2012", tempo: "14 anos, 1 mês e 8 dias", aniversario: "10/11/1963" },
-      { name: "Casiana Walter Braga", role: "Analista de Suporte de Produto Pleno N1", sede: "RS", admissao: "01/04/2013", tempo: "13 anos, 1 mês e 8 dias", aniversario: "31/01/1985" },
-      { name: "Gabriel Pereira Lazarin", role: "Analista de Suporte de Produto Pleno N1", sede: "SP", admissao: "28/08/2023", tempo: "2 anos, 8 meses e 11 dias", aniversario: "19/03/1997" },
+      { name: "Casiana Walter Braga", role: "Analista de Suporte de Produto", sede: "RS", admissao: "01/04/2013", tempo: "13 anos, 1 mês e 8 dias", aniversario: "31/01/1985" },
+      { name: "Gabriel Pereira Lazarin", role: "Analista de Suporte de Produto", sede: "SP", admissao: "28/08/2023", tempo: "2 anos, 8 meses e 11 dias", aniversario: "19/03/1997" },
     ],
   },
   {
@@ -68,11 +68,11 @@ const sections: TeamSection[] = [
     color: "#38b6ff",
     members: [
       { name: "Ismael Barth Hahn", role: "Coordenador Desenvolvimento", isLeader: true, sede: "RS", admissao: "01/06/2005", tempo: "20 anos, 11 meses e 8 dias", aniversario: "09/06/1981" },
-      { name: "Pedro Henrique Lemos", role: "Programador Sênior N1 / Tech Lead", isLeader: true, sede: "RS", admissao: "01/06/2007", tempo: "18 anos, 11 meses e 8 dias", aniversario: "03/06/1987" },
-      { name: "Marcelo Luvizotto", role: "Programador Pleno N1", sede: "SP", admissao: "01/06/2023", tempo: "2 anos, 11 meses e 8 dias", aniversario: "11/03/1965" },
-      { name: "Éverton Cristiano dos Santos", role: "Programador Web Júnior N2", sede: "RS", admissao: "27/01/2025", tempo: "1 ano, 3 meses e 12 dias", aniversario: "06/05/2025" },
-      { name: "Douglas Gnutzmann Santos", role: "Programador Pleno N2", sede: "RS", admissao: "08/11/2021", tempo: "4 anos, 6 meses e 1 dia", aniversario: "24/05/1985" },
-      { name: "João Roberto Teixeira Lopes", role: "Programador Júnior N1", sede: "SP", admissao: "01/03/2023", tempo: "3 anos, 2 meses e 8 dias", aniversario: "03/06/1986" },
+      { name: "Pedro Henrique Lemos", role: "Programador / Tech Lead", isLeader: true, sede: "RS", admissao: "01/06/2007", tempo: "18 anos, 11 meses e 8 dias", aniversario: "03/06/1987" },
+      { name: "Marcelo Luvizotto", role: "Programador", sede: "SP", admissao: "01/06/2023", tempo: "2 anos, 11 meses e 8 dias", aniversario: "11/03/1965" },
+      { name: "Éverton Cristiano dos Santos", role: "Programador Web", sede: "RS", admissao: "27/01/2025", tempo: "1 ano, 3 meses e 12 dias", aniversario: "06/05/2025" },
+      { name: "Douglas Gnutzmann Santos", role: "Programador", sede: "RS", admissao: "08/11/2021", tempo: "4 anos, 6 meses e 1 dia", aniversario: "24/05/1985" },
+      { name: "João Roberto Teixeira Lopes", role: "Programador", sede: "SP", admissao: "01/03/2023", tempo: "3 anos, 2 meses e 8 dias", aniversario: "03/06/1986" },
       { name: "Fernanda Spier", role: "Programadora (PJ)", sede: "RS", admissao: "01/01/2025", aniversario: "15/08/1985" },
       { name: "Vinícius Martins", role: "Desenvolvedor" },
     ],
@@ -93,7 +93,7 @@ const sections: TeamSection[] = [
     color: "#38b6ff",
     members: [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true },
-      { name: "Gabriel Rodrigues Justin", role: "Analista de Testes Júnior N1", sede: "RS", admissao: "18/03/2024", tempo: "2 anos, 1 mês e 21 dias", aniversario: "19/08/1995" },
+      { name: "Gabriel Rodrigues Justin", role: "Analista de Testes", sede: "RS", admissao: "18/03/2024", tempo: "2 anos, 1 mês e 21 dias", aniversario: "19/08/1995" },
       { name: "Tatiane", role: "Analista de Qualidade" },
     ],
   },
