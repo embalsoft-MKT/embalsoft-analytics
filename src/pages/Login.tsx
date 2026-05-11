@@ -3,15 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import logoEmbalsoft from "@/assets/logo-embalsoft.png";
 import OrbitalBackground from "@/components/OrbitalBackground";
+import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [touched, setTouched] = useState({ email: false, password: false });
+
+  useEffect(() => {
+    if (user) navigate("/dashboard");
+  }, [user, navigate]);
 
   const validateEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
@@ -30,9 +38,28 @@ const Login = () => {
     }
 
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setLoading(false);
-    navigate("/dashboard");
+    
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        if (error.message === "Invalid login credentials") {
+          setError("E-mail ou senha incorretos.");
+        } else {
+          setError("Erro ao entrar. Tente novamente mais tarde.");
+        }
+        return;
+      }
+
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Erro de conexão.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

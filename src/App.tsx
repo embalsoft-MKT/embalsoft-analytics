@@ -8,33 +8,48 @@ import DashboardLayout from "./components/DashboardLayout";
 import DashboardHome from "./pages/DashboardHome";
 import NotFound from "./pages/NotFound";
 
-import { UpdatesProvider } from "./contexts/UpdatesContext";
 import Updates from "./pages/Updates";
 import Team from "./pages/Team";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
-const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <UpdatesProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<DashboardLayout />}>
-              <Route index element={<DashboardHome />} />
-              <Route path="updates" element={<Updates />} />
-              <Route path="team" element={<Team />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </UpdatesProvider>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <UpdatesProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/login" element={<Login />} />
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <DashboardLayout />
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<DashboardHome />} />
+                <Route path="updates" element={<Updates />} />
+                <Route 
+                  path="team" 
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <Team />
+                    </ProtectedRoute>
+                  } 
+                />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </UpdatesProvider>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
-);
 
 export default App;

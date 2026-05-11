@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useUpdates, Category, UpdateItem } from "../contexts/UpdatesContext";
 import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2, X, Upload, FileText, Trash2, Edit3, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Configurations for HUD aesthetics by category
 const categoryConfig: Record<Category | 'Todas', { color: string, border: string, bg: string, tag: string }> = {
@@ -16,6 +17,7 @@ const categoryConfig: Record<Category | 'Todas', { color: string, border: string
 const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => void }> = ({ item, onEdit }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { markAsRead, deleteUpdate } = useUpdates();
+  const { isAdmin } = useAuth();
   const conf = categoryConfig[item.category];
 
   const handleToggle = () => {
@@ -66,22 +68,24 @@ const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => voi
                 )}
               </div>
               
-              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button 
-                  onClick={handleEdit}
-                  className="p-2 bg-white/5 hover:bg-[#38b6ff]/20 text-white/40 hover:text-[#38b6ff] rounded-lg transition-all"
-                  title="Editar"
-                >
-                  <Edit3 size={14} />
-                </button>
-                <button 
-                  onClick={handleDelete}
-                  className="p-2 bg-white/5 hover:bg-red-500/20 text-white/40 hover:text-red-500 rounded-lg transition-all"
-                  title="Deletar"
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
+              {isAdmin && (
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button 
+                    onClick={handleEdit}
+                    className="p-2 bg-white/5 hover:bg-[#38b6ff]/20 text-white/40 hover:text-[#38b6ff] rounded-lg transition-all"
+                    title="Editar"
+                  >
+                    <Edit3 size={14} />
+                  </button>
+                  <button 
+                    onClick={handleDelete}
+                    className="p-2 bg-white/5 hover:bg-red-500/20 text-white/40 hover:text-red-500 rounded-lg transition-all"
+                    title="Deletar"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              )}
             </div>
             
             <h3 className={cn("text-xl md:text-2xl font-bold font-sans tracking-wide transition-colors", item.read ? "text-white/80" : "text-white drop-shadow-md")}>
@@ -159,6 +163,7 @@ const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => voi
 
 const Updates = () => {
   const { updates, unreadCount, markAllAsRead, addUpdate, updateUpdate } = useUpdates();
+  const { isAdmin, user } = useAuth();
   const [filter, setFilter] = useState<Category | 'Todas'>('Todas');
   const [showPostModal, setShowPostModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -183,8 +188,8 @@ const Updates = () => {
     } else {
       addUpdate({
         ...newPost,
-        authorName: 'Você',
-        authorPhoto: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop'
+        authorName: user?.user_metadata?.full_name || 'Usuário',
+        authorPhoto: user?.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop'
       });
     }
     setShowPostModal(false);
@@ -251,17 +256,19 @@ const Updates = () => {
           </div>
         </div>
 
-        <div className="mt-6 sticky top-[calc(24rem+24px)]">
-          <button 
-            onClick={() => setShowPostModal(true)}
-            className="w-full flex items-center justify-center gap-4 text-sm font-mono font-black uppercase tracking-[0.2em] bg-[#38b6ff] text-[#0f172a] hover:bg-[#38b6ff]/90 px-4 py-5 rounded-2xl transition-all duration-300 shadow-[0_15px_35px_rgba(56,182,255,0.3)] hover:shadow-[0_20px_45px_rgba(56,182,255,0.4)] hover:-translate-y-1 active:translate-y-0.5"
-          >
-            <div className="bg-[#0f172a] rounded-full p-1.5 shadow-inner">
-              <Plus size={20} strokeWidth={3} className="text-[#38b6ff]" />
-            </div>
-            POSTAR AGORA
-          </button>
-        </div>
+        {isAdmin && (
+          <div className="mt-6 sticky top-[calc(24rem+24px)]">
+            <button 
+              onClick={() => setShowPostModal(true)}
+              className="w-full flex items-center justify-center gap-4 text-sm font-mono font-black uppercase tracking-[0.2em] bg-[#38b6ff] text-[#0f172a] hover:bg-[#38b6ff]/90 px-4 py-5 rounded-2xl transition-all duration-300 shadow-[0_15px_35px_rgba(56,182,255,0.3)] hover:shadow-[0_20px_45px_rgba(56,182,255,0.4)] hover:-translate-y-1 active:translate-y-0.5"
+            >
+              <div className="bg-[#0f172a] rounded-full p-1.5 shadow-inner">
+                <Plus size={20} strokeWidth={3} className="text-[#38b6ff]" />
+              </div>
+              POSTAR AGORA
+            </button>
+          </div>
+        )}
       </aside>
 
       {/* Main Feed area */}

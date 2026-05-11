@@ -15,6 +15,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import logoEmbalsoft from "@/assets/logo-embalsoft.png";
+import { useAuth } from "../contexts/AuthContext";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", disabled: false },
@@ -32,6 +33,7 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { unreadCount } = useUpdates();
+  const { signOut, isAdmin } = useAuth();
   const isDashboardHome = location.pathname === "/dashboard" || location.pathname === "/dashboard/";
 
   return (
@@ -115,7 +117,10 @@ const DashboardLayout = () => {
 
           {/* Nav */}
           <nav className="flex-1 py-4 px-3 space-y-1">
-            {navItems.map((item) => (
+            {navItems.filter(item => {
+              if (item.path === "/dashboard/team" && !isAdmin) return false;
+              return true;
+            }).map((item) => (
               <button
                 key={item.path}
                 disabled={item.disabled}
@@ -154,7 +159,13 @@ const DashboardLayout = () => {
 
           {/* Logout */}
           <div className="p-3 border-t border-border">
-            <button onClick={() => navigate("/login")} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200">
+            <button 
+              onClick={async () => {
+                await signOut();
+                navigate("/login");
+              }} 
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200"
+            >
               <LogOut size={20} className="shrink-0" />
               {!collapsed && <span>Sair</span>}
             </button>
