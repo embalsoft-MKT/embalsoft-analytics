@@ -39,14 +39,7 @@ const App = () => {
                 >
                   <Route index element={<DashboardHome />} />
                   <Route path="updates" element={<Updates />} />
-                  <Route 
-                    path="team" 
-                    element={
-                      <ProtectedRoute requireAdmin>
-                        <Team />
-                      </ProtectedRoute>
-                    } 
-                  />
+                  <Route path="team" element={<Team />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>

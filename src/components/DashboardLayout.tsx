@@ -117,10 +117,7 @@ const DashboardLayout = () => {
 
           {/* Nav */}
           <nav className="flex-1 py-4 px-3 space-y-1">
-            {navItems.filter(item => {
-              if (item.path === "/dashboard/team" && !isAdmin) return false;
-              return true;
-            }).map((item) => (
+            {navItems.map((item) => (
               <button
                 key={item.path}
                 disabled={item.disabled}
