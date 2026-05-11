@@ -8,6 +8,7 @@ import DashboardLayout from "./components/DashboardLayout";
 import DashboardHome from "./pages/DashboardHome";
 import NotFound from "./pages/NotFound";
 
+import { UpdatesProvider } from "./contexts/UpdatesContext";
 import Updates from "./pages/Updates";
 import Team from "./pages/Team";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -15,6 +16,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
+const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
@@ -51,5 +53,6 @@ const queryClient = new QueryClient();
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
+);
 
 export default App;
