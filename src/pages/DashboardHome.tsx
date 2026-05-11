@@ -28,8 +28,8 @@ const comercialData = {
 
 const avancosData = [
   { projeto: "CRM 2.0", progresso: 80, cor: "bg-[#a7c64f]" },
-  { projeto: "BI nativo do ERP 10%", progresso: 10, cor: "bg-[#38b6ff]" },
-  { projeto: "Agentes de IA 5%", progresso: 5, cor: "bg-[#38b6ff]" },
+  { projeto: "BI nativo do ERP", progresso: 10, cor: "bg-[#38b6ff]" },
+  { projeto: "Agentes de IA", progresso: 5, cor: "bg-[#38b6ff]" },
 ];
 
 const implantacoes = [
@@ -100,9 +100,6 @@ const DashboardHome = () => {
               <div className="grid grid-cols-2 gap-4 flex-1">
                 {/* ERP */}
                 <div className="border border-white/10 bg-black/60 p-5 rounded-lg flex flex-col justify-between group-hover:border-[#f48121]/50 transition-all duration-300 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-2">
-                    <svg className="w-5 h-5 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M4 4h16v16H4z"/></svg>
-                  </div>
                   <div>
                     <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">Novos Clientes ERP</span>
                     <div className="flex items-baseline gap-3 mt-4">
@@ -113,9 +110,6 @@ const DashboardHome = () => {
                 </div>
                 {/* Fábrica */}
                 <div className="border border-white/10 bg-black/60 p-5 rounded-lg flex flex-col justify-between group-hover:border-[#38b6ff]/50 transition-all duration-300 relative overflow-hidden">
-                <div className="absolute bottom-0 right-0 p-2">
-                    <svg className="w-5 h-5 text-white/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M4 20h16v-16H4z"/></svg>
-                  </div>
                   <div>
                     <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">Fábrica de Software</span>
                     <div className="flex items-baseline gap-3 mt-4">
