@@ -1,4 +1,7 @@
-import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle, MapPin, Calendar, Clock, Cake } from "lucide-react";
+import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle, MapPin, Calendar, Clock, Cake, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 
 interface Member {
   name: string;
@@ -101,8 +104,11 @@ const sections: TeamSection[] = [
 ];
 
 const Team = () => {
+  const navigate = useNavigate();
+  const { isAdmin } = useAuth();
+
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="relative space-y-8 animate-fade-in pb-20">
       <div>
         <h1 className="text-3xl md:text-4xl font-bold text-white tracking-wide drop-shadow-[0_0_15px_rgba(56,182,255,0.4)]">
           EQUIPE
@@ -273,6 +279,19 @@ const Team = () => {
           </section>
         );
       })}
+      {isAdmin && (
+        <div className="fixed bottom-8 right-8 z-50">
+          <button 
+            onClick={() => navigate("/dashboard/updates", { state: { openModal: true } })}
+            className="flex items-center gap-3 bg-[#38b6ff] text-[#0f172a] hover:bg-[#38b6ff]/90 px-6 py-4 rounded-full font-black font-mono tracking-widest shadow-[0_15px_35px_rgba(56,182,255,0.4)] transition-all duration-300 hover:-translate-y-1 active:translate-y-0.5 group"
+          >
+            <div className="bg-[#0f172a] rounded-full p-1 shadow-inner group-hover:rotate-90 transition-transform duration-300">
+              <Plus size={20} strokeWidth={3} className="text-[#38b6ff]" />
+            </div>
+            NOVA POSTAGEM
+          </button>
+        </div>
+      )}
     </div>
   );
 };

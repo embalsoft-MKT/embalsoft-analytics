@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useUpdates, Category, UpdateItem } from "../contexts/UpdatesContext";
+import { useLocation } from "react-router-dom";
 import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2, X, Upload, FileText, Trash2, Edit3, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -169,15 +170,18 @@ const Updates = () => {
   const [showPostModal, setShowPostModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showLinksPopover, setShowLinksPopover] = useState(false);
-  const [newPost, setNewPost] = useState({
-    title: '',
-    category: 'Comunicado' as Category,
-    shortDescription: '',
-    fullContent: '',
-    imageUrl: '',
-    fileUrl: '',
     link: ''
   });
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.openModal) {
+      setShowPostModal(true);
+      // Clear state so it doesn't reopen on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const categories: (Category | 'Todas')[] = ['Todas', 'Comunicado', 'Boas práticas', 'Aniversário', 'Feriado'];
 

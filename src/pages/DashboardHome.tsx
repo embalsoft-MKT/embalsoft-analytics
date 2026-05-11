@@ -33,13 +33,13 @@ const avancosData = [
 ];
 
 const implantacoes = [
-  { cliente: "Ind. Nova Era", etapa: "Go-live", progresso: 95, status: "em_dia" as const, responsavel: "Carlos" },
-  { cliente: "Distribuidora Sol", etapa: "Testes", progresso: 70, status: "atencao" as const, responsavel: "Ana" },
-  { cliente: "Metalúrgica Forte", etapa: "Configuração", progresso: 40, status: "em_dia" as const, responsavel: "Pedro" },
-  { cliente: "Alimentos Vida", etapa: "Início", progresso: 15, status: "atrasado" as const, responsavel: "Julia" },
+  { cliente: "Ind. Nova Era", etapa: "Golive", progresso: 100, status: "em_dia" as const, responsavel: "Marcos" },
+  { cliente: "Distribuidora Sol", etapa: "Testes", progresso: 70, status: "atencao" as const, responsavel: "Renan" },
+  { cliente: "Metalúrgica Forte", etapa: "Imersão Geral", progresso: 35, status: "em_dia" as const, responsavel: "Marcos" },
+  { cliente: "Alimentos Vida", etapa: "Kickoff", progresso: 10, status: "atrasado" as const, responsavel: "Renan" },
 ];
 
-const etapas = ["Início", "Configuração", "Testes", "Go-live"];
+const etapas = ["Kickoff", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Golive"];
 
 const statusConfig = {
   em_dia: { color: "text-[#a7c64f]", bg: "bg-[#a7c64f]/15", border: "border-[#a7c64f]/30", label: "Em dia", icon: CheckCircle2 },
