@@ -41,9 +41,10 @@ const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => voi
     <div 
       className={cn(
         "relative overflow-hidden rounded-xl border-2 transition-all duration-500 bg-card/60 backdrop-blur-md cursor-pointer group hover:bg-black/80",
-        item.read ? "border-white/10 shadow-sm" : cn(conf.border, `shadow-[0_0_15px_${conf.bg.split('/')[0]}] scale-[1.01]`),
+        item.read ? "border-white/10 shadow-sm" : cn(conf.border, "scale-[1.01]"),
         isExpanded ? "pb-6" : ""
       )}
+      style={!item.read ? { boxShadow: `0 0 15px ${conf.bg.split('/')[0]}` } : {}}
       onClick={handleToggle}
     >
       <div className={cn("absolute left-0 top-0 bottom-0 w-1.5 transition-all duration-300", item.read ? "bg-white/10" : conf.color.replace('text-', 'bg-'))} />
