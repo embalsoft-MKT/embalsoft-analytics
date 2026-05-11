@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useUpdates } from "../contexts/UpdatesContext";
 import {
   LayoutDashboard,
@@ -30,7 +30,9 @@ const DashboardLayout = () => {
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("ÚLTIMOS 30 DIAS");
   const navigate = useNavigate();
+  const location = useLocation();
   const { unreadCount } = useUpdates();
+  const isDashboardHome = location.pathname === "/dashboard" || location.pathname === "/dashboard/";
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -59,7 +61,9 @@ const DashboardLayout = () => {
         </div>
 
         <div className="flex-1 flex justify-end relative">
-          {/* Tech HUD Date Filter - Chamativo e Funcional */}
+          {/* Tech HUD Date Filter - Apenas no Dashboard */}
+          {isDashboardHome && (
+          <>
           <button 
             onClick={() => setFilterOpen(!filterOpen)}
             className="hidden sm:flex items-center gap-2 bg-black/60 border-2 border-[#38b6ff]/40 hover:border-[#38b6ff] shadow-[0_0_15px_rgba(56,182,255,0.2)] hover:shadow-[0_0_20px_rgba(56,182,255,0.4)] hover:bg-[#38b6ff]/10 text-white font-bold px-4 py-2 rounded-md transition-all duration-300">
@@ -85,6 +89,8 @@ const DashboardLayout = () => {
                  </button>
                ))}
             </div>
+          )}
+          </>
           )}
         </div>
       </header>
