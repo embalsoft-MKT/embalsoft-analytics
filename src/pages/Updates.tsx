@@ -379,6 +379,7 @@ const Updates = () => {
         </div>
       )}
     </div>
+  </div>
   );
 };
 
