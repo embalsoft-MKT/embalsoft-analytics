@@ -23,7 +23,7 @@ interface UpdatesContextType {
 const initialUpdates: UpdateItem[] = [
   {
     id: '1',
-    title: 'Nova versão do Embalsoft Analyze liberada',
+    title: 'Nova versão do EmbalConnect liberada',
     category: 'Comunicado',
     date: 'Hoje, 09:00',
     shortDescription: 'A nova arquitetura HUD foi disponibilizada globalmente no servidor principal.',

@@ -50,7 +50,7 @@ const DashboardLayout = () => {
             <Menu size={20} />
           </button>
           <span className="text-lg md:text-xl font-bold text-white tracking-wide drop-shadow-[0_0_12px_rgba(255,255,255,0.8)]">
-            Embalsoft Analyze
+            EmbalConnect
           </span>
         </div>
 
