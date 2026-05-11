@@ -84,8 +84,8 @@ const sections: TeamSection[] = [
     color: "#38b6ff",
     members: [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
-      { name: "Marcos Becker", role: "Analista de Implantação (PJ)", sede: "RS", admissao: "01/04/2019", tempo: "7 anos, 1 mês e 8 dias", aniversario: "18/02/1982" },
-      { name: "Renan Pires", role: "Consultor de Implantação (PJ)", sede: "SP", admissao: "03/06/2024", tempo: "1 ano, 11 meses e 6 dias", aniversario: "25/10/1988" },
+      { name: "Marcos Becker", role: "Analista de Implantação (PJ)", sede: "RS", admissao: "01/04/2019", tempo: "7 anos, 1 mês e 8 dias", aniversario: "18/02/1982", image: "/marcos.png" },
+      { name: "Renan Pires", role: "Consultor de Implantação (PJ)", sede: "SP", admissao: "03/06/2024", tempo: "1 ano, 11 meses e 6 dias", aniversario: "25/10/1988", image: "/renan.png" },
     ],
   },
   {
