@@ -127,7 +127,7 @@ const Updates = () => {
     link: ''
   });
 
-  const categories: (Category | 'Todas')[] = ['Todas', 'Comunicado', 'Boas práticas', 'Aniversário', 'Feriado', 'Links úteis'];
+  const categories: (Category | 'Todas')[] = ['Todas', 'Comunicado', 'Boas práticas', 'Aniversário', 'Feriado'];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,8 +148,43 @@ const Updates = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto pb-12 animate-fade-in-up flex flex-col lg:flex-row-reverse gap-8">
-      {/* Main Feed area takes full width now */}
-      <div className="flex-1 min-w-0">
+      {/* Sidebar Links Úteis (Restored as sticky card) */}
+      <aside className="lg:w-72 shrink-0 lg:sticky lg:top-24 self-start w-full order-1">
+        <div className="rounded-xl border-2 border-[#38b6ff]/30 bg-card/60 backdrop-blur-md p-5 shadow-[0_0_20px_rgba(56,182,255,0.15)]">
+          <div className="flex items-center gap-2 mb-5 pb-3 border-b border-white/10">
+            <Link2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_5px_rgba(56,182,255,0.8)]" />
+            <h2 className="text-sm font-mono font-bold uppercase tracking-widest text-white">Links úteis</h2>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-black/40 border border-white/5 mb-3">
+              <Phone size={16} className="text-[#a7c64f] shrink-0" />
+              <div className="flex flex-col">
+                <span className="text-[10px] uppercase font-mono text-muted-foreground tracking-wider">Telefone Voip</span>
+                <span className="text-sm text-white font-bold">(51) 2165-6886</span>
+              </div>
+            </div>
+
+            {[
+              { icon: GraduationCap, label: "Embalsoft Academia" },
+              { icon: BookOpen, label: "Wiki Antiga" },
+              { icon: Book, label: "Wiki Nova" },
+              { icon: ImageIcon, label: "Fundo Teams 2026" },
+              { icon: Linkedin, label: "Capa LinkedIn" },
+              { icon: Mail, label: "Assinaturas de email" },
+            ].map((l) => (
+              <a key={l.label} href="#" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-[#38b6ff] hover:bg-[#38b6ff]/10 border border-transparent hover:border-[#38b6ff]/30 transition-all group">
+                <l.icon size={16} className="shrink-0 text-muted-foreground group-hover:text-[#38b6ff]" />
+                <span className="flex-1">{l.label}</span>
+                <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Feed area */}
+      <div className="flex-1 min-w-0 order-2 lg:order-1">
       {/* Header Central HUD */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 mt-4">
         <div>
@@ -171,68 +206,17 @@ const Updates = () => {
 
         <div className="flex flex-col gap-4">
           <button 
-            onClick={markAllAsRead}
-            className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-[#a7c64f] hover:text-white bg-[#a7c64f]/10 border border-[#a7c64f]/30 hover:border-white/50 px-4 py-2.5 rounded transition-all duration-300"
+            onClick={() => setShowPostModal(true)}
+            className="flex items-center justify-center gap-3 text-sm font-mono font-black uppercase tracking-widest bg-[#38b6ff] text-secondary-foreground hover:bg-[#38b6ff]/80 px-6 py-3 rounded-lg transition-all duration-300 shadow-[0_0_20px_rgba(56,182,255,0.4)] hover:scale-[1.02] active:scale-[0.98]"
           >
-            <Check size={16} />
-            Marcar tudo como lido
+            <Plus size={18} strokeWidth={3} />
+            Postar Informativo
           </button>
-          
-          <div className="flex gap-3">
-            <button 
-              onClick={() => setShowPostModal(true)}
-              className="flex-1 flex items-center justify-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-[#38b6ff] hover:text-white bg-[#38b6ff]/10 border border-[#38b6ff]/30 hover:border-[#38b6ff] px-4 py-2.5 rounded transition-all duration-300 shadow-[0_0_15px_rgba(56,182,255,0.2)]"
-            >
-              <Plus size={16} />
-              Postar Informativo
-            </button>
-            <button 
-              onClick={() => setShowLinksPopover(!showLinksPopover)}
-              className="flex items-center justify-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-white bg-white/10 border border-white/20 hover:border-white/50 px-4 py-2.5 rounded transition-all duration-300"
-            >
-              <Link2 size={16} />
-              Links Úteis
-            </button>
-          </div>
         </div>
       </div>
 
-      {/* Links Úteis Suspensos */}
-      {showLinksPopover && (
-        <div className="absolute right-6 top-48 z-40 w-72 rounded-xl border-2 border-[#38b6ff]/50 bg-card/95 backdrop-blur-xl p-5 shadow-[0_15px_40px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in duration-200">
-          <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/10">
-            <div className="flex items-center gap-2">
-              <Link2 size={18} className="text-[#38b6ff]" />
-              <h2 className="text-xs font-mono font-bold uppercase tracking-widest text-white">Links úteis</h2>
-            </div>
-            <button onClick={() => setShowLinksPopover(false)} className="text-white/40 hover:text-white">
-              <Plus size={18} className="rotate-45" />
-            </button>
-          </div>
-          <div className="space-y-1">
-            <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-black/40 border border-white/5 mb-2">
-              <Phone size={14} className="text-[#a7c64f]" />
-              <div className="flex flex-col">
-                <span className="text-[9px] uppercase font-mono text-muted-foreground">Telefone Voip</span>
-                <span className="text-xs text-white font-bold">(51) 2165-6886</span>
-              </div>
-            </div>
-            {[
-              { icon: GraduationCap, label: "Embalsoft Academia" },
-              { icon: BookOpen, label: "Wiki Antiga" },
-              { icon: Book, label: "Wiki Nova" },
-              { icon: ImageIcon, label: "Fundo Teams 2026" },
-              { icon: Linkedin, label: "Capa LinkedIn" },
-              { icon: Mail, label: "Assinaturas de email" },
-            ].map((l) => (
-              <a key={l.label} href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-white/70 hover:text-[#38b6ff] hover:bg-[#38b6ff]/10 transition-all group">
-                <l.icon size={14} className="group-hover:text-[#38b6ff]" />
-                <span>{l.label}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Removed Popover as it's now back in the sidebar */}
+
 
       {/* Tech Pills Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-10">
