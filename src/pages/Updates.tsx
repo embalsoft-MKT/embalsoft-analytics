@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUpdates, Category, UpdateItem } from "../contexts/UpdatesContext";
-import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2 } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2, X, Upload, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Configurations for HUD aesthetics by category
@@ -84,6 +84,26 @@ const UpdateCard: React.FC<{ item: UpdateItem }> = ({ item }) => {
                   ACESSAR LINK <ExternalLink size={16} />
                 </a>
               )}
+
+              {item.imageUrl && (
+                <div className="mt-4 rounded-lg overflow-hidden border border-white/10 max-w-lg">
+                  <img src={item.imageUrl} alt={item.title} className="w-full h-auto object-cover" />
+                </div>
+              )}
+
+              {item.fileUrl && (
+                <div className="mt-4">
+                  <a 
+                    href={item.fileUrl} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/20 text-white px-4 py-2 rounded transition-all font-bold text-xs"
+                  >
+                    <FileText size={16} /> VER DOCUMENTO (PDF)
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -93,64 +113,42 @@ const UpdateCard: React.FC<{ item: UpdateItem }> = ({ item }) => {
 }
 
 const Updates = () => {
-  const { updates, unreadCount, markAllAsRead } = useUpdates();
+  const { updates, unreadCount, markAllAsRead, addUpdate } = useUpdates();
   const [filter, setFilter] = useState<Category | 'Todas'>('Todas');
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [showLinksPopover, setShowLinksPopover] = useState(false);
+  const [newPost, setNewPost] = useState({
+    title: '',
+    category: 'Comunicado' as Category,
+    shortDescription: '',
+    fullContent: '',
+    imageUrl: '',
+    fileUrl: '',
+    link: ''
+  });
 
   const categories: (Category | 'Todas')[] = ['Todas', 'Comunicado', 'Boas práticas', 'Aniversário', 'Feriado', 'Links úteis'];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addUpdate(newPost);
+    setShowPostModal(false);
+    setNewPost({
+      title: '',
+      category: 'Comunicado',
+      shortDescription: '',
+      fullContent: '',
+      imageUrl: '',
+      fileUrl: '',
+      link: ''
+    });
+  };
 
   const filteredUpdates = updates.filter(u => filter === 'Todas' || u.category === filter);
 
   return (
     <div className="w-full max-w-7xl mx-auto pb-12 animate-fade-in-up flex flex-col lg:flex-row-reverse gap-8">
-      {/* Sidebar Links Úteis */}
-      <aside className="lg:w-72 shrink-0 lg:sticky lg:top-24 self-start w-full">
-        <div className="rounded-xl border-2 border-[#38b6ff]/30 bg-card/60 backdrop-blur-md p-5 shadow-[0_0_20px_rgba(56,182,255,0.1)]">
-          <div className="flex items-center gap-2 mb-5 pb-3 border-b border-white/10">
-            <Link2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_5px_rgba(56,182,255,0.8)]" />
-            <h2 className="text-sm font-mono font-bold uppercase tracking-widest text-white">Links úteis</h2>
-          </div>
-
-          <div className="space-y-1">
-            <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-black/40 border border-white/5">
-              <Phone size={16} className="text-[#a7c64f] shrink-0" />
-              <div className="flex flex-col">
-                <span className="text-[10px] uppercase font-mono text-muted-foreground tracking-wider">Telefone Voip</span>
-                <span className="text-sm text-white font-bold">(51) 2165-6886</span>
-              </div>
-            </div>
-
-            {[
-              { icon: GraduationCap, label: "Embalsoft Academia", href: "#" },
-              { icon: BookOpen, label: "Wiki Antiga", href: "#" },
-              { icon: Book, label: "Wiki Nova", href: "#" },
-            ].map((l) => (
-              <a key={l.label} href={l.href} target="_blank" rel="noreferrer"
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-[#38b6ff] hover:bg-[#38b6ff]/10 border border-transparent hover:border-[#38b6ff]/30 transition-all group">
-                <l.icon size={16} className="shrink-0 text-muted-foreground group-hover:text-[#38b6ff]" />
-                <span className="flex-1">{l.label}</span>
-                <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-              </a>
-            ))}
-
-            <div className="my-3 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
-            {[
-              { icon: ImageIcon, label: "Fundo Teams 2026", href: "#" },
-              { icon: Linkedin, label: "Capa LinkedIn p/ colaboradores", href: "#" },
-              { icon: Mail, label: "Assinaturas de email", href: "#" },
-            ].map((l) => (
-              <a key={l.label} href={l.href} target="_blank" rel="noreferrer"
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-[#f48121] hover:bg-[#f48121]/10 border border-transparent hover:border-[#f48121]/30 transition-all group">
-                <l.icon size={16} className="shrink-0 text-muted-foreground group-hover:text-[#f48121]" />
-                <span className="flex-1">{l.label}</span>
-                <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-              </a>
-            ))}
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Feed */}
+      {/* Main Feed area takes full width now */}
       <div className="flex-1 min-w-0">
       {/* Header Central HUD */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 mt-4">
@@ -171,7 +169,7 @@ const Updates = () => {
           </p>
         </div>
 
-        {unreadCount > 0 && (
+        <div className="flex flex-col gap-4">
           <button 
             onClick={markAllAsRead}
             className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-[#a7c64f] hover:text-white bg-[#a7c64f]/10 border border-[#a7c64f]/30 hover:border-white/50 px-4 py-2.5 rounded transition-all duration-300"
@@ -179,8 +177,62 @@ const Updates = () => {
             <Check size={16} />
             Marcar tudo como lido
           </button>
-        )}
+          
+          <div className="flex gap-3">
+            <button 
+              onClick={() => setShowPostModal(true)}
+              className="flex-1 flex items-center justify-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-[#38b6ff] hover:text-white bg-[#38b6ff]/10 border border-[#38b6ff]/30 hover:border-[#38b6ff] px-4 py-2.5 rounded transition-all duration-300 shadow-[0_0_15px_rgba(56,182,255,0.2)]"
+            >
+              <Plus size={16} />
+              Postar Informativo
+            </button>
+            <button 
+              onClick={() => setShowLinksPopover(!showLinksPopover)}
+              className="flex items-center justify-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-white bg-white/10 border border-white/20 hover:border-white/50 px-4 py-2.5 rounded transition-all duration-300"
+            >
+              <Link2 size={16} />
+              Links Úteis
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Links Úteis Suspensos */}
+      {showLinksPopover && (
+        <div className="absolute right-6 top-48 z-40 w-72 rounded-xl border-2 border-[#38b6ff]/50 bg-card/95 backdrop-blur-xl p-5 shadow-[0_15px_40px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in duration-200">
+          <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/10">
+            <div className="flex items-center gap-2">
+              <Link2 size={18} className="text-[#38b6ff]" />
+              <h2 className="text-xs font-mono font-bold uppercase tracking-widest text-white">Links úteis</h2>
+            </div>
+            <button onClick={() => setShowLinksPopover(false)} className="text-white/40 hover:text-white">
+              <Plus size={18} className="rotate-45" />
+            </button>
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-black/40 border border-white/5 mb-2">
+              <Phone size={14} className="text-[#a7c64f]" />
+              <div className="flex flex-col">
+                <span className="text-[9px] uppercase font-mono text-muted-foreground">Telefone Voip</span>
+                <span className="text-xs text-white font-bold">(51) 2165-6886</span>
+              </div>
+            </div>
+            {[
+              { icon: GraduationCap, label: "Embalsoft Academia" },
+              { icon: BookOpen, label: "Wiki Antiga" },
+              { icon: Book, label: "Wiki Nova" },
+              { icon: ImageIcon, label: "Fundo Teams 2026" },
+              { icon: Linkedin, label: "Capa LinkedIn" },
+              { icon: Mail, label: "Assinaturas de email" },
+            ].map((l) => (
+              <a key={l.label} href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg text-xs text-white/70 hover:text-[#38b6ff] hover:bg-[#38b6ff]/10 transition-all group">
+                <l.icon size={14} className="group-hover:text-[#38b6ff]" />
+                <span>{l.label}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Tech Pills Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-10">
@@ -219,7 +271,113 @@ const Updates = () => {
           ))}
         </div>
       )}
-      </div>
+      {/* Modal de Postagem */}
+      {showPostModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="relative w-full max-w-2xl bg-[#0f172a] border-2 border-[#38b6ff]/50 rounded-2xl shadow-[0_0_50px_rgba(56,182,255,0.3)] overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="flex items-center justify-between p-6 border-b border-white/10 bg-black/20">
+              <div className="flex items-center gap-3">
+                <div className="w-1 h-6 bg-[#38b6ff] rounded-full shadow-[0_0_10px_#38b6ff]" />
+                <h2 className="text-xl font-bold font-mono tracking-widest text-white uppercase">NOVA POSTAGEM</h2>
+              </div>
+              <button onClick={() => setShowPostModal(false)} className="text-white/40 hover:text-white transition-colors">
+                <X size={24} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold font-mono text-[#38b6ff] uppercase tracking-wider">Título</label>
+                  <input 
+                    required
+                    value={newPost.title}
+                    onChange={e => setNewPost({...newPost, title: e.target.value})}
+                    className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-[#38b6ff] outline-none transition-all"
+                    placeholder="Ex: Nova regra de firewall"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold font-mono text-[#38b6ff] uppercase tracking-wider">Categoria</label>
+                  <select 
+                    value={newPost.category}
+                    onChange={e => setNewPost({...newPost, category: e.target.value as Category})}
+                    className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-[#38b6ff] outline-none transition-all"
+                  >
+                    {categories.filter(c => c !== 'Todas').map(c => (
+                      <option key={c} value={c} className="bg-[#0f172a]">{c}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold font-mono text-[#38b6ff] uppercase tracking-wider">Descrição Curta</label>
+                <input 
+                  required
+                  value={newPost.shortDescription}
+                  onChange={e => setNewPost({...newPost, shortDescription: e.target.value})}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-[#38b6ff] outline-none transition-all"
+                  placeholder="Resumo que aparece no card..."
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold font-mono text-[#38b6ff] uppercase tracking-wider">Conteúdo Completo</label>
+                <textarea 
+                  required
+                  rows={4}
+                  value={newPost.fullContent}
+                  onChange={e => setNewPost({...newPost, fullContent: e.target.value})}
+                  className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-[#38b6ff] outline-none transition-all resize-none"
+                  placeholder="Detalhes completos do informativo..."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold font-mono text-[#38b6ff] uppercase tracking-wider flex items-center gap-2">
+                    <ImageIcon size={12} /> URL da Imagem
+                  </label>
+                  <input 
+                    value={newPost.imageUrl}
+                    onChange={e => setNewPost({...newPost, imageUrl: e.target.value})}
+                    className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-[#38b6ff] outline-none transition-all text-xs"
+                    placeholder="https://..."
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold font-mono text-[#38b6ff] uppercase tracking-wider flex items-center gap-2">
+                    <FileText size={12} /> URL do PDF
+                  </label>
+                  <input 
+                    value={newPost.fileUrl}
+                    onChange={e => setNewPost({...newPost, fileUrl: e.target.value})}
+                    className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-[#38b6ff] outline-none transition-all text-xs"
+                    placeholder="https://..."
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 flex gap-4">
+                <button 
+                  type="button"
+                  onClick={() => setShowPostModal(false)}
+                  className="flex-1 px-6 py-3 border border-white/10 rounded-xl font-bold font-mono text-white/60 hover:bg-white/5 transition-all"
+                >
+                  CANCELAR
+                </button>
+                <button 
+                  type="submit"
+                  className="flex-[2] px-6 py-3 bg-[#38b6ff] hover:bg-[#38b6ff]/80 text-[#0f172a] rounded-xl font-black font-mono tracking-widest shadow-[0_0_20px_rgba(56,182,255,0.4)] transition-all"
+                >
+                  PUBLICAR AGORA
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

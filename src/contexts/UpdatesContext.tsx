@@ -10,6 +10,8 @@ export interface UpdateItem {
   shortDescription: string;
   fullContent?: string;
   link?: string;
+  imageUrl?: string;
+  fileUrl?: string;
   read: boolean;
 }
 
@@ -18,6 +20,7 @@ interface UpdatesContextType {
   unreadCount: number;
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
+  addUpdate: (update: Omit<UpdateItem, 'id' | 'read' | 'date'>) => void;
 }
 
 const initialUpdates: UpdateItem[] = [
@@ -77,8 +80,18 @@ export const UpdatesProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setUpdates(prev => prev.map(u => ({ ...u, read: true })));
   };
 
+  const addUpdate = (update: Omit<UpdateItem, 'id' | 'read' | 'date'>) => {
+    const newItem: UpdateItem = {
+      ...update,
+      id: Math.random().toString(36).substr(2, 9),
+      read: false,
+      date: 'Agora mesmo',
+    };
+    setUpdates(prev => [newItem, ...prev]);
+  };
+
   return (
-    <UpdatesContext.Provider value={{ updates, unreadCount, markAsRead, markAllAsRead }}>
+    <UpdatesContext.Provider value={{ updates, unreadCount, markAsRead, markAllAsRead, addUpdate }}>
       {children}
     </UpdatesContext.Provider>
   );

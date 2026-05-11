@@ -28,8 +28,8 @@ const comercialData = {
 
 const avancosData = [
   { projeto: "CRM 2.0", progresso: 80, cor: "bg-[#a7c64f]" },
-  { projeto: "Novo App WMS", progresso: 65, cor: "bg-[#38b6ff]" },
-  { projeto: "Integração B2B", progresso: 40, cor: "bg-[#38b6ff]" },
+  { projeto: "BI nativo do ERP 10%", progresso: 10, cor: "bg-[#38b6ff]" },
+  { projeto: "Agentes de IA 5%", progresso: 5, cor: "bg-[#38b6ff]" },
 ];
 
 const implantacoes = [
