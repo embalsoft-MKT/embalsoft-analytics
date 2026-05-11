@@ -62,16 +62,6 @@ const planets: Planet[] = [
     color: "#ec4899",
     glowColor: "#ec4899",
   },
-  {
-    id: "ia",
-    label: "Agentes de IA",
-    orbitRadius: 420,
-    size: 32,
-    duration: 84,
-    startAngle: 300,
-    color: "#facc15",
-    glowColor: "#facc15",
-  },
 ];
 
 const stars = Array.from({ length: 80 }, (_, i) => ({
@@ -241,20 +231,30 @@ const OrbitalBackground = () => {
                 onMouseLeave={() => setHoveredPlanet(null)}
               />
 
-              {/* Label */}
-              <text
-                x={cx + r}
-                y={cy - planetR - 1}
-                textAnchor="middle"
-                fill="white"
-                fontSize="1.3"
-                fontFamily="Inter, sans-serif"
-                fontWeight="600"
-                opacity={isHovered ? 1 : 0.85}
-                style={{ transition: "opacity 0.3s ease", pointerEvents: "none" }}
-              >
-                {p.label}
-              </text>
+              {/* Label - counter-rotates to stay upright */}
+              <g>
+                <animateTransform
+                  attributeName="transform"
+                  type="rotate"
+                  from={`${-p.startAngle} ${cx + r} ${cy}`}
+                  to={`${-(p.startAngle + 360)} ${cx + r} ${cy}`}
+                  dur={`${p.duration}s`}
+                  repeatCount="indefinite"
+                />
+                <text
+                  x={cx + r}
+                  y={cy - planetR - 1}
+                  textAnchor="middle"
+                  fill="white"
+                  fontSize="1.3"
+                  fontFamily="Inter, sans-serif"
+                  fontWeight="600"
+                  opacity={isHovered ? 1 : 0.85}
+                  style={{ transition: "opacity 0.3s ease", pointerEvents: "none" }}
+                >
+                  {p.label}
+                </text>
+              </g>
             </g>
           );
         })}
