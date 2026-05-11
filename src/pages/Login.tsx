@@ -53,7 +53,7 @@ const Login = () => {
               <span className="text-primary">EmbalConnect</span>
             </h1>
             <p className="text-muted-foreground text-sm">
-              Um ecossistema para decisões melhores.
+              Conectando times, informação e performance.
             </p>
           </div>
 

@@ -15,9 +15,9 @@ const planets: Planet[] = [
   {
     id: "erp",
     label: "ERP",
-    orbitRadius: 140,
-    size: 38,
-    duration: 30,
+    orbitRadius: 120,
+    size: 34,
+    duration: 28,
     startAngle: 0,
     color: "#f48121",
     glowColor: "#f48121",
@@ -25,12 +25,52 @@ const planets: Planet[] = [
   {
     id: "crm",
     label: "CRM",
-    orbitRadius: 220,
-    size: 32,
-    duration: 45,
-    startAngle: 120,
+    orbitRadius: 180,
+    size: 30,
+    duration: 38,
+    startAngle: 60,
     color: "#a7c64f",
     glowColor: "#a7c64f",
+  },
+  {
+    id: "wms",
+    label: "WMS",
+    orbitRadius: 240,
+    size: 30,
+    duration: 48,
+    startAngle: 120,
+    color: "#38b6ff",
+    glowColor: "#38b6ff",
+  },
+  {
+    id: "bi",
+    label: "BI",
+    orbitRadius: 300,
+    size: 30,
+    duration: 58,
+    startAngle: 180,
+    color: "#c084fc",
+    glowColor: "#c084fc",
+  },
+  {
+    id: "fabrica",
+    label: "Fábrica de Software",
+    orbitRadius: 360,
+    size: 32,
+    duration: 70,
+    startAngle: 240,
+    color: "#ec4899",
+    glowColor: "#ec4899",
+  },
+  {
+    id: "ia",
+    label: "Agentes de IA",
+    orbitRadius: 420,
+    size: 32,
+    duration: 84,
+    startAngle: 300,
+    color: "#facc15",
+    glowColor: "#facc15",
   },
 ];
 
@@ -207,10 +247,10 @@ const OrbitalBackground = () => {
                 y={cy - planetR - 1}
                 textAnchor="middle"
                 fill="white"
-                fontSize="1.1"
+                fontSize="1.3"
                 fontFamily="Inter, sans-serif"
                 fontWeight="600"
-                opacity={isHovered ? 0.95 : 0}
+                opacity={isHovered ? 1 : 0.85}
                 style={{ transition: "opacity 0.3s ease", pointerEvents: "none" }}
               >
                 {p.label}
