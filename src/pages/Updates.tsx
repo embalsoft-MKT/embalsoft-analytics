@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUpdates, Category, UpdateItem } from "../contexts/UpdatesContext";
-import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2, X, Upload, FileText } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2, X, Upload, FileText, Trash2, Edit3, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // Configurations for HUD aesthetics by category
@@ -13,14 +13,26 @@ const categoryConfig: Record<Category | 'Todas', { color: string, border: string
   'Links úteis': { color: 'text-muted-foreground', border: 'border-white/20', bg: 'bg-white/5', tag: 'text-white bg-white/10 border-white/20' }
 };
 
-const UpdateCard: React.FC<{ item: UpdateItem }> = ({ item }) => {
+const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => void }> = ({ item, onEdit }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { markAsRead } = useUpdates();
+  const { markAsRead, deleteUpdate } = useUpdates();
   const conf = categoryConfig[item.category];
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
     if (!item.read) markAsRead(item.id);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (confirm("Tem certeza que deseja excluir este informativo?")) {
+      deleteUpdate(item.id);
+    }
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEdit(item);
   };
 
   return (
@@ -40,17 +52,36 @@ const UpdateCard: React.FC<{ item: UpdateItem }> = ({ item }) => {
       <div className="p-5 md:p-6 ml-2">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-3 mb-3">
-              <span className={cn("text-[10px] md:text-xs uppercase font-bold font-mono px-3 py-1 rounded border", conf.tag)}>
-                {item.category}
-              </span>
-              <span className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
-                <Calendar size={14} />
-                {item.date}
-              </span>
-              {!item.read && (
-                <span className="animate-pulse bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest shadow-[0_0_10px_rgba(255,255,255,0.8)]">Novo</span>
-              )}
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+              <div className="flex items-center gap-3">
+                <span className={cn("text-[10px] md:text-xs uppercase font-bold font-mono px-3 py-1 rounded border", conf.tag)}>
+                  {item.category}
+                </span>
+                <span className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
+                  <Calendar size={14} />
+                  {item.date}
+                </span>
+                {!item.read && (
+                  <span className="animate-pulse bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest shadow-[0_0_10px_rgba(255,255,255,0.8)]">Novo</span>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  onClick={handleEdit}
+                  className="p-2 bg-white/5 hover:bg-[#38b6ff]/20 text-white/40 hover:text-[#38b6ff] rounded-lg transition-all"
+                  title="Editar"
+                >
+                  <Edit3 size={14} />
+                </button>
+                <button 
+                  onClick={handleDelete}
+                  className="p-2 bg-white/5 hover:bg-red-500/20 text-white/40 hover:text-red-500 rounded-lg transition-all"
+                  title="Deletar"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
             </div>
             
             <h3 className={cn("text-xl md:text-2xl font-bold font-sans tracking-wide transition-colors", item.read ? "text-white/80" : "text-white drop-shadow-md")}>
@@ -60,6 +91,20 @@ const UpdateCard: React.FC<{ item: UpdateItem }> = ({ item }) => {
             <p className="mt-2 text-sm text-muted-foreground font-sans line-clamp-2 md:line-clamp-none">
               {item.shortDescription}
             </p>
+
+            {/* Author Info */}
+            <div className="mt-4 flex items-center gap-3 border-t border-white/5 pt-4">
+              {item.authorPhoto ? (
+                <img src={item.authorPhoto} alt={item.authorName} className="w-6 h-6 rounded-full border border-white/10" />
+              ) : (
+                <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-white/40">
+                  <User size={12} />
+                </div>
+              )}
+              <span className="text-[10px] font-bold font-mono text-white/40 uppercase tracking-widest">
+                Postado por: <span className="text-white/60">{item.authorName || 'Sistema'}</span>
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center self-end md:self-auto shrink-0 border border-white/10 bg-white/5 rounded-full p-2 group-hover:bg-white/10 transition-colors">
@@ -113,9 +158,10 @@ const UpdateCard: React.FC<{ item: UpdateItem }> = ({ item }) => {
 }
 
 const Updates = () => {
-  const { updates, unreadCount, markAllAsRead, addUpdate } = useUpdates();
+  const { updates, unreadCount, markAllAsRead, addUpdate, updateUpdate } = useUpdates();
   const [filter, setFilter] = useState<Category | 'Todas'>('Todas');
   const [showPostModal, setShowPostModal] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [showLinksPopover, setShowLinksPopover] = useState(false);
   const [newPost, setNewPost] = useState({
     title: '',
@@ -131,7 +177,16 @@ const Updates = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    addUpdate(newPost);
+    if (editingId) {
+      updateUpdate(editingId, newPost);
+      setEditingId(null);
+    } else {
+      addUpdate({
+        ...newPost,
+        authorName: 'Você',
+        authorPhoto: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop'
+      });
+    }
     setShowPostModal(false);
     setNewPost({
       title: '',
@@ -142,6 +197,20 @@ const Updates = () => {
       fileUrl: '',
       link: ''
     });
+  };
+
+  const handleEdit = (item: UpdateItem) => {
+    setNewPost({
+      title: item.title,
+      category: item.category,
+      shortDescription: item.shortDescription,
+      fullContent: item.fullContent || '',
+      imageUrl: item.imageUrl || '',
+      fileUrl: item.fileUrl || '',
+      link: item.link || ''
+    });
+    setEditingId(item.id);
+    setShowPostModal(true);
   };
 
   const filteredUpdates = updates.filter(u => filter === 'Todas' || u.category === filter);
@@ -180,6 +249,16 @@ const Updates = () => {
               </a>
             ))}
           </div>
+
+          <div className="mt-6 pt-6 border-t border-white/10">
+            <button 
+              onClick={() => setShowPostModal(true)}
+              className="w-full flex items-center justify-center gap-3 text-sm font-mono font-black uppercase tracking-widest bg-[#38b6ff] text-secondary-foreground hover:bg-[#38b6ff]/80 px-4 py-4 rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(56,182,255,0.4)] hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <Plus size={18} strokeWidth={3} />
+              Postar Informativo
+            </button>
+          </div>
         </div>
       </aside>
 
@@ -205,13 +284,7 @@ const Updates = () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          <button 
-            onClick={() => setShowPostModal(true)}
-            className="flex items-center justify-center gap-3 text-sm font-mono font-black uppercase tracking-widest bg-[#38b6ff] text-secondary-foreground hover:bg-[#38b6ff]/80 px-6 py-3 rounded-lg transition-all duration-300 shadow-[0_0_20px_rgba(56,182,255,0.4)] hover:scale-[1.02] active:scale-[0.98]"
-          >
-            <Plus size={18} strokeWidth={3} />
-            Postar Informativo
-          </button>
+          {/* Header post button removed, moved to sidebar */}
         </div>
       </div>
 
@@ -251,7 +324,7 @@ const Updates = () => {
       ) : (
         <div className="space-y-6">
           {filteredUpdates.map(item => (
-            <UpdateCard key={item.id} item={item} />
+            <UpdateCard key={item.id} item={item} onEdit={handleEdit} />
           ))}
         </div>
       )}
@@ -262,9 +335,11 @@ const Updates = () => {
             <div className="flex items-center justify-between p-6 border-b border-white/10 bg-black/20">
               <div className="flex items-center gap-3">
                 <div className="w-1 h-6 bg-[#38b6ff] rounded-full shadow-[0_0_10px_#38b6ff]" />
-                <h2 className="text-xl font-bold font-mono tracking-widest text-white uppercase">NOVA POSTAGEM</h2>
+                <h2 className="text-xl font-bold font-mono tracking-widest text-white uppercase">
+                  {editingId ? 'EDITAR POSTAGEM' : 'NOVA POSTAGEM'}
+                </h2>
               </div>
-              <button onClick={() => setShowPostModal(false)} className="text-white/40 hover:text-white transition-colors">
+              <button onClick={() => { setShowPostModal(false); setEditingId(null); }} className="text-white/40 hover:text-white transition-colors">
                 <X size={24} />
               </button>
             </div>
@@ -355,7 +430,7 @@ const Updates = () => {
                   type="submit"
                   className="flex-[2] px-6 py-3 bg-[#38b6ff] hover:bg-[#38b6ff]/80 text-[#0f172a] rounded-xl font-black font-mono tracking-widest shadow-[0_0_20px_rgba(56,182,255,0.4)] transition-all"
                 >
-                  PUBLICAR AGORA
+                  {editingId ? 'SALVAR ALTERAÇÕES' : 'PUBLICAR AGORA'}
                 </button>
               </div>
             </form>
