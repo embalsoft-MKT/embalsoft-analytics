@@ -247,10 +247,10 @@ const OrbitalBackground = () => {
                 y={cy - planetR - 1}
                 textAnchor="middle"
                 fill="white"
-                fontSize="1.1"
+                fontSize="1.3"
                 fontFamily="Inter, sans-serif"
                 fontWeight="600"
-                opacity={isHovered ? 0.95 : 0}
+                opacity={isHovered ? 1 : 0.85}
                 style={{ transition: "opacity 0.3s ease", pointerEvents: "none" }}
               >
                 {p.label}
