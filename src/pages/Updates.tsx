@@ -348,6 +348,8 @@ const Updates = () => {
             <UpdateCard key={item.id} item={item} onEdit={handleEdit} />
           ))}
         </div>
+      )}
+
       {/* Floating Action Button - Nova Postagem */}
       {isAdmin && (
         <button
