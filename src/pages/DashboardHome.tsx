@@ -33,10 +33,10 @@ const avancosData = [
 ];
 
 const implantacoes = [
-  { cliente: "Ind. Nova Era", etapa: "Golive", progresso: 100, status: "em_dia" as const, responsavel: "Marcos" },
+  { cliente: "Ind. Nova Era", etapa: "Go Live", progresso: 100, status: "em_dia" as const, responsavel: "Marcos" },
   { cliente: "Distribuidora Sol", etapa: "Testes", progresso: 70, status: "atencao" as const, responsavel: "Renan" },
   { cliente: "Metalúrgica Forte", etapa: "Imersão Geral", progresso: 35, status: "em_dia" as const, responsavel: "Marcos" },
-  { cliente: "Alimentos Vida", etapa: "Kickoff", progresso: 10, status: "atrasado" as const, responsavel: "Renan" },
+  { cliente: "Alimentos Vida", etapa: "Kick-off", progresso: 10, status: "atrasado" as const, responsavel: "Renan" },
 ];
 
 const etapas = ["Kick-off", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Go Live"];
