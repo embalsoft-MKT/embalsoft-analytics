@@ -256,27 +256,27 @@ const DashboardHome = () => {
                       </div>
                     </div>
                     {/* Linha do tempo (progress bar com steps engrossada) */}
-                    <div className="flex items-center px-4 relative">
+                    <div className="flex items-start px-2 relative">
                       {etapas.map((etapa, idx) => {
                         const isCompleted = idx <= etapaIndex;
                         const isCurrent = idx === etapaIndex;
                         const mainColor = isCurrent ? s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor" : (isCompleted ? s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor" : "rgba(255,255,255,0.15)");
                         
                         return (
-                          <div key={etapa} className="flex-1 relative flex flex-col pt-2">
-                            <div className="relative flex items-center mb-3">
+                          <div key={etapa} className="flex-1 relative flex flex-col items-center pt-2 min-w-0">
+                            <div className="relative flex items-center justify-center w-full mb-3">
+                               {idx < etapas.length - 1 && (
+                                <div className="absolute left-1/2 right-0 h-1 bg-white/10 z-0 rounded-full" />
+                               )}
+                               {idx < etapas.length - 1 && isCompleted && idx < etapaIndex && (
+                                <div className="absolute left-1/2 right-0 h-1 z-0 shadow-[0_0_8px_currentColor] rounded-full" style={{ backgroundColor: mainColor }} />
+                               )}
                                <div 
                                 className={`w-4 h-4 rounded-sm z-10 transition-all ${isCurrent ? 'shadow-[0_0_15px_currentColor] scale-125' : ''}`}
                                 style={{ backgroundColor: mainColor, transform: 'rotate(45deg)' }}
                                />
-                               {idx < etapas.length - 1 && (
-                                <div className="absolute left-4 right-0 h-1 bg-white/10 z-0 rounded-full" />
-                               )}
-                               {idx < etapas.length - 1 && isCompleted && (
-                                <div className="absolute left-4 right-0 h-1 z-0 shadow-[0_0_8px_currentColor] rounded-full" style={{ backgroundColor: mainColor }} />
-                               )}
                             </div>
-                            <span className={`text-xs uppercase font-bold font-sans whitespace-nowrap -ml-2 drop-shadow-sm ${isCurrent ? 'text-white' : 'text-white/60'}`}>
+                            <span className={`text-[10px] leading-tight uppercase font-bold font-sans text-center px-1 drop-shadow-sm ${isCurrent ? 'text-white' : 'text-white/60'}`}>
                               {etapa}
                             </span>
                           </div>

@@ -170,6 +170,13 @@ const Updates = () => {
   const [showPostModal, setShowPostModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showLinksPopover, setShowLinksPopover] = useState(false);
+  const [newPost, setNewPost] = useState({
+    title: '',
+    category: 'Comunicado' as Category,
+    shortDescription: '',
+    fullContent: '',
+    imageUrl: '',
+    fileUrl: '',
     link: ''
   });
 
