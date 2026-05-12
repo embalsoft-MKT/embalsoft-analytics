@@ -349,6 +349,18 @@ const Updates = () => {
           ))}
         </div>
       )}
+
+      {/* Floating Action Button - Nova Postagem */}
+      {isAdmin && (
+        <button
+          onClick={() => { setEditingId(null); setShowPostModal(true); }}
+          className="fixed bottom-8 right-8 z-50 flex items-center gap-2 bg-[#38b6ff] hover:bg-[#38b6ff]/90 text-[#0f172a] font-bold font-mono uppercase tracking-wider text-sm px-5 py-4 rounded-full shadow-[0_10px_30px_rgba(56,182,255,0.5)] hover:shadow-[0_15px_40px_rgba(56,182,255,0.7)] hover:-translate-y-1 transition-all duration-300"
+          title="Nova postagem"
+        >
+          <Plus size={20} strokeWidth={3} />
+          Nova Postagem
+        </button>
+      )}
       {/* Modal de Postagem */}
       {showPostModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
