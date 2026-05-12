@@ -70,8 +70,8 @@ const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => voi
                 )}
               </div>
               
-              {isAdmin && (
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              {(
+                <div className="flex items-center gap-2 transition-opacity">
                   <button 
                     onClick={handleEdit}
                     className="p-2 bg-white/5 hover:bg-[#38b6ff]/20 text-white/40 hover:text-[#38b6ff] rounded-lg transition-all"
