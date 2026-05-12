@@ -39,7 +39,7 @@ const implantacoes = [
   { cliente: "Alimentos Vida", etapa: "Kickoff", progresso: 10, status: "atrasado" as const, responsavel: "Renan" },
 ];
 
-const etapas = ["Kickoff", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Golive"];
+const etapas = ["Kick-off", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Go Live"];
 
 const statusConfig = {
   em_dia: { color: "text-[#a7c64f]", bg: "bg-[#a7c64f]/15", border: "border-[#a7c64f]/30", label: "Em dia", icon: CheckCircle2 },
