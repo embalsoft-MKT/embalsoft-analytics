@@ -179,12 +179,12 @@ const DashboardHome = () => {
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="rounded-lg bg-black/60 border border-white/10 p-5 flex flex-col justify-center">
                   <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">Entregas Realizadas</span>
-                  <p className="text-5xl font-bold text-white mt-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">155</p>
+                  <p className="text-5xl font-bold text-white mt-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">{entregas?.valor ?? "—"}</p>
                 </div>
                 <div className="rounded-lg bg-black/60 border border-white/10 p-5 flex flex-col justify-center relative overflow-hidden">
                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#f48121] to-transparent shadow-[0_0_10px_#f48121]" />
                   <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">Retrabalho</span>
-                  <p className="text-5xl font-bold text-[#f48121] mt-3 drop-shadow-[0_0_15px_rgba(244,129,33,0.7)]">8.5%</p>
+                  <p className="text-5xl font-bold text-[#f48121] mt-3 drop-shadow-[0_0_15px_rgba(244,129,33,0.7)]">{retrabalho?.valor ?? "—"}{retrabalho?.valor_extra ?? "%"}</p>
                 </div>
               </div>
               <ChartContainer config={devChartConfig} className="h-[220px] w-full mt-4">
