@@ -1,6 +1,7 @@
 import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useIndicadores } from "@/hooks/useIndicadores";
 import {
   ChartContainer,
   ChartTooltip,
