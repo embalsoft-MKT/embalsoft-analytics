@@ -268,19 +268,15 @@ const Updates = () => {
           </div>
         </div>
 
-        {isAdmin && (
-          <div className="mt-6 sticky top-[calc(24rem+24px)]">
-            <button 
-              onClick={() => setShowPostModal(true)}
-              className="w-full flex items-center justify-center gap-4 text-sm font-mono font-black uppercase tracking-[0.2em] bg-[#38b6ff] text-[#0f172a] hover:bg-[#38b6ff]/90 px-4 py-5 rounded-2xl transition-all duration-300 shadow-[0_15px_35px_rgba(56,182,255,0.3)] hover:shadow-[0_20px_45px_rgba(56,182,255,0.4)] hover:-translate-y-1 active:translate-y-0.5"
-            >
-              <div className="bg-[#0f172a] rounded-full p-1.5 shadow-inner">
-                <Plus size={20} strokeWidth={3} className="text-[#38b6ff]" />
-              </div>
-              POSTAR AGORA
-            </button>
+        <button
+          onClick={() => { setEditingId(null); setShowPostModal(true); }}
+          className="mt-6 w-full flex items-center justify-center gap-4 text-sm font-mono font-black uppercase tracking-[0.2em] bg-[#38b6ff] text-[#0f172a] hover:bg-[#38b6ff]/90 px-4 py-5 rounded-2xl transition-all duration-300 shadow-[0_15px_35px_rgba(56,182,255,0.3)] hover:shadow-[0_20px_45px_rgba(56,182,255,0.4)] hover:-translate-y-1 active:translate-y-0.5"
+        >
+          <div className="bg-[#0f172a] rounded-full p-1.5 shadow-inner">
+            <Plus size={20} strokeWidth={3} className="text-[#38b6ff]" />
           </div>
-        )}
+          Nova Postagem
+        </button>
       </aside>
 
       {/* Main Feed area */}
@@ -350,15 +346,6 @@ const Updates = () => {
         </div>
       )}
 
-      {/* Floating Action Button - Nova Postagem */}
-      <button
-        onClick={() => { setEditingId(null); setShowPostModal(true); }}
-        className="fixed bottom-8 right-8 z-50 flex items-center gap-2 bg-[#38b6ff] hover:bg-[#38b6ff]/90 text-[#0f172a] font-bold font-mono uppercase tracking-wider text-sm px-5 py-4 rounded-full shadow-[0_10px_30px_rgba(56,182,255,0.5)] hover:shadow-[0_15px_40px_rgba(56,182,255,0.7)] hover:-translate-y-1 transition-all duration-300"
-        title="Nova postagem"
-      >
-        <Plus size={20} strokeWidth={3} />
-        Nova Postagem
-      </button>
       {/* Modal de Postagem */}
       {showPostModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
