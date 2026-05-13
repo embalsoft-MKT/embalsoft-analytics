@@ -70,6 +70,15 @@ const supportChartConfig: ChartConfig = {
 // ── Component ──
 
 const DashboardHome = () => {
+  const { byChave, indicadores } = useIndicadores();
+  const erp = byChave("com_novos_erp");
+  const fab = byChave("com_novos_fabrica");
+  const avancosData = indicadores
+    .filter((i) => i.categoria === "avancos")
+    .map((i) => ({ projeto: i.label, progresso: Number(i.valor ?? 0), cor: avancoCores[i.chave] ?? "bg-[#38b6ff]" }));
+  const entregas = byChave("op_entregas");
+  const retrabalho = byChave("op_retrabalho");
+  const chamados = byChave("op_chamados");
   return (
     <TooltipProvider delayDuration={200}>
       <div className="relative min-h-[calc(100vh-4rem)]">
