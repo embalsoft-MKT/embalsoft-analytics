@@ -208,8 +208,8 @@ const DashboardHome = () => {
               <div className="rounded-lg bg-black/60 border border-white/10 p-5 mb-6 inline-block pr-16 shadow-lg">
                 <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md block mb-3">Chamados Atendidos</span>
                 <p className="text-5xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] flex items-baseline gap-4">
-                  555 
-                  <span className="text-lg font-bold text-[#a7c64f] p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">↑12%</span>
+                  {chamados?.valor ?? "—"}
+                  <span className="text-lg font-bold text-[#a7c64f] p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{chamados?.valor_extra ?? ""}</span>
                 </p>
               </div>
               <ChartContainer config={supportChartConfig} className="h-[220px] w-full mt-4">
