@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import DashboardLayout from "./components/DashboardLayout";
 import DashboardHome from "./pages/DashboardHome";
 import NotFound from "./pages/NotFound";
+import Indicadores from "./pages/Indicadores";
 
 import { UpdatesProvider } from "./contexts/UpdatesContext";
 import Updates from "./pages/Updates";
