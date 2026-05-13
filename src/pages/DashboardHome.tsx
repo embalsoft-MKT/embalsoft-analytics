@@ -109,8 +109,8 @@ const DashboardHome = () => {
                   <div>
                     <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">Novos Clientes ERP</span>
                     <div className="flex items-baseline gap-3 mt-4">
-                      <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{comercialData.novosERP.count}</span>
-                      <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-sans p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{comercialData.novosERP.growth}</span>
+                      <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{erp?.valor ?? "—"}</span>
+                      <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-sans p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{erp?.valor_extra ?? ""}</span>
                     </div>
                   </div>
                 </div>
