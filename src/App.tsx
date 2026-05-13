@@ -41,6 +41,7 @@ const App = () => {
                   <Route index element={<DashboardHome />} />
                   <Route path="updates" element={<Updates />} />
                   <Route path="team" element={<Team />} />
+                  <Route path="indicadores" element={<Indicadores />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
