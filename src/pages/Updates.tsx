@@ -170,9 +170,9 @@ const Updates = () => {
   const [showPostModal, setShowPostModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showLinksPopover, setShowLinksPopover] = useState(false);
-  const [newPost, setNewPost] = useState<Omit<UpdateItem, 'id' | 'date' | 'read'>>({
+  const [newPost, setNewPost] = useState({
     title: '',
-    category: 'Comunicado',
+    category: 'Comunicado' as Category,
     shortDescription: '',
     fullContent: '',
     imageUrl: '',
@@ -233,54 +233,8 @@ const Updates = () => {
   const filteredUpdates = updates.filter(u => filter === 'Todas' || u.category === filter);
 
   return (
-    <div className="w-full max-w-7xl mx-auto pb-12 animate-fade-in-up">
-      {/* Header Central HUD */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 mt-4">
-        <div>
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-2 h-8 bg-white rounded-sm shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
-            <h1 className="text-3xl md:text-5xl font-mono font-bold tracking-tight text-white drop-shadow-lg flex items-center gap-4">
-              INFORMATIVOS
-              {unreadCount > 0 && (
-                <span className="bg-[#38b6ff] text-secondary-foreground text-sm px-3 py-1 rounded-full font-bold shadow-[0_0_15px_#38b6ff] flex items-center justify-center">
-                  {unreadCount}
-                </span>
-              )}
-            </h1>
-          </div>
-          <p className="text-muted-foreground font-sans text-sm md:text-base max-w-xl">
-            Acompanhe comunicados, datas comemorativas e novidades da plataforma em tempo real.
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          {/* Header post button removed, moved to sidebar */}
-        </div>
-      </div>
-
-      {/* Tech Pills Filters */}
-      <div className="flex flex-wrap items-center gap-3 mb-10">
-        <span className="text-muted-foreground/60 mr-2 border border-muted-foreground/20 bg-black/40 p-2 rounded shadow-inner">
-          <Layers size={18} />
-        </span>
-        {categories.map(cat => (
-          <button
-            key={cat}
-            onClick={() => setFilter(cat)}
-            className={cn(
-              "px-4 py-2 rounded-full text-xs md:text-sm font-bold font-mono tracking-wider border-2 transition-all duration-300",
-              filter === cat 
-                ? cn(categoryConfig[cat].border, categoryConfig[cat].bg, categoryConfig[cat].color, `shadow-[0_0_15px_${categoryConfig[cat].bg.split('/')[0]}] scale-105`) 
-                : "border-white/10 text-muted-foreground hover:border-white/30 hover:text-white bg-black/40"
-            )}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      <div className="flex flex-col lg:flex-row-reverse gap-8">
-        {/* Sidebar Links Úteis (Restored as sticky card) */}
+    <div className="w-full max-w-7xl mx-auto pb-12 animate-fade-in-up flex flex-col lg:flex-row-reverse gap-8">
+      {/* Sidebar Links Úteis (Restored as sticky card) */}
       <aside className="lg:w-72 shrink-0 lg:sticky lg:top-24 self-start w-full order-1">
         <div className="rounded-xl border-2 border-[#38b6ff]/30 bg-card/60 backdrop-blur-md p-5 shadow-[0_0_20px_rgba(56,182,255,0.15)]">
           <div className="flex items-center gap-2 mb-5 pb-3 border-b border-white/10">
@@ -327,6 +281,54 @@ const Updates = () => {
 
       {/* Main Feed area */}
       <div className="flex-1 min-w-0 order-2 lg:order-1">
+      {/* Header Central HUD */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6 mt-4">
+        <div>
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-2 h-8 bg-white rounded-sm shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
+            <h1 className="text-3xl md:text-5xl font-mono font-bold tracking-tight text-white drop-shadow-lg flex items-center gap-4">
+              INFORMATIVOS
+              {unreadCount > 0 && (
+                <span className="bg-[#38b6ff] text-secondary-foreground text-sm px-3 py-1 rounded-full font-bold shadow-[0_0_15px_#38b6ff] flex items-center justify-center">
+                  {unreadCount}
+                </span>
+              )}
+            </h1>
+          </div>
+          <p className="text-muted-foreground font-sans text-sm md:text-base max-w-xl">
+            Acompanhe comunicados, datas comemorativas e novidades da plataforma em tempo real.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {/* Header post button removed, moved to sidebar */}
+        </div>
+      </div>
+
+      {/* Removed Popover as it's now back in the sidebar */}
+
+
+      {/* Tech Pills Filters */}
+      <div className="flex flex-wrap items-center gap-3 mb-10">
+        <span className="text-muted-foreground/60 mr-2 border border-muted-foreground/20 bg-black/40 p-2 rounded shadow-inner">
+          <Layers size={18} />
+        </span>
+        {categories.map(cat => (
+          <button
+            key={cat}
+            onClick={() => setFilter(cat)}
+            className={cn(
+              "px-4 py-2 rounded-full text-xs md:text-sm font-bold font-mono tracking-wider border-2 transition-all duration-300",
+              filter === cat 
+                ? cn(categoryConfig[cat].border, categoryConfig[cat].bg, categoryConfig[cat].color, `shadow-[0_0_15px_${categoryConfig[cat].bg.split('/')[0]}] scale-105`) 
+                : "border-white/10 text-muted-foreground hover:border-white/30 hover:text-white bg-black/40"
+            )}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
       {/* Feed Area */}
       {filteredUpdates.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32 bg-black/30 border border-white/5 rounded-2xl border-dashed">
@@ -453,7 +455,6 @@ const Updates = () => {
           </div>
         </div>
       )}
-    </div>
     </div>
   </div>
   );
