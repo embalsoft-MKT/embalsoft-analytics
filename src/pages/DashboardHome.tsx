@@ -1,6 +1,7 @@
 import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useIndicadores } from "@/hooks/useIndicadores";
 import {
   ChartContainer,
   ChartTooltip,
@@ -21,16 +22,12 @@ import OrbitalBackground from "@/components/OrbitalBackground";
 
 // ── Mock Data ──
 
-const comercialData = {
-  novosERP: { count: 12, growth: "+15%" },
-  novosFabrica: { count: 5, growth: "+8%" }
+// Mock data dos itens de avanços (apenas cores; valores vêm do Supabase)
+const avancoCores: Record<string, string> = {
+  av_crm: "bg-[#a7c64f]",
+  av_bi: "bg-[#38b6ff]",
+  av_ia: "bg-[#38b6ff]",
 };
-
-const avancosData = [
-  { projeto: "CRM 2.0", progresso: 80, cor: "bg-[#a7c64f]" },
-  { projeto: "BI nativo do ERP", progresso: 10, cor: "bg-[#38b6ff]" },
-  { projeto: "Agentes de IA", progresso: 5, cor: "bg-[#38b6ff]" },
-];
 
 const implantacoes = [
   { cliente: "Ind. Nova Era", etapa: "Go Live", progresso: 100, status: "em_dia" as const, responsavel: "Marcos" },
@@ -73,6 +70,15 @@ const supportChartConfig: ChartConfig = {
 // ── Component ──
 
 const DashboardHome = () => {
+  const { byChave, indicadores } = useIndicadores();
+  const erp = byChave("com_novos_erp");
+  const fab = byChave("com_novos_fabrica");
+  const avancosData = indicadores
+    .filter((i) => i.categoria === "avancos")
+    .map((i) => ({ projeto: i.label, progresso: Number(i.valor ?? 0), cor: avancoCores[i.chave] ?? "bg-[#38b6ff]" }));
+  const entregas = byChave("op_entregas");
+  const retrabalho = byChave("op_retrabalho");
+  const chamados = byChave("op_chamados");
   return (
     <TooltipProvider delayDuration={200}>
       <div className="relative min-h-[calc(100vh-4rem)]">
@@ -103,8 +109,8 @@ const DashboardHome = () => {
                   <div>
                     <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">Novos Clientes ERP</span>
                     <div className="flex items-baseline gap-3 mt-4">
-                      <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{comercialData.novosERP.count}</span>
-                      <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-sans p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{comercialData.novosERP.growth}</span>
+                      <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{erp?.valor ?? "—"}</span>
+                      <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-sans p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{erp?.valor_extra ?? ""}</span>
                     </div>
                   </div>
                 </div>
@@ -113,8 +119,8 @@ const DashboardHome = () => {
                   <div>
                     <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">Fábrica de Software</span>
                     <div className="flex items-baseline gap-3 mt-4">
-                      <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{comercialData.novosFabrica.count}</span>
-                      <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-sans p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{comercialData.novosFabrica.growth}</span>
+                      <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{fab?.valor ?? "—"}</span>
+                      <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-sans p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{fab?.valor_extra ?? ""}</span>
                     </div>
                   </div>
                 </div>
@@ -173,12 +179,12 @@ const DashboardHome = () => {
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="rounded-lg bg-black/60 border border-white/10 p-5 flex flex-col justify-center">
                   <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">Entregas Realizadas</span>
-                  <p className="text-5xl font-bold text-white mt-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">155</p>
+                  <p className="text-5xl font-bold text-white mt-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">{entregas?.valor ?? "—"}</p>
                 </div>
                 <div className="rounded-lg bg-black/60 border border-white/10 p-5 flex flex-col justify-center relative overflow-hidden">
                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#f48121] to-transparent shadow-[0_0_10px_#f48121]" />
                   <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">Retrabalho</span>
-                  <p className="text-5xl font-bold text-[#f48121] mt-3 drop-shadow-[0_0_15px_rgba(244,129,33,0.7)]">8.5%</p>
+                  <p className="text-5xl font-bold text-[#f48121] mt-3 drop-shadow-[0_0_15px_rgba(244,129,33,0.7)]">{retrabalho?.valor ?? "—"}{retrabalho?.valor_extra ?? "%"}</p>
                 </div>
               </div>
               <ChartContainer config={devChartConfig} className="h-[220px] w-full mt-4">
@@ -202,8 +208,8 @@ const DashboardHome = () => {
               <div className="rounded-lg bg-black/60 border border-white/10 p-5 mb-6 inline-block pr-16 shadow-lg">
                 <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md block mb-3">Chamados Atendidos</span>
                 <p className="text-5xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] flex items-baseline gap-4">
-                  555 
-                  <span className="text-lg font-bold text-[#a7c64f] p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">↑12%</span>
+                  {chamados?.valor ?? "—"}
+                  <span className="text-lg font-bold text-[#a7c64f] p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{chamados?.valor_extra ?? ""}</span>
                 </p>
               </div>
               <ChartContainer config={supportChartConfig} className="h-[220px] w-full mt-4">
