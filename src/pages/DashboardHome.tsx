@@ -22,16 +22,12 @@ import OrbitalBackground from "@/components/OrbitalBackground";
 
 // ── Mock Data ──
 
-const comercialData = {
-  novosERP: { count: 12, growth: "+15%" },
-  novosFabrica: { count: 5, growth: "+8%" }
+// Mock data dos itens de avanços (apenas cores; valores vêm do Supabase)
+const avancoCores: Record<string, string> = {
+  av_crm: "bg-[#a7c64f]",
+  av_bi: "bg-[#38b6ff]",
+  av_ia: "bg-[#38b6ff]",
 };
-
-const avancosData = [
-  { projeto: "CRM 2.0", progresso: 80, cor: "bg-[#a7c64f]" },
-  { projeto: "BI nativo do ERP", progresso: 10, cor: "bg-[#38b6ff]" },
-  { projeto: "Agentes de IA", progresso: 5, cor: "bg-[#38b6ff]" },
-];
 
 const implantacoes = [
   { cliente: "Ind. Nova Era", etapa: "Go Live", progresso: 100, status: "em_dia" as const, responsavel: "Marcos" },
