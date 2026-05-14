@@ -11,6 +11,7 @@ export interface Indicador {
   ordem: number;
   updated_at: string;
   updated_by: string | null;
+  updated_by_name?: string | null;
 }
 
 export interface IndicadorHistorico {
@@ -23,7 +24,20 @@ export interface IndicadorHistorico {
   valor_extra_novo: string | null;
   alterado_em: string;
   alterado_por: string | null;
+  alterado_por_name?: string | null;
 }
+
+const enrichWithNames = async <T extends { updated_by?: string | null; alterado_por?: string | null }>(
+  rows: T[],
+  field: "updated_by" | "alterado_por",
+  nameField: string
+): Promise<any[]> => {
+  const ids = Array.from(new Set(rows.map((r: any) => r[field]).filter(Boolean))) as string[];
+  if (ids.length === 0) return rows;
+  const { data } = await supabase.from("profiles").select("id, full_name").in("id", ids);
+  const map = new Map((data || []).map((p: any) => [p.id, p.full_name]));
+  return rows.map((r: any) => ({ ...r, [nameField]: r[field] ? map.get(r[field]) ?? null : null }));
+};
 
 export const useIndicadores = () => {
   const [indicadores, setIndicadores] = useState<Indicador[]>([]);
@@ -37,8 +51,13 @@ export const useIndicadores = () => {
       .select("*")
       .order("categoria")
       .order("ordem");
-    if (error) setError(error.message);
-    else setIndicadores((data || []) as Indicador[]);
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
+    const enriched = await enrichWithNames(data || [], "updated_by", "updated_by_name");
+    setIndicadores(enriched as Indicador[]);
     setLoading(false);
   }, []);
 
@@ -72,5 +91,6 @@ export const fetchHistorico = async (indicadorId: string) => {
     .order("alterado_em", { ascending: false })
     .limit(20);
   if (error) throw error;
-  return (data || []) as IndicadorHistorico[];
+  const enriched = await enrichWithNames(data || [], "alterado_por", "alterado_por_name");
+  return enriched as IndicadorHistorico[];
 };
