@@ -1,7 +1,6 @@
 import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useIndicadores } from "@/hooks/useIndicadores";
 import {
   ChartContainer,
   ChartTooltip,
@@ -22,12 +21,21 @@ import OrbitalBackground from "@/components/OrbitalBackground";
 
 // ── Mock Data ──
 
-// Mock data dos itens de avanços (apenas cores; valores vêm do Supabase)
-const avancoCores: Record<string, string> = {
-  av_crm: "bg-[#a7c64f]",
-  av_bi: "bg-[#38b6ff]",
-  av_ia: "bg-[#38b6ff]",
-};
+// Mock dos avanços
+const avancosData = [
+  { projeto: "Embalsoft CRM 2.0", progresso: 80, cor: "bg-[#a7c64f]" },
+  { projeto: "BI Nativo do ERP", progresso: 15, cor: "bg-[#38b6ff]" },
+  { projeto: "Agentes de IA", progresso: 5, cor: "bg-[#38b6ff]" },
+];
+
+// Painel Comercial (fictício)
+const erp = { valor: 12, valor_extra: "+15%" };
+const fab = { valor: 8, valor_extra: "+10%" };
+
+// Performance Operacional (fictício)
+const entregas = { valor: 45 };
+const retrabalho = { valor: 4, valor_extra: "%" };
+const chamados = { valor: 158, valor_extra: "+8%" };
 
 const implantacoes = [
   { cliente: "Ind. Nova Era", etapa: "Go Live", progresso: 100, status: "em_dia" as const, responsavel: "Marcos" },
@@ -70,15 +78,6 @@ const supportChartConfig: ChartConfig = {
 // ── Component ──
 
 const DashboardHome = () => {
-  const { byChave, indicadores } = useIndicadores();
-  const erp = byChave("com_novos_erp");
-  const fab = byChave("com_novos_fabrica");
-  const avancosData = indicadores
-    .filter((i) => i.categoria === "avancos")
-    .map((i) => ({ projeto: i.label, progresso: Number(i.valor ?? 0), cor: avancoCores[i.chave] ?? "bg-[#38b6ff]" }));
-  const entregas = byChave("op_entregas");
-  const retrabalho = byChave("op_retrabalho");
-  const chamados = byChave("op_chamados");
   return (
     <TooltipProvider delayDuration={200}>
       <div className="relative min-h-[calc(100vh-4rem)]">
