@@ -21,6 +21,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard", disabled: false },
   { icon: RefreshCw, label: "Informativos", path: "/dashboard/updates", disabled: false },
   { icon: Users, label: "Equipe", path: "/dashboard/team", disabled: false },
+  { icon: BarChart3, label: "Indicadores", path: "/dashboard/indicadores", disabled: false, adminOnly: true },
   { icon: FileText, label: "Documentos", path: "/dashboard/docs", disabled: true },
 ];
 
