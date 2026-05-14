@@ -117,7 +117,7 @@ const DashboardLayout = () => {
 
           {/* Nav */}
           <nav className="flex-1 py-4 px-3 space-y-1">
-            {navItems.map((item) => (
+            {navItems.filter((i) => !i.adminOnly || isAdmin).map((item) => (
               <button
                 key={item.path}
                 disabled={item.disabled}
