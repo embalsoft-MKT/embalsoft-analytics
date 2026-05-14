@@ -109,11 +109,14 @@ const Team = () => {
 
   return (
     <div className="relative space-y-8 animate-fade-in pb-20">
-      <div>
-        <h1 className="text-3xl md:text-4xl font-bold text-white tracking-wide drop-shadow-[0_0_15px_rgba(56,182,255,0.4)]">
-          EQUIPE EMBALSOFT
-        </h1>
-        <p className="text-muted-foreground mt-2 text-sm">
+      <div className="mt-4">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-2 h-8 bg-white rounded-sm shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
+          <h1 className="text-3xl md:text-5xl font-mono font-bold tracking-tight text-white drop-shadow-lg">
+            EQUIPE EMBALSOFT
+          </h1>
+        </div>
+        <p className="text-muted-foreground font-sans text-sm md:text-base max-w-xl">
           Conheça quem faz a Embalsoft acontecer
         </p>
       </div>
