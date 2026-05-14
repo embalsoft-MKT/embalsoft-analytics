@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useIndicadores, fetchHistorico, type Indicador, type IndicadorHistorico } from "@/hooks/useIndicadores";
-import { Pencil, History, Save, X, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { History, Loader2, X, Lock, Check, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
 
 const categoriaLabel: Record<string, { label: string; color: string }> = {
@@ -9,54 +10,97 @@ const categoriaLabel: Record<string, { label: string; color: string }> = {
   operacional: { label: "PERFORMANCE OPERACIONAL", color: "#38b6ff" },
 };
 
-const Indicadores = () => {
-  const { indicadores, loading, updateIndicador } = useIndicadores();
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [valor, setValor] = useState<string>("");
-  const [valorExtra, setValorExtra] = useState<string>("");
+// Inline auto-save cell
+const InlineCell: React.FC<{
+  value: string;
+  type?: "number" | "text";
+  placeholder?: string;
+  disabled?: boolean;
+  onSave: (val: string) => Promise<void>;
+}> = ({ value, type = "text", placeholder, disabled, onSave }) => {
+  const [draft, setDraft] = useState(value);
   const [saving, setSaving] = useState(false);
-  const [historicoFor, setHistoricoFor] = useState<Indicador | null>(null);
-  const [historico, setHistorico] = useState<IndicadorHistorico[]>([]);
+  const [savedFlash, setSavedFlash] = useState(false);
+  const initial = useRef(value);
 
-  const startEdit = (i: Indicador) => {
-    setEditingId(i.id);
-    setValor(i.valor?.toString() ?? "");
-    setValorExtra(i.valor_extra ?? "");
-  };
+  useEffect(() => {
+    setDraft(value);
+    initial.current = value;
+  }, [value]);
 
-  const cancel = () => {
-    setEditingId(null);
-    setValor("");
-    setValorExtra("");
-  };
-
-  const save = async (i: Indicador) => {
+  const commit = async () => {
+    if (draft === initial.current) return;
     setSaving(true);
     try {
-      const num = valor === "" ? null : Number(valor);
-      if (num !== null && Number.isNaN(num)) {
-        toast.error("Valor inválido");
-        return;
-      }
-      await updateIndicador(i.id, num, valorExtra || null);
-      toast.success("Indicador atualizado");
-      cancel();
+      await onSave(draft);
+      initial.current = draft;
+      setSavedFlash(true);
+      setTimeout(() => setSavedFlash(false), 1200);
     } catch (e: any) {
       toast.error(e.message || "Erro ao salvar");
+      setDraft(initial.current);
     } finally {
       setSaving(false);
     }
   };
 
+  if (disabled) {
+    return <span className="text-white/90">{value || "—"}</span>;
+  }
+
+  return (
+    <div className="relative inline-flex items-center">
+      <input
+        type={type}
+        step={type === "number" ? "0.1" : undefined}
+        value={draft}
+        placeholder={placeholder}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+          if (e.key === "Escape") {
+            setDraft(initial.current);
+            (e.target as HTMLInputElement).blur();
+          }
+        }}
+        className="bg-black/60 border border-white/20 hover:border-[#38b6ff]/60 focus:border-[#38b6ff] focus:outline-none rounded px-2 py-1 w-28 text-white transition-colors"
+      />
+      {saving && <Loader2 size={14} className="animate-spin text-[#38b6ff] absolute -right-5" />}
+      {!saving && savedFlash && <Check size={14} className="text-[#a7c64f] absolute -right-5" />}
+    </div>
+  );
+};
+
+const Indicadores = () => {
+  const { indicadores, loading, updateIndicador } = useIndicadores();
+  const { isAdmin } = useAuth();
+  const [historicoFor, setHistoricoFor] = useState<Indicador | null>(null);
+  const [historico, setHistorico] = useState<IndicadorHistorico[]>([]);
+  const [historicoLoading, setHistoricoLoading] = useState(false);
+
   const openHistorico = async (i: Indicador) => {
     setHistoricoFor(i);
     setHistorico([]);
+    setHistoricoLoading(true);
     try {
       const data = await fetchHistorico(i.id);
       setHistorico(data);
     } catch (e: any) {
       toast.error(e.message || "Erro ao carregar histórico");
+    } finally {
+      setHistoricoLoading(false);
     }
+  };
+
+  const saveValor = async (i: Indicador, raw: string) => {
+    const num = raw === "" ? null : Number(raw);
+    if (num !== null && Number.isNaN(num)) throw new Error("Valor inválido");
+    await updateIndicador(i.id, num, i.valor_extra);
+  };
+
+  const saveExtra = async (i: Indicador, raw: string) => {
+    await updateIndicador(i.id, i.valor, raw || null);
   };
 
   const grouped = indicadores.reduce<Record<string, Indicador[]>>((acc, i) => {
@@ -66,13 +110,29 @@ const Indicadores = () => {
 
   return (
     <div className="space-y-8 animate-fade-in-up pb-8">
-      <div className="flex items-center gap-3">
-        <div className="w-2 h-6 bg-white rounded-sm shadow-[0_0_12px_rgba(255,255,255,0.6)]" />
-        <h1 className="font-mono text-lg font-bold tracking-[0.2em] text-white uppercase">Gestão de Indicadores</h1>
+      <div className="mt-4">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-2 h-8 bg-white rounded-sm shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
+          <h1 className="text-3xl md:text-5xl font-mono font-bold tracking-tight text-white drop-shadow-lg">
+            GESTÃO DE INDICADORES
+          </h1>
+        </div>
+        <p className="text-muted-foreground font-sans text-sm md:text-base max-w-2xl">
+          {isAdmin
+            ? "Edite os valores diretamente nas células. As alterações são salvas automaticamente e o histórico é registrado."
+            : "Visualização dos indicadores. Apenas administradores podem editar valores."}
+        </p>
+        {!isAdmin && (
+          <div className="mt-3 inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#f48121] border border-[#f48121]/40 bg-[#f48121]/10 px-3 py-1.5 rounded">
+            <Lock size={12} /> Modo somente leitura
+          </div>
+        )}
       </div>
 
       {loading && (
-        <div className="flex items-center gap-2 text-white/70"><Loader2 className="animate-spin" size={18} /> Carregando…</div>
+        <div className="flex items-center gap-2 text-white/70">
+          <Loader2 className="animate-spin" size={18} /> Carregando…
+        </div>
       )}
 
       {Object.entries(grouped).map(([categoria, items]) => {
@@ -91,82 +151,54 @@ const Indicadores = () => {
                     <th className="py-2 pr-4">Indicador</th>
                     <th className="py-2 pr-4">Valor</th>
                     <th className="py-2 pr-4">Extra</th>
-                    <th className="py-2 pr-4">Atualizado em</th>
+                    <th className="py-2 pr-4">Última atualização</th>
+                    <th className="py-2 pr-4">Alterado por</th>
                     <th className="py-2 pr-4 text-right">Ações</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((i) => {
-                    const editing = editingId === i.id;
-                    return (
-                      <tr key={i.id} className="border-b border-white/5 hover:bg-white/5">
-                        <td className="py-3 pr-4 font-bold text-white">{i.label}</td>
-                        <td className="py-3 pr-4">
-                          {editing ? (
-                            <input
-                              autoFocus
-                              type="number"
-                              step="0.1"
-                              value={valor}
-                              onChange={(e) => setValor(e.target.value)}
-                              className="bg-black/60 border border-white/20 rounded px-2 py-1 w-28 text-white"
-                            />
-                          ) : (
-                            <span className="text-white/90">{i.valor ?? "—"}</span>
-                          )}
-                        </td>
-                        <td className="py-3 pr-4">
-                          {editing ? (
-                            <input
-                              type="text"
-                              value={valorExtra}
-                              onChange={(e) => setValorExtra(e.target.value)}
-                              placeholder="ex: +15%"
-                              className="bg-black/60 border border-white/20 rounded px-2 py-1 w-28 text-white"
-                            />
-                          ) : (
-                            <span className="text-white/70">{i.valor_extra ?? "—"}</span>
-                          )}
-                        </td>
-                        <td className="py-3 pr-4 text-white/60 text-xs">
-                          {new Date(i.updated_at).toLocaleString("pt-BR")}
-                        </td>
-                        <td className="py-3 pr-4">
-                          <div className="flex items-center justify-end gap-2">
-                            {editing ? (
-                              <>
-                                <button
-                                  onClick={() => save(i)}
-                                  disabled={saving}
-                                  className="flex items-center gap-1 bg-[#a7c64f] hover:bg-[#a7c64f]/90 text-black font-bold px-3 py-1.5 rounded text-xs"
-                                >
-                                  {saving ? <Loader2 className="animate-spin" size={14} /> : <Save size={14} />} Salvar
-                                </button>
-                                <button onClick={cancel} className="flex items-center gap-1 bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-xs">
-                                  <X size={14} /> Cancelar
-                                </button>
-                              </>
-                            ) : (
-                              <>
-                                <button
-                                  onClick={() => startEdit(i)}
-                                  className="flex items-center gap-1 bg-[#38b6ff]/20 hover:bg-[#38b6ff]/30 text-[#38b6ff] border border-[#38b6ff]/40 px-3 py-1.5 rounded text-xs font-bold"
-                                >
-                                  <Pencil size={14} /> Editar
-                                </button>
-                                <button
-                                  onClick={() => openHistorico(i)}
-                                  className="flex items-center gap-1 bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 px-3 py-1.5 rounded text-xs"
-                                >
-                                  <History size={14} /> Histórico
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {items.map((i) => (
+                    <tr key={i.id} className="border-b border-white/5 hover:bg-white/5">
+                      <td className="py-3 pr-4 font-bold text-white">{i.label}</td>
+                      <td className="py-3 pr-6">
+                        <InlineCell
+                          value={i.valor?.toString() ?? ""}
+                          type="number"
+                          placeholder="—"
+                          disabled={!isAdmin}
+                          onSave={(v) => saveValor(i, v)}
+                        />
+                      </td>
+                      <td className="py-3 pr-6">
+                        <InlineCell
+                          value={i.valor_extra ?? ""}
+                          type="text"
+                          placeholder="ex: +15%"
+                          disabled={!isAdmin}
+                          onSave={(v) => saveExtra(i, v)}
+                        />
+                      </td>
+                      <td className="py-3 pr-4 text-white/70 text-xs">
+                        {new Date(i.updated_at).toLocaleString("pt-BR")}
+                      </td>
+                      <td className="py-3 pr-4 text-white/70 text-xs">
+                        <span className="inline-flex items-center gap-1.5">
+                          <UserIcon size={12} className="text-white/40" />
+                          {i.updated_by_name || (i.updated_by ? "—" : "Sistema")}
+                        </span>
+                      </td>
+                      <td className="py-3 pr-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => openHistorico(i)}
+                            className="flex items-center gap-1 bg-white/5 hover:bg-white/10 text-white/80 border border-white/10 px-3 py-1.5 rounded text-xs"
+                          >
+                            <History size={14} /> Histórico
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -181,13 +213,20 @@ const Indicadores = () => {
               <h3 className="text-white font-bold text-lg">Histórico — {historicoFor.label}</h3>
               <button onClick={() => setHistoricoFor(null)} className="text-white/60 hover:text-white"><X size={20} /></button>
             </div>
-            {historico.length === 0 ? (
-              <p className="text-white/60 text-sm">Sem histórico ainda.</p>
+            {historicoLoading ? (
+              <div className="flex items-center gap-2 text-white/70"><Loader2 className="animate-spin" size={16} /> Carregando histórico…</div>
+            ) : historico.length === 0 ? (
+              <p className="text-white/60 text-sm">Sem alterações registradas ainda.</p>
             ) : (
               <div className="space-y-2">
                 {historico.map((h) => (
                   <div key={h.id} className="border border-white/10 bg-black/40 rounded p-3 text-sm">
-                    <div className="text-white/60 text-xs mb-1">{new Date(h.alterado_em).toLocaleString("pt-BR")}</div>
+                    <div className="flex items-center justify-between text-xs mb-1">
+                      <span className="text-white/60">{new Date(h.alterado_em).toLocaleString("pt-BR")}</span>
+                      <span className="inline-flex items-center gap-1 text-white/50">
+                        <UserIcon size={12} /> {h.alterado_por_name || "—"}
+                      </span>
+                    </div>
                     <div className="text-white">
                       <span className="text-red-400 line-through">{h.valor_anterior ?? "—"} {h.valor_extra_anterior ?? ""}</span>
                       {" → "}

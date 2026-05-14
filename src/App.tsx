@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import DashboardLayout from "./components/DashboardLayout";
 import DashboardHome from "./pages/DashboardHome";
 import NotFound from "./pages/NotFound";
+import Indicadores from "./pages/Indicadores";
 import { UpdatesProvider } from "./contexts/UpdatesContext";
 import Updates from "./pages/Updates";
 import Team from "./pages/Team";
@@ -39,6 +40,7 @@ const App = () => {
                   <Route index element={<DashboardHome />} />
                   <Route path="updates" element={<Updates />} />
                   <Route path="team" element={<Team />} />
+                  <Route path="indicadores" element={<Indicadores />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
