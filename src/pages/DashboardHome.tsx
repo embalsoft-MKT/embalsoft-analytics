@@ -310,7 +310,7 @@ const DashboardHome = () => {
                 {/* Fábrica */}
                 <EditableIndicator 
                   chave="fabrica" 
-                  defaultLabel="Fábrica de Software" 
+                  defaultLabel="Serviços Tech" 
                   defaultValorExtra="+10%"
                   layout="commercial" 
                   groupHoverBorder="group-hover:border-[#38b6ff]/50" 
