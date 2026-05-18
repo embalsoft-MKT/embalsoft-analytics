@@ -166,7 +166,7 @@ const Login = () => {
                 type="button"
                 className="text-sm text-primary hover:text-primary/80 transition-colors hover:underline"
               >
-                Esqueci minha senha
+                Dificuldades de acesso? Contate o administrador.
               </button>
             </div>
           </form>
