@@ -162,12 +162,12 @@ const Login = () => {
 
             {/* Forgot */}
             <div className="text-center pt-2">
-              <button
-                type="button"
-                className="text-sm text-primary hover:text-primary/80 transition-colors hover:underline"
+              <a
+                href="mailto:patricia.fernandes@embalsoft.com.br"
+                className="text-sm text-primary hover:text-primary/80 transition-colors hover:underline inline-block"
               >
                 Dificuldades de acesso? Contate o administrador.
-              </button>
+              </a>
             </div>
           </form>
         </div>
