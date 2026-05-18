@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Loader2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -18,24 +18,16 @@ import {
 } from "recharts";
 
 import OrbitalBackground from "@/components/OrbitalBackground";
+import { useIndicadores } from "@/hooks/useIndicadores";
 
 // ── Mock Data ──
 
-// Mock dos avanços
+// Mock dos avanços (estes podem vir do banco no futuro)
 const avancosData = [
   { projeto: "Embalsoft CRM 2.0", progresso: 80, cor: "bg-[#a7c64f]" },
   { projeto: "BI Nativo do ERP", progresso: 15, cor: "bg-[#38b6ff]" },
   { projeto: "Agentes de IA", progresso: 5, cor: "bg-[#38b6ff]" },
 ];
-
-// Painel Comercial (fictício)
-const erp = { valor: 12, valor_extra: "+15%" };
-const fab = { valor: 8, valor_extra: "+10%" };
-
-// Performance Operacional (fictício)
-const entregas = { valor: 45 };
-const retrabalho = { valor: 4, valor_extra: "%" };
-const chamados = { valor: 158, valor_extra: "+8%" };
 
 const implantacoes = [
   { cliente: "Ind. Nova Era", etapa: "Go Live", progresso: 100, status: "em_dia" as const, responsavel: "Marcos" },
@@ -78,6 +70,22 @@ const supportChartConfig: ChartConfig = {
 // ── Component ──
 
 const DashboardHome = () => {
+  const { byChave, loading } = useIndicadores();
+
+  const erp = byChave('erp');
+  const fab = byChave('fabrica');
+  const entregas = byChave('entregas');
+  const retrabalho = byChave('retrabalho');
+  const chamados = byChave('chamados');
+
+  if (loading) {
+    return (
+      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center text-white/50">
+        <Loader2 className="animate-spin mr-2" size={24} /> Carregando dashboard...
+      </div>
+    );
+  }
+
   return (
     <TooltipProvider delayDuration={200}>
       <div className="relative min-h-[calc(100vh-4rem)]">
@@ -106,7 +114,7 @@ const DashboardHome = () => {
                 {/* ERP */}
                 <div className="border border-white/10 bg-black/60 p-5 rounded-lg flex flex-col justify-between group-hover:border-[#f48121]/50 transition-all duration-300 relative overflow-hidden">
                   <div>
-                    <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">Novos Clientes ERP</span>
+                    <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">{erp?.label ?? "Novos Clientes ERP"}</span>
                     <div className="flex items-baseline gap-3 mt-4">
                       <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{erp?.valor ?? "—"}</span>
                       <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-sans p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{erp?.valor_extra ?? ""}</span>
@@ -116,7 +124,7 @@ const DashboardHome = () => {
                 {/* Fábrica */}
                 <div className="border border-white/10 bg-black/60 p-5 rounded-lg flex flex-col justify-between group-hover:border-[#38b6ff]/50 transition-all duration-300 relative overflow-hidden">
                   <div>
-                    <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">Fábrica de Software</span>
+                    <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md">{fab?.label ?? "Fábrica de Software"}</span>
                     <div className="flex items-baseline gap-3 mt-4">
                       <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{fab?.valor ?? "—"}</span>
                       <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-sans p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{fab?.valor_extra ?? ""}</span>
@@ -177,12 +185,12 @@ const DashboardHome = () => {
               </div>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="rounded-lg bg-black/60 border border-white/10 p-5 flex flex-col justify-center">
-                  <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">Entregas Realizadas</span>
+                  <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">{entregas?.label ?? "Entregas Realizadas"}</span>
                   <p className="text-5xl font-bold text-white mt-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">{entregas?.valor ?? "—"}</p>
                 </div>
                 <div className="rounded-lg bg-black/60 border border-white/10 p-5 flex flex-col justify-center relative overflow-hidden">
                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#f48121] to-transparent shadow-[0_0_10px_#f48121]" />
-                  <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">Retrabalho</span>
+                  <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">{retrabalho?.label ?? "Retrabalho"}</span>
                   <p className="text-5xl font-bold text-[#f48121] mt-3 drop-shadow-[0_0_15px_rgba(244,129,33,0.7)]">{retrabalho?.valor ?? "—"}{retrabalho?.valor_extra ?? "%"}</p>
                 </div>
               </div>
@@ -205,7 +213,7 @@ const DashboardHome = () => {
                 <h4 className="font-sans text-sm font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">Suporte</h4>
               </div>
               <div className="rounded-lg bg-black/60 border border-white/10 p-5 mb-6 inline-block pr-16 shadow-lg">
-                <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md block mb-3">Chamados Atendidos</span>
+                <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md block mb-3">{chamados?.label ?? "Chamados Atendidos"}</span>
                 <p className="text-5xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] flex items-baseline gap-4">
                   {chamados?.valor ?? "—"}
                   <span className="text-lg font-bold text-[#a7c64f] p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{chamados?.valor_extra ?? ""}</span>

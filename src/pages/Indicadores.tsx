@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useIndicadores, fetchHistorico, type Indicador, type IndicadorHistorico } from "@/hooks/useIndicadores";
 import { useAuth } from "@/contexts/AuthContext";
-import { History, Loader2, X, Lock, Check, User as UserIcon } from "lucide-react";
+import { History, Loader2, X, Lock, Check, User as UserIcon, Save } from "lucide-react";
 import { toast } from "sonner";
 
 const categoriaLabel: Record<string, { label: string; color: string }> = {
@@ -49,7 +50,7 @@ const InlineCell: React.FC<{
   }
 
   return (
-    <div className="relative inline-flex items-center">
+    <div className="relative inline-flex items-center gap-1 group">
       <input
         type={type}
         step={type === "number" ? "0.1" : undefined}
@@ -64,10 +65,17 @@ const InlineCell: React.FC<{
             (e.target as HTMLInputElement).blur();
           }
         }}
-        className="bg-black/60 border border-white/20 hover:border-[#38b6ff]/60 focus:border-[#38b6ff] focus:outline-none rounded px-2 py-1 w-28 text-white transition-colors"
+        className={`bg-black/60 border border-white/20 hover:border-[#38b6ff]/60 focus:border-[#38b6ff] focus:outline-none rounded px-2 py-1 text-white transition-colors ${type === 'number' ? 'w-24' : 'w-40'}`}
       />
-      {saving && <Loader2 size={14} className="animate-spin text-[#38b6ff] absolute -right-5" />}
-      {!saving && savedFlash && <Check size={14} className="text-[#a7c64f] absolute -right-5" />}
+      <button 
+        onMouseDown={(e) => { e.preventDefault(); commit(); }}
+        className={`p-1 rounded text-white/50 hover:text-[#38b6ff] hover:bg-white/10 transition-all ${draft === initial.current ? 'opacity-0 pointer-events-none' : 'opacity-100'} group-hover:opacity-100`}
+        title="Salvar"
+      >
+        <Save size={14} />
+      </button>
+      {saving && <Loader2 size={14} className="animate-spin text-[#38b6ff] absolute -right-6" />}
+      {!saving && savedFlash && <Check size={14} className="text-[#a7c64f] absolute -right-6" />}
     </div>
   );
 };
@@ -75,9 +83,16 @@ const InlineCell: React.FC<{
 const Indicadores = () => {
   const { indicadores, loading, updateIndicador } = useIndicadores();
   const { isAdmin } = useAuth();
+  const navigate = useNavigate();
   const [historicoFor, setHistoricoFor] = useState<Indicador | null>(null);
   const [historico, setHistorico] = useState<IndicadorHistorico[]>([]);
   const [historicoLoading, setHistoricoLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAdmin === false) {
+      navigate('/dashboard');
+    }
+  }, [isAdmin, navigate]);
 
   const openHistorico = async (i: Indicador) => {
     setHistoricoFor(i);
@@ -93,14 +108,19 @@ const Indicadores = () => {
     }
   };
 
+  const saveLabel = async (i: Indicador, raw: string) => {
+    if (!raw.trim()) throw new Error("O nome do indicador não pode ser vazio");
+    await updateIndicador(i.id, i.valor, i.valor_extra, raw);
+  };
+
   const saveValor = async (i: Indicador, raw: string) => {
     const num = raw === "" ? null : Number(raw);
     if (num !== null && Number.isNaN(num)) throw new Error("Valor inválido");
-    await updateIndicador(i.id, num, i.valor_extra);
+    await updateIndicador(i.id, num, i.valor_extra, i.label);
   };
 
   const saveExtra = async (i: Indicador, raw: string) => {
-    await updateIndicador(i.id, i.valor, raw || null);
+    await updateIndicador(i.id, i.valor, raw || null, i.label);
   };
 
   const grouped = indicadores.reduce<Record<string, Indicador[]>>((acc, i) => {
@@ -159,7 +179,15 @@ const Indicadores = () => {
                 <tbody>
                   {items.map((i) => (
                     <tr key={i.id} className="border-b border-white/5 hover:bg-white/5">
-                      <td className="py-3 pr-4 font-bold text-white">{i.label}</td>
+                      <td className="py-3 pr-4 font-bold text-white">
+                        <InlineCell
+                          value={i.label}
+                          type="text"
+                          placeholder="Nome do Indicador"
+                          disabled={!isAdmin}
+                          onSave={(v) => saveLabel(i, v)}
+                        />
+                      </td>
                       <td className="py-3 pr-6">
                         <InlineCell
                           value={i.valor?.toString() ?? ""}

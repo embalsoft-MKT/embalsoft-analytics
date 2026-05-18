@@ -66,11 +66,11 @@ export const useIndicadores = () => {
   }, [fetchAll]);
 
   const updateIndicador = useCallback(
-    async (id: string, valor: number | null, valor_extra: string | null) => {
+    async (id: string, valor: number | null, valor_extra: string | null, label: string) => {
       const { data: { user } } = await supabase.auth.getUser();
       const { error } = await supabase
         .from("indicadores")
-        .update({ valor, valor_extra, updated_by: user?.id ?? null })
+        .update({ valor, valor_extra, label, updated_by: user?.id ?? null })
         .eq("id", id);
       if (error) throw error;
       await fetchAll();
