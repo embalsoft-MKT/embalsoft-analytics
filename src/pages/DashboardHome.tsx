@@ -195,7 +195,7 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
   const renderEditButton = () => isAdmin && (
     <button 
       onClick={handleEdit}
-      className="absolute top-2 right-2 p-1.5 rounded-md bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/15 text-white/70 hover:text-white z-20"
+      className="absolute top-2 right-2 p-1.5 rounded-md bg-white/5 opacity-40 group-hover:opacity-100 transition-opacity hover:bg-white/15 text-white/70 hover:text-white z-20"
       title="Editar"
     >
       <Edit2 size={14} />
@@ -203,7 +203,7 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
   );
 
   const renderFooterInfo = () => isAdmin && indicador?.updated_at && (
-    <div className="absolute bottom-2 right-2 text-[9px] text-white/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-20">
+    <div className="absolute bottom-2 right-2 text-[9px] text-white/40 opacity-50 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-20">
       <UserIcon size={9}/> {indicador.updated_by_name || 'Admin'}
     </div>
   );
