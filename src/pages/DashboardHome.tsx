@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Loader2 } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -70,21 +70,13 @@ const supportChartConfig: ChartConfig = {
 // ── Component ──
 
 const DashboardHome = () => {
-  const { byChave, loading } = useIndicadores();
+  const { byChave } = useIndicadores();
 
   const erp = byChave('erp');
   const fab = byChave('fabrica');
   const entregas = byChave('entregas');
   const retrabalho = byChave('retrabalho');
   const chamados = byChave('chamados');
-
-  if (loading) {
-    return (
-      <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center text-white/50">
-        <Loader2 className="animate-spin mr-2" size={24} /> Carregando dashboard...
-      </div>
-    );
-  }
 
   return (
     <TooltipProvider delayDuration={200}>
