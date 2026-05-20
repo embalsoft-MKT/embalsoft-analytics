@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail } from "lucide-react";
 import logoEmbalsoft from "@/assets/logo-embalsoft.png";
 import OrbitalBackground from "@/components/OrbitalBackground";
 import { supabase } from "@/lib/supabase";
@@ -164,8 +164,9 @@ const Login = () => {
             <div className="text-center pt-2">
               <a
                 href="mailto:patricia.fernandes@embalsoft.com.br"
-                className="text-sm text-primary hover:text-primary/80 transition-colors hover:underline inline-block"
+                className="text-sm text-primary hover:text-primary/80 transition-colors hover:underline inline-flex items-center gap-2"
               >
+                <Mail size={16} />
                 Dificuldades de acesso? Contate o administrador.
               </a>
             </div>
