@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail } from "lucide-react";
 import logoEmbalsoft from "@/assets/logo-embalsoft.png";
 import OrbitalBackground from "@/components/OrbitalBackground";
 import { supabase } from "@/lib/supabase";
