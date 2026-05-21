@@ -70,7 +70,7 @@ const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => voi
                 )}
               </div>
               
-              {(
+              {isAdmin && (
                 <div className="flex items-center gap-2 transition-opacity">
                   <button 
                     onClick={handleEdit}
@@ -268,15 +268,17 @@ const Updates = () => {
           </div>
         </div>
 
-        <button
-          onClick={() => { setEditingId(null); setShowPostModal(true); }}
-          className="mt-6 w-full flex items-center justify-center gap-4 text-sm font-mono font-black uppercase tracking-[0.2em] bg-[#38b6ff] text-[#0f172a] hover:bg-[#38b6ff]/90 px-4 py-5 rounded-2xl transition-all duration-300 shadow-[0_15px_35px_rgba(56,182,255,0.3)] hover:shadow-[0_20px_45px_rgba(56,182,255,0.4)] hover:-translate-y-1 active:translate-y-0.5"
-        >
-          <div className="bg-[#0f172a] rounded-full p-1.5 shadow-inner">
-            <Plus size={20} strokeWidth={3} className="text-[#38b6ff]" />
-          </div>
-          Nova Postagem
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => { setEditingId(null); setShowPostModal(true); }}
+            className="mt-6 w-full flex items-center justify-center gap-4 text-sm font-mono font-black uppercase tracking-[0.2em] bg-[#38b6ff] text-[#0f172a] hover:bg-[#38b6ff]/90 px-4 py-5 rounded-2xl transition-all duration-300 shadow-[0_15px_35px_rgba(56,182,255,0.3)] hover:shadow-[0_20px_45px_rgba(56,182,255,0.4)] hover:-translate-y-1 active:translate-y-0.5"
+          >
+            <div className="bg-[#0f172a] rounded-full p-1.5 shadow-inner">
+              <Plus size={20} strokeWidth={3} className="text-[#38b6ff]" />
+            </div>
+            Nova Postagem
+          </button>
+        )}
       </aside>
 
       {/* Main Feed area */}
@@ -320,9 +322,10 @@ const Updates = () => {
             className={cn(
               "px-4 py-2 rounded-full text-xs md:text-sm font-bold font-mono tracking-wider border-2 transition-all duration-300",
               filter === cat 
-                ? cn(categoryConfig[cat].border, categoryConfig[cat].bg, categoryConfig[cat].color, `shadow-[0_0_15px_${categoryConfig[cat].bg.split('/')[0]}] scale-105`) 
+                ? cn(categoryConfig[cat].border, categoryConfig[cat].bg, categoryConfig[cat].color, "scale-105") 
                 : "border-white/10 text-muted-foreground hover:border-white/30 hover:text-white bg-black/40"
             )}
+            style={filter === cat ? { boxShadow: `0 0 15px ${categoryConfig[cat].bg.split('/')[0]}` } : undefined}
           >
             {cat}
           </button>
