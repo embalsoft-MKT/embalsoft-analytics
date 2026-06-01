@@ -380,9 +380,12 @@ const DashboardHome = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
             {/* Desenvolvimento */}
             <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300">
-              <div className="flex items-center gap-3 mb-5">
-                <Code2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
-                <h4 className="font-sans text-sm font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">Desenvolvimento e QA</h4>
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-3">
+                  <Code2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
+                  <h4 className="font-sans text-sm font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">Desenvolvimento e QA</h4>
+                </div>
+                <ReportButton />
               </div>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <EditableIndicator 
