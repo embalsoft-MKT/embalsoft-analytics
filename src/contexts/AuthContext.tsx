@@ -75,7 +75,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     profile,
     loading,
-    isAdmin: profile?.role === 'admin' || user?.email === 'embalsofterp@gmail.com',
+    isAdmin:
+      profile?.role === 'admin' ||
+      [
+        'embalsofterp@gmail.com',
+        'embalsoft.erp@gmail.com',
+        'patricia.fernandes@embalsoft.com.br',
+      ].includes((user?.email || '').toLowerCase()),
     signOut
   };
 
