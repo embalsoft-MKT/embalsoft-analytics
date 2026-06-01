@@ -81,9 +81,10 @@ const supportChartConfig: ChartConfig = {
 
 // ── Component ──
 
-const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, groupHoverBorder }: { 
+const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtra, layout, groupHoverBorder }: { 
   chave: string, 
   defaultLabel: string, 
+  defaultValue: number,
   defaultValorExtra?: string,
   layout: "commercial" | "operacional" | "retrabalho" | "suporte",
   groupHoverBorder?: string 
@@ -101,13 +102,14 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
   useEffect(() => {
     if (indicador) {
       setDraftLabel(indicador.label || defaultLabel);
-      setDraftValor(indicador.valor?.toString() ?? "");
+      setDraftValor(indicador.valor !== null && indicador.valor !== undefined ? indicador.valor.toString() : defaultValue.toString());
       setDraftExtra(indicador.valor_extra ?? "");
     } else {
       setDraftLabel(defaultLabel);
+      setDraftValor(defaultValue.toString());
       setDraftExtra(defaultValorExtra || "");
     }
-  }, [indicador, defaultLabel, defaultValorExtra]);
+  }, [indicador, defaultLabel, defaultValue, defaultValorExtra]);
 
   const handleEdit = () => {
     if (!isAdmin) return;
@@ -118,24 +120,37 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
     setEditing(false);
     if (indicador) {
       setDraftLabel(indicador.label || defaultLabel);
-      setDraftValor(indicador.valor?.toString() ?? "");
+      setDraftValor(indicador.valor !== null && indicador.valor !== undefined ? indicador.valor.toString() : defaultValue.toString());
       setDraftExtra(indicador.valor_extra ?? "");
+    } else {
+      setDraftLabel(defaultLabel);
+      setDraftValor(defaultValue.toString());
+      setDraftExtra(defaultValorExtra || "");
     }
   };
 
   const handleSave = async () => {
-    if (!indicador) {
-       toast.error("Indicador não encontrado no banco.");
-       return;
-    }
     setSaving(true);
     try {
       const num = draftValor === "" ? null : Number(draftValor);
       if (num !== null && Number.isNaN(num)) throw new Error("Valor inválido");
       if (!draftLabel.trim()) throw new Error("Título não pode ser vazio");
       
-      await updateIndicador(indicador.id, num, draftExtra || null, draftLabel);
-      toast.success("Indicador atualizado!");
+      let categoria: "comercial" | "avancos" | "operacional" = "comercial";
+      let ordem = 1;
+      
+      if (layout === "commercial") {
+        categoria = "comercial";
+        ordem = chave === "erp" ? 1 : 2;
+      } else {
+        categoria = "operacional";
+        if (chave === "entregas") ordem = 1;
+        else if (chave === "retrabalho") ordem = 2;
+        else if (chave === "chamados") ordem = 3;
+      }
+      
+      await updateIndicador(chave, num, draftExtra || null, draftLabel, categoria, ordem);
+      toast.success("Salvo com sucesso!");
       setEditing(false);
     } catch (e: any) {
       toast.error(e.message || "Erro ao salvar indicador");
@@ -145,7 +160,7 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
   };
 
   const displayLabel = indicador?.label || defaultLabel;
-  const displayValor = indicador?.valor ?? "—";
+  const displayValor = indicador?.valor !== null && indicador?.valor !== undefined ? indicador.valor : defaultValue;
   const displayExtra = indicador?.valor_extra ?? defaultValorExtra ?? "";
 
   if (editing) {
@@ -169,7 +184,12 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
              />
              <input 
                value={draftExtra}
-               onChange={e => setDraftExtra(e.target.value)}
+               onChange={e => {
+                 const val = e.target.value;
+                 if (/^[0-9+\-%↑↓.,\s]*$/.test(val)) {
+                   setDraftExtra(val);
+                 }
+               }}
                className="w-full bg-black/50 border border-white/20 rounded px-2 py-1 text-sm font-bold text-[#a7c64f] focus:border-[#38b6ff] outline-none"
                placeholder="Extra (%)"
              />
@@ -271,12 +291,7 @@ const DashboardHome = () => {
     <TooltipProvider delayDuration={200}>
       <div className="relative min-h-[calc(100vh-4rem)]">
         
-        {/* DEBUG TEMPORÁRIO */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 z-50 bg-black/80 border border-[#f48121] text-[#f48121] px-4 py-2 rounded-md text-xs font-mono flex gap-4 shadow-lg backdrop-blur-md">
-           <span>LOGADO COMO: {profile?.full_name || 'Desconhecido'}</span>
-           <span>ROLE: {profile?.role || 'Nenhuma'}</span>
-           <span>IS_ADMIN: {isAdmin ? 'SIM' : 'NÃO'}</span>
-        </div>
+        {/* Banner de debug removido */}
 
         {/* Fundo Espacial Tech (HUD Backdrop) */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-40 overflow-hidden mix-blend-screen">
@@ -303,6 +318,7 @@ const DashboardHome = () => {
                 <EditableIndicator 
                   chave="erp" 
                   defaultLabel="Novos Clientes ERP" 
+                  defaultValue={12}
                   defaultValorExtra="+15%"
                   layout="commercial" 
                   groupHoverBorder="group-hover:border-[#f48121]/50" 
@@ -311,6 +327,7 @@ const DashboardHome = () => {
                 <EditableIndicator 
                   chave="fabrica" 
                   defaultLabel="Serviços Tech" 
+                  defaultValue={8}
                   defaultValorExtra="+10%"
                   layout="commercial" 
                   groupHoverBorder="group-hover:border-[#38b6ff]/50" 
@@ -371,11 +388,13 @@ const DashboardHome = () => {
                 <EditableIndicator 
                   chave="entregas" 
                   defaultLabel="Entregas Realizadas" 
+                  defaultValue={45}
                   layout="operacional" 
                 />
                 <EditableIndicator 
                   chave="retrabalho" 
                   defaultLabel="Retrabalho" 
+                  defaultValue={4}
                   defaultValorExtra="%"
                   layout="retrabalho" 
                 />
@@ -401,6 +420,7 @@ const DashboardHome = () => {
               <EditableIndicator 
                 chave="chamados" 
                 defaultLabel="Chamados Atendidos" 
+                defaultValue={158}
                 defaultValorExtra="+8%"
                 layout="suporte" 
               />
