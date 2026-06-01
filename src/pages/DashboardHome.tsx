@@ -100,13 +100,6 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
   layout: "commercial" | "operacional" | "retrabalho" | "suporte",
   groupHoverBorder?: string 
 }) => {
-const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, groupHoverBorder }: { 
-  chave: string, 
-  defaultLabel: string, 
-  defaultValorExtra?: string,
-  layout: "commercial" | "operacional" | "retrabalho" | "suporte",
-  groupHoverBorder?: string 
-}) => {
   const { isAdmin } = useAuth();
   const { byChave, updateIndicador } = useIndicadores();
   const indicador = byChave(chave);
