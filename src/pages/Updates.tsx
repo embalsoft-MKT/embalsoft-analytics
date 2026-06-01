@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUpdates, Category, UpdateItem } from "../contexts/UpdatesContext";
 import { useLocation } from "react-router-dom";
-import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2, X, Upload, FileText, Trash2, Edit3, User } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2, X, Upload, FileText, Trash2, Edit3, User, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -38,6 +38,14 @@ const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => voi
     onEdit(item);
   };
 
+  const isScheduledInFuture = item.scheduledDate && new Date(item.scheduledDate) > new Date();
+  
+  const displayDate = item.scheduledDate 
+    ? (isScheduledInFuture
+        ? `Agendado: ${new Date(item.scheduledDate).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}`
+        : new Date(item.scheduledDate).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }))
+    : item.date;
+
   return (
     <div 
       className={cn(
@@ -63,10 +71,13 @@ const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => voi
                 </span>
                 <span className="flex items-center gap-1.5 text-xs font-mono text-muted-foreground">
                   <Calendar size={14} />
-                  {item.date}
+                  {displayDate}
                 </span>
-                {!item.read && (
+                {!item.read && !isScheduledInFuture && (
                   <span className="animate-pulse bg-white text-black text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest shadow-[0_0_10px_rgba(255,255,255,0.8)]">Novo</span>
+                )}
+                {isScheduledInFuture && (
+                  <span className="bg-[#f48121]/20 border border-[#f48121]/50 text-[#f48121] text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-widest shadow-[0_0_10px_rgba(244,129,33,0.2)]">Agendado</span>
                 )}
               </div>
               
@@ -100,13 +111,18 @@ const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => voi
 
             {/* Author Info */}
             <div className="mt-4 flex items-center gap-3 border-t border-white/5 pt-4">
-              {item.authorPhoto ? (
-                <img src={item.authorPhoto} alt={item.authorName} className="w-6 h-6 rounded-full border border-white/10" />
-              ) : (
-                <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-white/40">
-                  <User size={12} />
-                </div>
-              )}
+              {(() => {
+                const photo = (item.authorName?.toLowerCase().includes('embalsoft') || item.authorName?.toLowerCase() === 'admin')
+                  ? '/icon-e.png'
+                  : item.authorPhoto;
+                return photo ? (
+                  <img src={photo} alt={item.authorName} className="w-6 h-6 rounded-full border border-white/10 bg-white/10 object-contain p-0.5" />
+                ) : (
+                  <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-white/40">
+                    <User size={12} />
+                  </div>
+                );
+              })()}
               <span className="text-[10px] font-bold font-mono text-white/40 uppercase tracking-widest">
                 Postado por: <span className="text-white/60">{item.authorName || 'Sistema'}</span>
               </span>
@@ -169,7 +185,7 @@ const Updates = () => {
   const [filter, setFilter] = useState<Category | 'Todas'>('Todas');
   const [showPostModal, setShowPostModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [showLinksPopover, setShowLinksPopover] = useState(false);
+  const [shouldSchedule, setShouldSchedule] = useState(false);
   const [newPost, setNewPost] = useState({
     title: '',
     category: 'Comunicado' as Category,
@@ -177,7 +193,8 @@ const Updates = () => {
     fullContent: '',
     imageUrl: '',
     fileUrl: '',
-    link: ''
+    link: '',
+    scheduledDate: ''
   });
 
   const location = useLocation();
@@ -194,14 +211,19 @@ const Updates = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const postData = {
+      ...newPost,
+      scheduledDate: shouldSchedule ? newPost.scheduledDate : ''
+    };
+
     if (editingId) {
-      updateUpdate(editingId, newPost);
+      updateUpdate(editingId, postData);
       setEditingId(null);
     } else {
       addUpdate({
-        ...newPost,
-        authorName: user?.user_metadata?.full_name || 'Usuário',
-        authorPhoto: user?.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop'
+        ...postData,
+        authorName: user?.user_metadata?.full_name || 'Adm Embalsoft',
+        authorPhoto: user?.user_metadata?.avatar_url || '/icon-e.png'
       });
     }
     setShowPostModal(false);
@@ -212,8 +234,10 @@ const Updates = () => {
       fullContent: '',
       imageUrl: '',
       fileUrl: '',
-      link: ''
+      link: '',
+      scheduledDate: ''
     });
+    setShouldSchedule(false);
   };
 
   const handleEdit = (item: UpdateItem) => {
@@ -224,13 +248,34 @@ const Updates = () => {
       fullContent: item.fullContent || '',
       imageUrl: item.imageUrl || '',
       fileUrl: item.fileUrl || '',
-      link: item.link || ''
+      link: item.link || '',
+      scheduledDate: item.scheduledDate || ''
     });
+    setShouldSchedule(!!item.scheduledDate);
     setEditingId(item.id);
     setShowPostModal(true);
   };
 
-  const filteredUpdates = updates.filter(u => filter === 'Todas' || u.category === filter);
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setNewPost(prev => ({ ...prev, imageUrl: reader.result as string }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const filteredUpdates = updates.filter(u => {
+    const matchesFilter = filter === 'Todas' || u.category === filter;
+    if (!matchesFilter) return false;
+
+    // Se estiver agendado no futuro, apenas administradores podem visualizar
+    if (u.scheduledDate && new Date(u.scheduledDate) > new Date()) {
+      return isAdmin;
+    }
+    return true;
+  });
 
   return (
     <div className="w-full max-w-7xl mx-auto pb-12 animate-fade-in-up flex flex-col lg:flex-row-reverse gap-8">
@@ -270,7 +315,7 @@ const Updates = () => {
 
         {isAdmin && (
           <button
-            onClick={() => { setEditingId(null); setShowPostModal(true); }}
+            onClick={() => { setEditingId(null); setShouldSchedule(false); setShowPostModal(true); }}
             className="mt-6 w-full flex items-center justify-center gap-4 text-sm font-mono font-black uppercase tracking-[0.2em] bg-[#38b6ff] text-[#0f172a] hover:bg-[#38b6ff]/90 px-4 py-5 rounded-2xl transition-all duration-300 shadow-[0_15px_35px_rgba(56,182,255,0.3)] hover:shadow-[0_20px_45px_rgba(56,182,255,0.4)] hover:-translate-y-1 active:translate-y-0.5"
           >
             <div className="bg-[#0f172a] rounded-full p-1.5 shadow-inner">
@@ -306,8 +351,6 @@ const Updates = () => {
           {/* Header post button removed, moved to sidebar */}
         </div>
       </div>
-
-      {/* Removed Popover as it's now back in the sidebar */}
 
 
       {/* Tech Pills Filters */}
@@ -414,18 +457,47 @@ const Updates = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold font-mono text-[#38b6ff] uppercase tracking-wider flex items-center gap-2">
-                    <ImageIcon size={12} /> URL da Imagem
-                  </label>
-                  <input 
-                    value={newPost.imageUrl}
-                    onChange={e => setNewPost({...newPost, imageUrl: e.target.value})}
-                    className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-[#38b6ff] outline-none transition-all text-xs"
-                    placeholder="https://..."
-                  />
+              {/* Upload de Imagem */}
+              <div className="space-y-1.5 border border-white/5 bg-black/20 p-4 rounded-xl">
+                <label className="text-[10px] font-bold font-mono text-[#38b6ff] uppercase tracking-wider flex items-center gap-2">
+                  <ImageIcon size={12} /> Imagem do Informativo
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-2">
+                    <input 
+                      value={newPost.imageUrl}
+                      onChange={e => setNewPost({...newPost, imageUrl: e.target.value})}
+                      className="w-full bg-black/40 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-[#38b6ff] outline-none transition-all text-xs"
+                      placeholder="Cole a URL da imagem (opcional)..."
+                    />
+                    <span className="text-[10px] text-muted-foreground text-center font-mono">OU</span>
+                    <div className="relative border-2 border-dashed border-white/10 hover:border-[#38b6ff]/50 rounded-lg p-4 flex flex-col items-center justify-center cursor-pointer transition-colors bg-black/20 group">
+                      <input 
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <Upload size={20} className="text-white/40 group-hover:text-[#38b6ff] mb-2 transition-colors" />
+                      <span className="text-xs font-sans text-white/60 group-hover:text-white transition-colors">Fazer upload de imagem</span>
+                    </div>
+                  </div>
+                  {newPost.imageUrl && (
+                    <div className="relative rounded-lg overflow-hidden border border-white/10 h-32 flex items-center justify-center bg-black/40">
+                      <img src={newPost.imageUrl} alt="Preview" className="max-h-full max-w-full object-contain p-1" />
+                      <button 
+                        type="button" 
+                        onClick={() => setNewPost(prev => ({ ...prev, imageUrl: '' }))}
+                        className="absolute top-2 right-2 p-1 rounded bg-black/70 hover:bg-red-500 text-white transition-colors"
+                      >
+                        <X size={14} />
+                      </button>
+                    </div>
+                  )}
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold font-mono text-[#38b6ff] uppercase tracking-wider flex items-center gap-2">
                     <FileText size={12} /> URL do PDF
@@ -439,10 +511,38 @@ const Updates = () => {
                 </div>
               </div>
 
+              {/* Opção de Agendamento */}
+              <div className="border border-white/5 bg-black/20 p-4 rounded-xl space-y-3">
+                <div className="flex items-center gap-3">
+                  <input 
+                    type="checkbox"
+                    id="shouldSchedule"
+                    checked={shouldSchedule}
+                    onChange={e => setShouldSchedule(e.target.checked)}
+                    className="w-4 h-4 rounded border-white/10 bg-black/40 text-[#38b6ff] focus:ring-0"
+                  />
+                  <label htmlFor="shouldSchedule" className="text-xs font-bold font-mono text-white/80 cursor-pointer select-none">
+                    PROGRAMAR PUBLICAÇÃO (POST AGENDADO)
+                  </label>
+                </div>
+                {shouldSchedule && (
+                  <div className="space-y-1.5 animate-fade-in pl-7">
+                    <label className="text-[10px] font-bold font-mono text-[#38b6ff] uppercase tracking-wider">Data e Hora de Publicação</label>
+                    <input 
+                      type="datetime-local"
+                      required={shouldSchedule}
+                      value={newPost.scheduledDate}
+                      onChange={e => setNewPost({...newPost, scheduledDate: e.target.value})}
+                      className="bg-black/40 border border-white/10 rounded-lg px-4 py-2 text-white focus:border-[#38b6ff] outline-none transition-all text-xs font-mono"
+                    />
+                  </div>
+                )}
+              </div>
+
               <div className="pt-4 flex gap-4">
                 <button 
                   type="button"
-                  onClick={() => setShowPostModal(false)}
+                  onClick={() => { setShowPostModal(false); setEditingId(null); }}
                   className="flex-1 px-6 py-3 border border-white/10 rounded-xl font-bold font-mono text-white/60 hover:bg-white/5 transition-all"
                 >
                   CANCELAR

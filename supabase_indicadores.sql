@@ -91,3 +91,47 @@ insert into public.indicadores (chave, label, categoria, valor, valor_extra, ord
   ('op_retrabalho',       'Retrabalho',          'operacional',8.5, '%',    2),
   ('op_chamados',         'Chamados Atendidos',  'operacional',555, '↑12%', 3)
 on conflict (chave) do nothing;
+
+-- ============================================================
+-- Tabela: informativos (Updates / Avisos)
+-- ============================================================
+
+create table if not exists public.informativos (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  category text not null,
+  date text not null,
+  short_description text not null,
+  full_content text,
+  link text,
+  image_url text,
+  file_url text,
+  author_name text,
+  author_photo text,
+  scheduled_date timestamptz,
+  created_at timestamptz not null default now()
+);
+
+-- RLS para informativos
+alter table public.informativos enable row level security;
+
+-- Policies para informativos
+drop policy if exists "inf_select" on public.informativos;
+create policy "inf_select" on public.informativos for select to authenticated using (true);
+
+drop policy if exists "inf_all_admin" on public.informativos;
+create policy "inf_all_admin" on public.informativos for all to authenticated using (
+  exists (
+    select 1 from public.profiles 
+    where profiles.id = auth.uid() and profiles.role = 'admin'
+  ) or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
+) with check (
+  exists (
+    select 1 from public.profiles 
+    where profiles.id = auth.uid() and profiles.role = 'admin'
+  ) or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
+);
+
+-- Grants para informativos
+grant all privileges on public.informativos to authenticated, service_role;
+
