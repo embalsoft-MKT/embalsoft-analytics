@@ -296,18 +296,11 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
 };
 
 const DashboardHome = () => {
-  const { isAdmin, profile } = useAuth();
-
   return (
     <TooltipProvider delayDuration={200}>
       <div className="relative min-h-[calc(100vh-4rem)]">
-        
-        {/* DEBUG TEMPORÁRIO */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 z-50 bg-black/80 border border-[#f48121] text-[#f48121] px-4 py-2 rounded-md text-xs font-mono flex gap-4 shadow-lg backdrop-blur-md">
-           <span>LOGADO COMO: {profile?.full_name || 'Desconhecido'}</span>
-           <span>ROLE: {profile?.role || 'Nenhuma'}</span>
-           <span>IS_ADMIN: {isAdmin ? 'SIM' : 'NÃO'}</span>
-        </div>
+
+
 
         {/* Fundo Espacial Tech (HUD Backdrop) */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-40 overflow-hidden mix-blend-screen">
