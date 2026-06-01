@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -19,9 +19,21 @@ import {
 
 import OrbitalBackground from "@/components/OrbitalBackground";
 import { useAuth } from "@/contexts/AuthContext";
-import { useIndicadores } from "@/hooks/useIndicadores";
+import { useIndicadores, fetchHistorico } from "@/hooks/useIndicadores";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+
+// Botão de relatório padrão (desativado por enquanto)
+const ReportButton = () => (
+  <button
+    disabled
+    title="Em breve"
+    className="flex items-center gap-2 text-[11px] font-sans font-bold text-white/60 bg-black/40 border border-white/15 px-2.5 py-1.5 rounded-md opacity-60 cursor-not-allowed"
+  >
+    <Download size={12} className="text-[#38b6ff]/70" />
+    BAIXAR RELATÓRIO
+  </button>
+);
 
 // ── Mock Data ──
 
