@@ -371,11 +371,8 @@ const DashboardHome = () => {
               <div className="w-2 h-6 bg-[#38b6ff] rounded-sm shadow-[0_0_12px_#38b6ff]" />
               <h3 className="font-mono text-base font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">PERFORMANCE OPERACIONAL</h3>
             </div>
-            <button className="flex items-center gap-2 text-xs font-sans font-bold text-white bg-black/50 border border-white/20 hover:border-[#38b6ff]/60 hover:bg-[#38b6ff]/20 px-3 py-2 rounded-md transition-all duration-300 shadow-[0_0_10px_rgba(0,0,0,0.5)] cursor-pointer">
-               <Download size={14} className="text-[#38b6ff]" />
-               BAIXAR RELATÓRIO
-            </button>
           </div>
+
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
             {/* Desenvolvimento */}
