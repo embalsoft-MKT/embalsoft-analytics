@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon, TrendingUp, TrendingDown } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -19,9 +19,21 @@ import {
 
 import OrbitalBackground from "@/components/OrbitalBackground";
 import { useAuth } from "@/contexts/AuthContext";
-import { useIndicadores } from "@/hooks/useIndicadores";
+import { useIndicadores, fetchHistorico } from "@/hooks/useIndicadores";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+
+// Botão de relatório padrão (desativado por enquanto)
+const ReportButton = () => (
+  <button
+    disabled
+    title="Em breve"
+    className="flex items-center gap-2 text-[11px] font-sans font-bold text-white/60 bg-black/40 border border-white/15 px-2.5 py-1.5 rounded-md opacity-60 cursor-not-allowed"
+  >
+    <Download size={12} className="text-[#38b6ff]/70" />
+    BAIXAR RELATÓRIO
+  </button>
+);
 
 // ── Mock Data ──
 
@@ -93,21 +105,26 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
   const indicador = byChave(chave);
 
   const [editing, setEditing] = useState(false);
-  const [draftLabel, setDraftLabel] = useState("");
   const [draftValor, setDraftValor] = useState("");
-  const [draftExtra, setDraftExtra] = useState("");
   const [saving, setSaving] = useState(false);
+  const [prevValor, setPrevValor] = useState<number | null>(null);
+
+  // Carrega o último valor anterior para calcular % automática
+  useEffect(() => {
+    if (!indicador) return;
+    fetchHistorico(indicador.id)
+      .then((h) => {
+        const last = h.find((x) => x.valor_anterior !== null);
+        setPrevValor(last?.valor_anterior ?? null);
+      })
+      .catch(() => setPrevValor(null));
+  }, [indicador?.id, indicador?.updated_at]);
 
   useEffect(() => {
     if (indicador) {
-      setDraftLabel(indicador.label || defaultLabel);
       setDraftValor(indicador.valor?.toString() ?? "");
-      setDraftExtra(indicador.valor_extra ?? "");
-    } else {
-      setDraftLabel(defaultLabel);
-      setDraftExtra(defaultValorExtra || "");
     }
-  }, [indicador, defaultLabel, defaultValorExtra]);
+  }, [indicador]);
 
   const handleEdit = () => {
     if (!isAdmin) return;
@@ -116,12 +133,20 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
 
   const handleCancel = () => {
     setEditing(false);
-    if (indicador) {
-      setDraftLabel(indicador.label || defaultLabel);
-      setDraftValor(indicador.valor?.toString() ?? "");
-      setDraftExtra(indicador.valor_extra ?? "");
-    }
+    if (indicador) setDraftValor(indicador.valor?.toString() ?? "");
   };
+
+  // Calcula porcentagem automática com base no histórico
+  const computedExtra = (() => {
+    if (layout === "retrabalho") return defaultValorExtra || "%";
+    const atual = indicador?.valor ?? null;
+    if (atual === null || prevValor === null || prevValor === 0) {
+      return defaultValorExtra || "";
+    }
+    const pct = ((atual - prevValor) / Math.abs(prevValor)) * 100;
+    const sign = pct >= 0 ? "+" : "";
+    return `${sign}${pct.toFixed(0)}%`;
+  })();
 
   const handleSave = async () => {
     if (!indicador) {
@@ -132,9 +157,8 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
     try {
       const num = draftValor === "" ? null : Number(draftValor);
       if (num !== null && Number.isNaN(num)) throw new Error("Valor inválido");
-      if (!draftLabel.trim()) throw new Error("Título não pode ser vazio");
       
-      await updateIndicador(indicador.id, num, draftExtra || null, draftLabel);
+      await updateIndicador(indicador.id, num, computedExtra || null, indicador.label || defaultLabel);
       toast.success("Indicador atualizado!");
       setEditing(false);
     } catch (e: any) {
@@ -146,67 +170,55 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
 
   const displayLabel = indicador?.label || defaultLabel;
   const displayValor = indicador?.valor ?? "—";
-  const displayExtra = indicador?.valor_extra ?? defaultValorExtra ?? "";
+  const displayExtra = computedExtra;
+  const isPositive = displayExtra.startsWith("+");
+  const isNegative = displayExtra.startsWith("-");
 
-  if (editing) {
-    return (
-      <div className="border border-[#38b6ff]/40 bg-black/80 p-4 rounded-lg flex flex-col justify-between relative shadow-[0_0_15px_rgba(56,182,255,0.15)] animate-fade-in w-full h-full min-h-[140px]">
-        <div className="space-y-2 flex-1">
-           <input 
-             value={draftLabel}
-             onChange={e => setDraftLabel(e.target.value)}
-             className="w-full bg-black/50 border border-white/20 rounded px-2 py-1 text-xs font-bold font-sans text-white/90 uppercase tracking-wider focus:border-[#38b6ff] outline-none"
-             placeholder="Título"
-           />
-           <div className="flex gap-2">
-             <input 
-               type="number"
-               step="0.1"
-               value={draftValor}
-               onChange={e => setDraftValor(e.target.value)}
-               className="w-full bg-black/50 border border-white/20 rounded px-2 py-1 text-lg font-bold text-white focus:border-[#38b6ff] outline-none"
-               placeholder="Valor"
-             />
-             <input 
-               value={draftExtra}
-               onChange={e => setDraftExtra(e.target.value)}
-               className="w-full bg-black/50 border border-white/20 rounded px-2 py-1 text-sm font-bold text-[#a7c64f] focus:border-[#38b6ff] outline-none"
-               placeholder="Extra (%)"
-             />
-           </div>
-        </div>
-        
-        <div className="flex justify-between items-center mt-2 border-t border-white/10 pt-2">
-           <div className="text-[9px] text-white/30 flex items-center gap-1">
-             {indicador?.updated_at && <><Clock size={9}/> {new Date(indicador.updated_at).toLocaleDateString('pt-BR')}</>}
-           </div>
-           <div className="flex gap-2">
-             <button onClick={handleCancel} disabled={saving} className="p-1 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors"><X size={14}/></button>
-             <button onClick={handleSave} disabled={saving} className="p-1 rounded bg-[#a7c64f]/20 hover:bg-[#a7c64f]/40 text-[#a7c64f] transition-colors">
-               {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14}/>}
-             </button>
-           </div>
-        </div>
-      </div>
-    );
-  }
-
-  // View Mode Renders
-  const renderEditButton = () => isAdmin && (
+  const renderEditButton = () => isAdmin && !editing && (
     <button 
       onClick={handleEdit}
       className="absolute top-2 right-2 p-1.5 rounded-md bg-white/5 opacity-40 group-hover:opacity-100 transition-opacity hover:bg-white/15 text-white/70 hover:text-white z-20"
-      title="Editar"
+      title="Editar valor"
     >
       <Edit2 size={14} />
     </button>
   );
 
-  const renderFooterInfo = () => isAdmin && indicador?.updated_at && (
+  const renderEditControls = () => (
+    <div className="flex justify-between items-center mt-2 border-t border-white/10 pt-2">
+      <div className="text-[9px] text-white/30 flex items-center gap-1">
+        {indicador?.updated_at && <><Clock size={9}/> {new Date(indicador.updated_at).toLocaleDateString('pt-BR')}</>}
+      </div>
+      <div className="flex gap-2">
+        <button onClick={handleCancel} disabled={saving} className="p-1 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors"><X size={14}/></button>
+        <button onClick={handleSave} disabled={saving} className="p-1 rounded bg-[#a7c64f]/20 hover:bg-[#a7c64f]/40 text-[#a7c64f] transition-colors">
+          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14}/>}
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderFooterInfo = () => isAdmin && indicador?.updated_at && !editing && (
     <div className="absolute bottom-2 right-2 text-[9px] text-white/40 opacity-50 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-20">
       <UserIcon size={9}/> {indicador.updated_by_name || 'Admin'}
     </div>
   );
+
+  const valorNode = editing ? (
+    <input 
+      type="number"
+      step="0.1"
+      autoFocus
+      value={draftValor}
+      onChange={e => setDraftValor(e.target.value)}
+      className="w-32 bg-black/50 border border-[#38b6ff]/60 rounded px-2 py-1 text-3xl font-bold text-white focus:border-[#38b6ff] outline-none"
+      placeholder="Valor"
+    />
+  ) : null;
+
+  const extraBadgeClass = isNegative
+    ? "text-[#f48121] bg-[#f48121]/10 border-[#f48121]/30"
+    : "text-[#a7c64f] bg-[#a7c64f]/10 border-[#a7c64f]/30";
 
   if (layout === "commercial") {
     return (
@@ -215,11 +227,15 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
         <div>
           <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md pr-8">{displayLabel}</span>
           <div className="flex items-baseline gap-3 mt-4">
-            <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{displayValor}</span>
-            <span className="text-sm lg:text-base font-bold text-[#a7c64f] font-sans p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{displayExtra}</span>
+            {editing ? valorNode : (
+              <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{displayValor}</span>
+            )}
+            {displayExtra && (
+              <span className={`text-sm lg:text-base font-bold font-sans p-1 rounded border ${extraBadgeClass}`}>{displayExtra}</span>
+            )}
           </div>
         </div>
-        {renderFooterInfo()}
+        {editing ? renderEditControls() : renderFooterInfo()}
       </div>
     );
   }
@@ -229,8 +245,10 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
       <div className="rounded-lg bg-black/60 border border-white/10 p-5 flex flex-col justify-center relative group">
         {renderEditButton()}
         <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md pr-8">{displayLabel}</span>
-        <p className="text-5xl font-bold text-white mt-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">{displayValor}</p>
-        {renderFooterInfo()}
+        {editing ? <div className="mt-3">{valorNode}</div> : (
+          <p className="text-5xl font-bold text-white mt-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">{displayValor}</p>
+        )}
+        {editing ? renderEditControls() : renderFooterInfo()}
       </div>
     );
   }
@@ -241,8 +259,10 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
         {renderEditButton()}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#f48121] to-transparent shadow-[0_0_10px_#f48121]" />
         <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md pr-8">{displayLabel}</span>
-        <p className="text-5xl font-bold text-[#f48121] mt-3 drop-shadow-[0_0_15px_rgba(244,129,33,0.7)]">{displayValor}{displayExtra}</p>
-        {renderFooterInfo()}
+        {editing ? <div className="mt-3">{valorNode}</div> : (
+          <p className="text-5xl font-bold text-[#f48121] mt-3 drop-shadow-[0_0_15px_rgba(244,129,33,0.7)]">{displayValor}{displayExtra}</p>
+        )}
+        {editing ? renderEditControls() : renderFooterInfo()}
       </div>
     );
   }
@@ -252,11 +272,15 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
       <div className="rounded-lg bg-black/60 border border-white/10 p-5 mb-6 inline-block pr-16 shadow-lg relative group">
         {renderEditButton()}
         <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md block mb-3 pr-8">{displayLabel}</span>
-        <p className="text-5xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] flex items-baseline gap-4">
-          {displayValor}
-          <span className="text-lg font-bold text-[#a7c64f] p-1 bg-[#a7c64f]/10 rounded border border-[#a7c64f]/30">{displayExtra}</span>
-        </p>
-        {renderFooterInfo()}
+        {editing ? <div>{valorNode}</div> : (
+          <p className="text-5xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] flex items-baseline gap-4">
+            {displayValor}
+            {displayExtra && (
+              <span className={`text-lg font-bold p-1 rounded border ${extraBadgeClass}`}>{displayExtra}</span>
+            )}
+          </p>
+        )}
+        {editing ? renderEditControls() : renderFooterInfo()}
       </div>
     );
   }
@@ -265,18 +289,11 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValorExtra, layout, gro
 };
 
 const DashboardHome = () => {
-  const { isAdmin, profile } = useAuth();
-
   return (
     <TooltipProvider delayDuration={200}>
       <div className="relative min-h-[calc(100vh-4rem)]">
-        
-        {/* DEBUG TEMPORÁRIO */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 z-50 bg-black/80 border border-[#f48121] text-[#f48121] px-4 py-2 rounded-md text-xs font-mono flex gap-4 shadow-lg backdrop-blur-md">
-           <span>LOGADO COMO: {profile?.full_name || 'Desconhecido'}</span>
-           <span>ROLE: {profile?.role || 'Nenhuma'}</span>
-           <span>IS_ADMIN: {isAdmin ? 'SIM' : 'NÃO'}</span>
-        </div>
+
+
 
         {/* Fundo Espacial Tech (HUD Backdrop) */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-40 overflow-hidden mix-blend-screen">
@@ -293,9 +310,12 @@ const DashboardHome = () => {
             {/* HUD: Painel Comercial */}
             <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#f48121]/80 transition-all duration-300 hover:shadow-[0_0_25px_rgba(244,129,33,0.3)] flex flex-col">
               <div className="absolute top-0 right-0 w-24 h-24 bg-[#f48121]/20 blur-2xl rounded-full pointer-events-none" />
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-2 h-6 bg-[#f48121] rounded-sm shadow-[0_0_12px_#f48121]" />
-                <h3 className="font-sans text-base font-bold tracking-[0.2em] text-[#f48121] uppercase drop-shadow-md">PAINEL COMERCIAL</h3>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-6 bg-[#f48121] rounded-sm shadow-[0_0_12px_#f48121]" />
+                  <h3 className="font-sans text-base font-bold tracking-[0.2em] text-[#f48121] uppercase drop-shadow-md">PAINEL COMERCIAL</h3>
+                </div>
+                <ReportButton />
               </div>
               
               <div className="grid grid-cols-2 gap-4 flex-1">
@@ -354,18 +374,18 @@ const DashboardHome = () => {
               <div className="w-2 h-6 bg-[#38b6ff] rounded-sm shadow-[0_0_12px_#38b6ff]" />
               <h3 className="font-mono text-base font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">PERFORMANCE OPERACIONAL</h3>
             </div>
-            <button className="flex items-center gap-2 text-xs font-sans font-bold text-white bg-black/50 border border-white/20 hover:border-[#38b6ff]/60 hover:bg-[#38b6ff]/20 px-3 py-2 rounded-md transition-all duration-300 shadow-[0_0_10px_rgba(0,0,0,0.5)] cursor-pointer">
-               <Download size={14} className="text-[#38b6ff]" />
-               BAIXAR RELATÓRIO
-            </button>
           </div>
+
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
             {/* Desenvolvimento */}
             <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300">
-              <div className="flex items-center gap-3 mb-5">
-                <Code2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
-                <h4 className="font-sans text-sm font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">Desenvolvimento e QA</h4>
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-3">
+                  <Code2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
+                  <h4 className="font-sans text-sm font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">Desenvolvimento e QA</h4>
+                </div>
+                <ReportButton />
               </div>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <EditableIndicator 
@@ -394,9 +414,12 @@ const DashboardHome = () => {
 
             {/* Suporte */}
             <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300">
-              <div className="flex items-center gap-3 mb-5">
-                <Headphones size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
-                <h4 className="font-sans text-sm font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">Suporte</h4>
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-3">
+                  <Headphones size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
+                  <h4 className="font-sans text-sm font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">Suporte</h4>
+                </div>
+                <ReportButton />
               </div>
               <EditableIndicator 
                 chave="chamados" 
@@ -423,10 +446,8 @@ const DashboardHome = () => {
                 <div className="w-2 h-6 bg-white/90 rounded-sm shadow-[0_0_12px_rgba(255,255,255,0.6)]" />
                 <h3 className="font-mono text-base font-bold tracking-[0.2em] text-white uppercase drop-shadow-md">PROJETOS EM IMPLANTAÇÃO</h3>
               </div>
-              <button className="flex items-center gap-2 text-xs font-sans font-bold text-white bg-black/50 border border-white/20 hover:border-[#38b6ff]/60 hover:bg-[#38b6ff]/20 px-3 py-2 rounded-md transition-all duration-300 shadow-[0_0_10px_rgba(0,0,0,0.5)] cursor-pointer">
-                 <Download size={14} className="text-[#38b6ff]" />
-                 BAIXAR RELATÓRIO
-              </button>
+              <ReportButton />
+
             </div>
             
             <div className="space-y-5">
