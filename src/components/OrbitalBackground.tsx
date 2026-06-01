@@ -44,7 +44,7 @@ const planets: Planet[] = [
   },
   {
     id: "bi",
-    label: "BI",
+    label: "BI+IA",
     orbitRadius: 300,
     size: 30,
     duration: 58,
@@ -54,7 +54,7 @@ const planets: Planet[] = [
   },
   {
     id: "fabrica",
-    label: "Fábrica de Software",
+    label: "Serviços Tech",
     orbitRadius: 360,
     size: 32,
     duration: 70,
