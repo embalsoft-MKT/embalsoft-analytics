@@ -33,6 +33,11 @@ create index if not exists idx_hist_indicador on public.indicadores_historico(in
 alter table public.indicadores enable row level security;
 alter table public.indicadores_historico enable row level security;
 
+-- Grants
+grant all privileges on public.indicadores to authenticated, service_role;
+grant all privileges on public.indicadores_historico to authenticated, service_role;
+grant usage, select on all sequences in schema public to authenticated, service_role;
+
 drop policy if exists "ind_select" on public.indicadores;
 create policy "ind_select" on public.indicadores for select to authenticated using (true);
 
