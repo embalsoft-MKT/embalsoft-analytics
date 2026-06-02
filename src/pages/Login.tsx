@@ -80,7 +80,7 @@ const Login = () => {
               <span className="text-primary">EmbalConnect</span>
             </h1>
             <p className="text-muted-foreground text-sm">
-              Conectando times, informação e performance.
+              Conectando pessoas, dados e performance.
             </p>
           </div>
 
