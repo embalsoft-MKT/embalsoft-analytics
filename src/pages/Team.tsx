@@ -65,8 +65,8 @@ const sections: TeamSection[] = [
     members: [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
       { name: "Cíntia Villar", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "01/09/2021", sede: "RS", aniversario: "10/05/2023", image: "/cintia.png" },
-      { name: "Jacqueline Fontoura", role: "Consultor de Vendas", image: "/jacqueline.png" },
-      { name: "Luiz Fagam", role: "Consultor de Vendas", image: "/luiz-fagam.png" },
+      { name: "Jacqueline Fontoura", role: "Consultor de Vendas", isPJ: true, image: "/jacqueline.png" },
+      { name: "Luiz Fagam", role: "Consultor de Vendas", isPJ: true, image: "/luiz-fagam.png" },
     ],
   },
   {
