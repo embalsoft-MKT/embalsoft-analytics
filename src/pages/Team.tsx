@@ -1,4 +1,4 @@
-import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle, MapPin, Calendar, Clock, Cake, Plus } from "lucide-react";
+import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle, MapPin, Calendar, Clock, Cake, Plus, Server, Handshake } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
@@ -7,12 +7,15 @@ interface Member {
   name: string;
   role: string;
   isLeader?: boolean;
+  isPJ?: boolean;
+  parceriaDesde?: string;
   sede?: string;
   admissao?: string;
   tempo?: string;
   aniversario?: string;
   image?: string;
 }
+
 
 interface TeamSection {
   title: string;
