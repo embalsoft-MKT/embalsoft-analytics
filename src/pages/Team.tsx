@@ -267,7 +267,7 @@ const Team = () => {
                         <p className="text-xs text-muted-foreground truncate mt-0.5">
                           {member.role}
                         </p>
-                        {member.isPJ && (
+                        {member.isPJ && member.parceriaDesde && (
                           <p className="text-[11px] text-[#f48121]/90 mt-0.5 truncate">
                             Parceiro desde {member.parceriaDesde}
                           </p>
