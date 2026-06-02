@@ -65,8 +65,8 @@ const sections: TeamSection[] = [
     members: [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
       { name: "Cíntia Villar", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "01/09/2021", sede: "RS", aniversario: "10/05/2023", image: "/cintia.png" },
-      { name: "Jacqueline Fontoura", role: "Consultor de Vendas", image: "/jacqueline.png" },
-      { name: "Luiz Fagam", role: "Consultor de Vendas", image: "/luiz-fagam.png" },
+      { name: "Jacqueline Fontoura", role: "Consultor de Vendas", isPJ: true, image: "/jacqueline.png" },
+      { name: "Luiz Fagam", role: "Consultor de Vendas", isPJ: true, image: "/luiz-fagam.png" },
     ],
   },
   {
@@ -100,7 +100,7 @@ const sections: TeamSection[] = [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
       { name: "Marcos Becker", role: "Analista de Implantação", isPJ: true, parceriaDesde: "01/04/2019", sede: "RS", aniversario: "18/02/1982", image: "/marcos.png" },
       { name: "Renan Pires", role: "Consultor de Implantação", isPJ: true, parceriaDesde: "03/06/2024", sede: "SP", aniversario: "25/10/1988", image: "/renan.png" },
-      { name: "Tatiane", role: "Analista de Implantação" },
+      { name: "Tatiane", role: "Analista de Implantação", isPJ: true },
     ],
   },
   {
@@ -267,7 +267,7 @@ const Team = () => {
                         <p className="text-xs text-muted-foreground truncate mt-0.5">
                           {member.role}
                         </p>
-                        {member.isPJ && (
+                        {member.isPJ && member.parceriaDesde && (
                           <p className="text-[11px] text-[#f48121]/90 mt-0.5 truncate">
                             Parceiro desde {member.parceriaDesde}
                           </p>
