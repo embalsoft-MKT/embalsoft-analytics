@@ -231,24 +231,33 @@ const Team = () => {
                 .map((member, idx) => (
                   <div
                     key={idx}
-                    className={`group relative bg-card/60 backdrop-blur-sm border rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 ${
-                      section.highlighted
-                        ? "border-[#f48121]/30 hover:border-[#f48121] hover:shadow-[0_0_25px_rgba(244,129,33,0.25)]"
-                        : "border-white/10 hover:border-[#38b6ff]/50 hover:shadow-[0_0_25px_rgba(56,182,255,0.2)]"
+                    className={`group relative backdrop-blur-sm border rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 ${
+                      member.isPJ
+                        ? "bg-gradient-to-br from-[#f48121]/10 to-card/60 border-dashed border-[#f48121]/40 hover:border-[#f48121] hover:shadow-[0_0_25px_rgba(244,129,33,0.25)]"
+                        : section.highlighted
+                        ? "bg-card/60 border-[#f48121]/30 hover:border-[#f48121] hover:shadow-[0_0_25px_rgba(244,129,33,0.25)]"
+                        : "bg-card/60 border-white/10 hover:border-[#38b6ff]/50 hover:shadow-[0_0_25px_rgba(56,182,255,0.2)]"
                     }`}
                   >
+                    {member.isPJ && (
+                      <span className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#f48121]/20 border border-[#f48121]/50 text-[10px] font-semibold text-[#f48121] uppercase tracking-wider">
+                        <Handshake size={10} /> Parceiro
+                      </span>
+                    )}
                     <div className="flex items-center gap-4">
                       <div
                         className="w-14 h-14 rounded-full flex items-center justify-center border-2 shrink-0 overflow-hidden"
                         style={{
-                          borderColor: `${section.color}50`,
-                          background: `linear-gradient(135deg, ${section.color}25, transparent)`,
+                          borderColor: member.isPJ ? "#f4812150" : `${section.color}50`,
+                          background: member.isPJ
+                            ? "linear-gradient(135deg, #f4812125, transparent)"
+                            : `linear-gradient(135deg, ${section.color}25, transparent)`,
                         }}
                       >
                         {member.image ? (
                           <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
                         ) : (
-                          <User size={24} style={{ color: section.color }} />
+                          <User size={24} style={{ color: member.isPJ ? "#f48121" : section.color }} />
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -258,23 +267,28 @@ const Team = () => {
                         <p className="text-xs text-muted-foreground truncate mt-0.5">
                           {member.role}
                         </p>
+                        {member.isPJ && (
+                          <p className="text-[11px] text-[#f48121]/90 mt-0.5 truncate">
+                            Parceiro desde {member.parceriaDesde}
+                          </p>
+                        )}
                       </div>
                     </div>
                     {(member.sede || member.admissao || member.tempo || member.aniversario) && (
                       <div className="mt-3 pt-3 border-t border-white/10 space-y-1.5 text-[11px] text-muted-foreground">
                         {member.sede && (
                           <div className="flex items-center gap-1.5">
-                            <MapPin size={12} style={{ color: section.color }} className="shrink-0" />
+                            <MapPin size={12} style={{ color: member.isPJ ? "#f48121" : section.color }} className="shrink-0" />
                             <span>Sede: <span className="text-white/90">{member.sede}</span></span>
                           </div>
                         )}
-                        {member.admissao && (
+                        {member.admissao && !member.isPJ && (
                           <div className="flex items-center gap-1.5">
                             <Calendar size={12} style={{ color: section.color }} className="shrink-0" />
                             <span>Admissão: <span className="text-white/90">{member.admissao}</span></span>
                           </div>
                         )}
-                        {member.tempo && (
+                        {member.tempo && !member.isPJ && (
                           <div className="flex items-center gap-1.5">
                             <Clock size={12} style={{ color: section.color }} className="shrink-0" />
                             <span className="truncate text-white/90">{member.tempo}</span>
@@ -282,12 +296,13 @@ const Team = () => {
                         )}
                         {member.aniversario && (
                           <div className="flex items-center gap-1.5">
-                            <Cake size={12} style={{ color: section.color }} className="shrink-0" />
+                            <Cake size={12} style={{ color: member.isPJ ? "#f48121" : section.color }} className="shrink-0" />
                             <span>Aniversário: <span className="text-white/90">{member.aniversario}</span></span>
                           </div>
                         )}
                       </div>
                     )}
+
                   </div>
                 ))}
             </div>
