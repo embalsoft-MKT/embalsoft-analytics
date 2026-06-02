@@ -32,7 +32,7 @@ const sections: TeamSection[] = [
     color: "#f48121",
     highlighted: true,
     members: [
-      { name: "Júnior Muck", role: "CEO", sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/2023", image: "/junior.png" },
+      { name: "Júnior Muck", role: "CEO", sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/1978", image: "/junior.png" },
       { name: "Rose Muck", role: "Cofundadora", image: "/rose.png" },
       { name: "Gerson Muck", role: "Cofundador", image: "/gerson.png" },
     ],
@@ -42,7 +42,7 @@ const sections: TeamSection[] = [
     icon: Briefcase,
     color: "#38b6ff",
     members: [
-      { name: "Gisele Muck", role: "Gerente Financeiro (Supervisora Setor ADM)", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1980", image: "/gisele.png" },
+      { name: "Gisele Muck", role: "Gerente Financeiro (Supervisora Setor ADM)", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1983", image: "/gisele.png" },
       { name: "Juliana de Oliveira Dias Charão", role: "Generalista de RH", sede: "RS", admissao: "01/03/2022", tempo: "4 anos, 2 meses e 8 dias", aniversario: "26/10/1982", image: "/juliana.png" },
       { name: "Patricia Fernandes Barbosa", role: "Marketing", sede: "RS", admissao: "18/09/2023", tempo: "2 anos, 7 meses e 21 dias", aniversario: "23/04/1999", image: "/patricia.png" },
     ],
@@ -53,7 +53,7 @@ const sections: TeamSection[] = [
     color: "#38b6ff",
     members: [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
-      { name: "Luís Fernando Teixeira da Silva", role: "Analista de Suporte (PJ)", sede: "RS", admissao: "01/04/2012", tempo: "14 anos, 1 mês e 8 dias", aniversario: "10/11/1963", image: "/luis-fernando.png" },
+      { name: "Luís Fernando Teixeira da Silva", role: "Analista de Suporte", isPJ: true, parceriaDesde: "01/04/2012", sede: "RS", aniversario: "10/11/1963", image: "/luis-fernando.png" },
       { name: "Casiana Walter Braga", role: "Analista de Suporte de Produto", sede: "RS", admissao: "01/04/2013", tempo: "13 anos, 1 mês e 8 dias", aniversario: "31/01/1985", image: "/casiana.png" },
       { name: "Gabriel Pereira Lazarin", role: "Analista de Suporte de Produto", sede: "SP", admissao: "28/08/2023", tempo: "2 anos, 8 meses e 11 dias", aniversario: "19/03/1997", image: "/gabriel-lazarin.png" },
     ],
@@ -64,7 +64,7 @@ const sections: TeamSection[] = [
     color: "#38b6ff",
     members: [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
-      { name: "Cíntia Villar", role: "Consultor de Vendas (PJ)", sede: "RS", admissao: "01/09/2021", tempo: "4 anos, 8 meses e 8 dias", aniversario: "10/05/2023", image: "/cintia.png" },
+      { name: "Cíntia Villar", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "01/09/2021", sede: "RS", aniversario: "10/05/2023", image: "/cintia.png" },
       { name: "Jacqueline Fontoura", role: "Consultor de Vendas", image: "/jacqueline.png" },
       { name: "Luiz Fagam", role: "Consultor de Vendas", image: "/luiz-fagam.png" },
     ],
@@ -75,13 +75,21 @@ const sections: TeamSection[] = [
     color: "#38b6ff",
     members: [
       { name: "Ismael Barth Hahn", role: "Coordenador Desenvolvimento", isLeader: true, sede: "RS", admissao: "01/06/2005", tempo: "20 anos, 11 meses e 8 dias", aniversario: "09/06/1981", image: "/ismael.png" },
-      { name: "Pedro Henrique Lemos", role: "Programador / Tech Lead", isLeader: true, sede: "RS", admissao: "01/06/2007", tempo: "18 anos, 11 meses e 8 dias", aniversario: "03/06/1987", image: "/pedro.png" },
-      { name: "Marcelo Luvizotto", role: "Programador", sede: "SP", admissao: "01/06/2023", tempo: "2 anos, 11 meses e 8 dias", aniversario: "11/03/1965", image: "/macelo.png" },
-      { name: "Éverton Cristiano dos Santos", role: "Programador Web", sede: "RS", admissao: "27/01/2025", tempo: "1 ano, 3 meses e 12 dias", aniversario: "06/05/2025", image: "/everton.png" },
-      { name: "Douglas Gnutzmann Santos", role: "Programador", sede: "RS", admissao: "08/11/2021", tempo: "4 anos, 6 meses e 1 dia", aniversario: "24/05/1985", image: "/douglas.png" },
-      { name: "João Roberto Teixeira Lopes", role: "Programador", sede: "SP", admissao: "01/03/2023", tempo: "3 anos, 2 meses e 8 dias", aniversario: "03/06/1986", image: "/joao.png" },
-      { name: "Fernanda Spier", role: "Programadora (PJ)", sede: "RS", admissao: "01/01/2025", aniversario: "15/08/1985", image: "/fernanda.png" },
+      { name: "Pedro Henrique Lemos", role: "Tech Lead", isLeader: true, sede: "RS", admissao: "01/06/2007", tempo: "18 anos, 11 meses e 8 dias", aniversario: "03/06/1987", image: "/pedro.png" },
+      { name: "Marcelo Luvizotto", role: "Desenvolvedor", sede: "SP", admissao: "01/06/2023", tempo: "2 anos, 11 meses e 8 dias", aniversario: "11/03/1965", image: "/macelo.png" },
+      { name: "Éverton Cristiano dos Santos", role: "Desenvolvedor", sede: "RS", admissao: "27/01/2025", tempo: "1 ano, 3 meses e 12 dias", aniversario: "06/05/2025", image: "/everton.png" },
+      { name: "Douglas Gnutzmann Santos", role: "Desenvolvedor", sede: "RS", admissao: "08/11/2021", tempo: "4 anos, 6 meses e 1 dia", aniversario: "24/05/1985", image: "/douglas.png" },
+      { name: "João Roberto Teixeira Lopes", role: "Desenvolvedor", sede: "SP", admissao: "01/03/2023", tempo: "3 anos, 2 meses e 8 dias", aniversario: "03/06/1986", image: "/joao.png" },
       { name: "Vinícius Martins", role: "Desenvolvedor", image: "/vinicius.png" },
+    ],
+  },
+  {
+    title: "Qualidade",
+    icon: CheckCircle,
+    color: "#38b6ff",
+    members: [
+      { name: "Ismael Barth Hahn", role: "Supervisor", isLeader: true, image: "/ismael.png" },
+      { name: "Gabriel Rodrigues Justin", role: "Analista de Testes", sede: "RS", admissao: "18/03/2024", tempo: "2 anos, 1 mês e 21 dias", aniversario: "19/08/1995", image: "/gabriel-justin.png" },
     ],
   },
   {
@@ -90,21 +98,22 @@ const sections: TeamSection[] = [
     color: "#38b6ff",
     members: [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
-      { name: "Marcos Becker", role: "Analista de Implantação (PJ)", sede: "RS", admissao: "01/04/2019", tempo: "7 anos, 1 mês e 8 dias", aniversario: "18/02/1982", image: "/marcos.png" },
-      { name: "Renan Pires", role: "Consultor de Implantação (PJ)", sede: "SP", admissao: "03/06/2024", tempo: "1 ano, 11 meses e 6 dias", aniversario: "25/10/1988", image: "/renan.png" },
+      { name: "Marcos Becker", role: "Analista de Implantação", isPJ: true, parceriaDesde: "01/04/2019", sede: "RS", aniversario: "18/02/1982", image: "/marcos.png" },
+      { name: "Renan Pires", role: "Consultor de Implantação", isPJ: true, parceriaDesde: "03/06/2024", sede: "SP", aniversario: "25/10/1988", image: "/renan.png" },
+      { name: "Tatiane", role: "Analista de Implantação" },
     ],
   },
   {
-    title: "Qualidade",
-    icon: CheckCircle,
+    title: "Infraestrutura",
+    icon: Server,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
-      { name: "Gabriel Rodrigues Justin", role: "Analista de Testes", sede: "RS", admissao: "18/03/2024", tempo: "2 anos, 1 mês e 21 dias", aniversario: "19/08/1995", image: "/gabriel-justin.png" },
-      { name: "Tatiane", role: "Analista de Qualidade" },
+      { name: "Ismael Barth Hahn", role: "Supervisor", isLeader: true, image: "/ismael.png" },
+      { name: "Raian Guimarães", role: "Analista de Infraestrutura", aniversario: "17/02/2003" },
     ],
   },
 ];
+
 
 const Team = () => {
   const navigate = useNavigate();
