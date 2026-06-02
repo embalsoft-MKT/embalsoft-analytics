@@ -100,7 +100,7 @@ const sections: TeamSection[] = [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
       { name: "Marcos Becker", role: "Analista de Implantação", isPJ: true, parceriaDesde: "01/04/2019", sede: "RS", aniversario: "18/02/1982", image: "/marcos.png" },
       { name: "Renan Pires", role: "Consultor de Implantação", isPJ: true, parceriaDesde: "03/06/2024", sede: "SP", aniversario: "25/10/1988", image: "/renan.png" },
-      { name: "Tatiane", role: "Analista de Implantação" },
+      { name: "Tatiane", role: "Analista de Implantação", isPJ: true },
     ],
   },
   {
