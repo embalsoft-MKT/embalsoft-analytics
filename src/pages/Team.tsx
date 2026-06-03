@@ -109,7 +109,7 @@ const sections: TeamSection[] = [
     color: "#38b6ff",
     members: [
       { name: "Ismael Barth Hahn", role: "Supervisor", isLeader: true, image: "/ismael.png" },
-      { name: "Raian Guimarães", role: "Analista de Infraestrutura", sede: "RS", admissao: "08/06/2026", aniversario: "17/02/2003" },
+      { name: "Raian Guimarães", role: "Analista de Infraestrutura", sede: "RS", admissao: "08/06/2026", aniversario: "17/02/2003", image: "/raian.png" },
     ],
   },
 ];
