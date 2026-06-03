@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon, TrendingUp, TrendingDown } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon, TrendingUp, TrendingDown, Plus, Trash2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -16,6 +16,11 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import OrbitalBackground from "@/components/OrbitalBackground";
 import { useAuth } from "@/contexts/AuthContext";
@@ -53,12 +58,22 @@ const entregas = { valor: 45 };
 const retrabalho = { valor: 4, valor_extra: "%" };
 const chamados = { valor: 158, valor_extra: "+8%" };
 
-const implantacoes = [
-  { cliente: "Ind. Nova Era", etapa: "Go Live", progresso: 100, status: "em_dia" as const, responsavel: "Marcos" },
-  { cliente: "Distribuidora Sol", etapa: "Testes", progresso: 70, status: "atencao" as const, responsavel: "Renan" },
-  { cliente: "Metalúrgica Forte", etapa: "Imersão Geral", progresso: 35, status: "em_dia" as const, responsavel: "Marcos" },
-  { cliente: "Alimentos Vida", etapa: "Kick-off", progresso: 10, status: "atrasado" as const, responsavel: "Renan" },
+type ImplantacaoStatus = "em_dia" | "atencao" | "atrasado";
+interface Implantacao {
+  cliente: string;
+  etapa: string;
+  status: ImplantacaoStatus;
+  responsavel: string;
+}
+
+const implantacoesIniciais: Implantacao[] = [
+  { cliente: "Ind. Nova Era", etapa: "Go Live", status: "em_dia", responsavel: "Marcos" },
+  { cliente: "Distribuidora Sol", etapa: "Testes", status: "atencao", responsavel: "Renan" },
+  { cliente: "Metalúrgica Forte", etapa: "Imersão Geral", status: "em_dia", responsavel: "Marcos" },
+  { cliente: "Alimentos Vida", etapa: "Kick-off", status: "atrasado", responsavel: "Renan" },
 ];
+
+const IMPLANTACOES_STORAGE_KEY = "embalconnect:implantacoes";
 
 const etapas = ["Kick-off", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Go Live"];
 
@@ -415,7 +430,60 @@ const EditableAvanco = ({ chave, ordem, defaultProjeto, defaultProgresso, cor }:
   );
 };
 
+const emptyImplantacao: Implantacao = { cliente: "", etapa: etapas[0], status: "em_dia", responsavel: "" };
+
 const DashboardHome = () => {
+  const { isAdmin } = useAuth();
+  const [implantacoes, setImplantacoes] = useState<Implantacao[]>(() => {
+    try {
+      const raw = localStorage.getItem(IMPLANTACOES_STORAGE_KEY);
+      if (raw) return JSON.parse(raw) as Implantacao[];
+    } catch {}
+    return implantacoesIniciais;
+  });
+  const [implDialogOpen, setImplDialogOpen] = useState(false);
+  const [editingIdx, setEditingIdx] = useState<number | null>(null);
+  const [implForm, setImplForm] = useState<Implantacao>(emptyImplantacao);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(IMPLANTACOES_STORAGE_KEY, JSON.stringify(implantacoes));
+    } catch {}
+  }, [implantacoes]);
+
+  const openNewImplantacao = () => {
+    setEditingIdx(null);
+    setImplForm(emptyImplantacao);
+    setImplDialogOpen(true);
+  };
+
+  const openEditImplantacao = (idx: number) => {
+    setEditingIdx(idx);
+    setImplForm({ ...implantacoes[idx] });
+    setImplDialogOpen(true);
+  };
+
+  const saveImplantacao = () => {
+    if (!implForm.cliente.trim()) {
+      toast.error("Informe o cliente");
+      return;
+    }
+    setImplantacoes((prev) => {
+      if (editingIdx === null) return [...prev, { ...implForm, cliente: implForm.cliente.trim(), responsavel: implForm.responsavel.trim() }];
+      const next = [...prev];
+      next[editingIdx] = { ...implForm, cliente: implForm.cliente.trim(), responsavel: implForm.responsavel.trim() };
+      return next;
+    });
+    setImplDialogOpen(false);
+    toast.success("Salvo com sucesso!");
+  };
+
+  const removeImplantacao = (idx: number) => {
+    setImplantacoes((prev) => prev.filter((_, i) => i !== idx));
+    setImplDialogOpen(false);
+    toast.success("Removido");
+  };
+
   return (
     <TooltipProvider delayDuration={200}>
       <div className="relative min-h-[calc(100vh-4rem)]">
@@ -569,60 +637,82 @@ const DashboardHome = () => {
                 <div className="w-2 h-6 bg-white/90 rounded-sm shadow-[0_0_12px_rgba(255,255,255,0.6)]" />
                 <h3 className="font-sans text-base font-bold tracking-normal text-white drop-shadow-md">Projetos em Implantação</h3>
               </div>
-              <ReportButton />
-
+              <div className="flex items-center gap-2">
+                {isAdmin && (
+                  <button
+                    onClick={openNewImplantacao}
+                    className="flex items-center gap-1.5 text-[11px] font-sans font-bold text-[#a7c64f] bg-[#a7c64f]/10 border border-[#a7c64f]/30 hover:bg-[#a7c64f]/20 hover:border-[#a7c64f]/60 px-2.5 py-1.5 rounded-md transition-colors"
+                    title="Adicionar implantação"
+                  >
+                    <Plus size={12} />
+                    NOVA IMPLANTAÇÃO
+                  </button>
+                )}
+                <ReportButton />
+              </div>
             </div>
             
             <div className="space-y-5">
-              {implantacoes.map((item) => {
+              {implantacoes.map((item, idx) => {
                 const s = statusConfig[item.status];
                 const StatusIcon = s.icon;
                 const etapaIndex = etapas.indexOf(item.etapa);
+                const progresso = etapaIndex >= 0 ? Math.round((etapaIndex / (etapas.length - 1)) * 100) : 0;
                 return (
                   <div
-                    key={item.cliente}
-                    className="relative rounded-lg border-2 border-white/10 bg-black/60 p-5 transition-all duration-300 hover:border-white/30 overflow-hidden shadow-md"
+                    key={`${item.cliente}-${idx}`}
+                    className="relative rounded-lg border-2 border-white/10 bg-black/60 p-5 transition-all duration-300 hover:border-white/30 overflow-hidden shadow-md group/impl"
                   >
                     <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor" }} />
-                    <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6 pl-3">
+                    {isAdmin && (
+                      <button
+                        onClick={() => openEditImplantacao(idx)}
+                        className="absolute top-2 right-2 p-1.5 rounded-md bg-white/5 opacity-40 group-hover/impl:opacity-100 transition-opacity hover:bg-white/15 text-white/70 hover:text-white z-20"
+                        title="Editar implantação"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                    )}
+                    <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6 pl-3 pr-8">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <StatusIcon size={20} className={s.color} />
                         <span className="font-sans text-lg font-bold tracking-wide text-white truncate drop-shadow-sm">{item.cliente}</span>
-                        <span className={`text-xs uppercase font-bold font-sans px-3 py-1 rounded border-2 ${s.border} ${s.color} shadow-sm`}>
+                        <span className={`text-xs uppercase font-bold font-sans px-3 py-1 rounded border-2 ${s.border} ${s.color}`}>
                           {s.label}
                         </span>
                       </div>
                       <div className="flex items-center gap-6 text-sm font-bold font-sans text-white/90">
                         <span className="uppercase tracking-widest bg-white/10 px-3 py-1 rounded-sm border border-white/10">RESP: {item.responsavel}</span>
-                        <span className="text-xl text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">{item.progresso}%</span>
+                        <span className="text-xl text-white">{progresso}%</span>
                       </div>
                     </div>
-                    {/* Linha do tempo (progress bar com steps engrossada) */}
+                    {/* Linha do tempo (progress bar com steps) */}
                     <div className="relative flex items-center px-4">
                       {/* Linha base contínua */}
                       <div className="absolute left-4 right-4 top-2 h-1 bg-white/10 rounded-full z-0" />
                       {/* Linha de progresso preenchida */}
                       <div
-                        className="absolute left-4 top-2 h-1 rounded-full z-0 shadow-[0_0_8px_currentColor] transition-all duration-500"
+                        className="absolute left-4 top-2 h-1 rounded-full z-0 transition-all duration-500"
                         style={{
                           width: etapaIndex >= 0 ? `calc((100% - 2rem) * ${etapaIndex / (etapas.length - 1)})` : '0%',
                           backgroundColor: s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor",
+                          opacity: 0.85,
                         }}
                       />
-                      {etapas.map((etapa, idx) => {
-                        const isCompleted = idx <= etapaIndex;
-                        const isCurrent = idx === etapaIndex;
+                      {etapas.map((etapa, eIdx) => {
+                        const isCompleted = eIdx <= etapaIndex;
+                        const isCurrent = eIdx === etapaIndex;
                         const mainColor = isCompleted ? s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor" : "rgba(255,255,255,0.15)";
 
                         return (
                           <div key={etapa} className="flex-1 relative flex flex-col items-center">
                             <div className="relative flex items-center justify-center w-full mb-3">
                                <div
-                                className={`w-4 h-4 rounded-sm z-10 transition-all ${isCurrent ? 'shadow-[0_0_15px_currentColor] scale-125' : ''}`}
+                                className={`w-4 h-4 rounded-sm z-10 transition-all ${isCurrent ? 'scale-110' : ''}`}
                                 style={{ backgroundColor: mainColor, transform: 'rotate(45deg)' }}
                                />
                             </div>
-                            <span className={`text-xs whitespace-nowrap font-bold font-sans drop-shadow-sm ${isCurrent ? 'text-white' : 'text-white/60'}`}>
+                            <span className={`text-xs whitespace-nowrap font-bold font-sans ${isCurrent ? 'text-white' : 'text-white/60'}`}>
                               {etapa}
                             </span>
                           </div>
@@ -634,6 +724,61 @@ const DashboardHome = () => {
               })}
             </div>
           </div>
+
+          {/* Dialog de edição de implantação */}
+          <Dialog open={implDialogOpen} onOpenChange={(o) => { setImplDialogOpen(o); if (!o) setEditingIdx(null); }}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{editingIdx === null ? "Nova implantação" : "Editar implantação"}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="space-y-2">
+                  <Label>Cliente</Label>
+                  <Input value={implForm.cliente} onChange={(e) => setImplForm({ ...implForm, cliente: e.target.value })} placeholder="Nome do cliente" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Responsável</Label>
+                  <Input value={implForm.responsavel} onChange={(e) => setImplForm({ ...implForm, responsavel: e.target.value })} placeholder="Nome do responsável" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>Etapa atual</Label>
+                    <Select value={implForm.etapa} onValueChange={(v) => setImplForm({ ...implForm, etapa: v })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {etapas.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Status</Label>
+                    <Select value={implForm.status} onValueChange={(v) => setImplForm({ ...implForm, status: v as ImplantacaoStatus })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="em_dia">Em dia</SelectItem>
+                        <SelectItem value="atencao">Atenção</SelectItem>
+                        <SelectItem value="atrasado">Atrasado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter className="flex sm:justify-between gap-2">
+                <div>
+                  {editingIdx !== null && (
+                    <Button variant="destructive" onClick={() => removeImplantacao(editingIdx)}>
+                      <Trash2 size={14} className="mr-1" /> Excluir
+                    </Button>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setImplDialogOpen(false)}>Cancelar</Button>
+                  <Button onClick={saveImplantacao}>Salvar</Button>
+                </div>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
 
         </div>
       </div>
