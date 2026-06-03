@@ -1,6 +1,5 @@
-import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon, TrendingUp, TrendingDown } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Download, Edit2, Loader2, Save, X, User as UserIcon, TrendingUp, TrendingDown, ArrowUpRight } from "lucide-react";
+import { Tooltip, TooltipProvider } from "@/components/ui/tooltip";
 import {
   ChartContainer,
   ChartTooltip,
@@ -17,41 +16,42 @@ import {
   Line,
 } from "recharts";
 
-import OrbitalBackground from "@/components/OrbitalBackground";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIndicadores, fetchHistorico } from "@/hooks/useIndicadores";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
-// Botão de relatório padrão (desativado por enquanto)
+/* ─────────── Design tokens (SaaS premium) ─────────── */
+const BRAND = {
+  blue: "#2563EB",
+  green: "#84CC16",
+  orange: "#F97316",
+};
+
+const cardBase =
+  "rounded-2xl bg-[#111827] border border-white/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.25)] p-6";
+const sectionTitle = "text-[18px] font-semibold text-white tracking-tight";
+const labelText = "text-[14px] font-medium text-white/60";
+const kpiText = "text-[52px] leading-none font-bold text-white tracking-tight";
+
+/* ─────────── Report button (disabled) ─────────── */
 const ReportButton = () => (
   <button
     disabled
     title="Em breve"
-    className="flex items-center gap-2 text-[11px] font-sans font-bold text-white/60 bg-black/40 border border-white/15 px-2.5 py-1.5 rounded-md opacity-60 cursor-not-allowed"
+    className="flex items-center gap-1.5 text-[12px] font-medium text-white/50 bg-white/[0.04] border border-white/[0.06] hover:border-white/10 px-2.5 py-1.5 rounded-lg opacity-70 cursor-not-allowed transition-colors"
   >
-    <Download size={12} className="text-[#38b6ff]/70" />
-    BAIXAR RELATÓRIO
+    <Download size={12} />
+    Relatório
   </button>
 );
 
-// ── Mock Data ──
-
-// Mock dos avanços
+/* ─────────── Mock data (preservada) ─────────── */
 const avancosData = [
-  { projeto: "Embalsoft CRM 2.0", progresso: 80, cor: "bg-[#a7c64f]" },
-  { projeto: "BI Nativo do ERP", progresso: 15, cor: "bg-[#38b6ff]" },
-  { projeto: "Agentes de IA", progresso: 5, cor: "bg-[#38b6ff]" },
+  { projeto: "Embalsoft CRM 2.0", progresso: 80, cor: BRAND.green },
+  { projeto: "BI Nativo do ERP", progresso: 15, cor: BRAND.blue },
+  { projeto: "Agentes de IA", progresso: 5, cor: BRAND.blue },
 ];
-
-// Painel Comercial (fictício)
-const erp = { valor: 12, valor_extra: "+15%" };
-const fab = { valor: 8, valor_extra: "+10%" };
-
-// Performance Operacional (fictício)
-const entregas = { valor: 45 };
-const retrabalho = { valor: 4, valor_extra: "%" };
-const chamados = { valor: 158, valor_extra: "+8%" };
 
 const implantacoes = [
   { cliente: "Ind. Nova Era", etapa: "Go Live", progresso: 100, status: "em_dia" as const, responsavel: "Marcos" },
@@ -63,9 +63,9 @@ const implantacoes = [
 const etapas = ["Kick-off", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Go Live"];
 
 const statusConfig = {
-  em_dia: { color: "text-[#a7c64f]", bg: "bg-[#a7c64f]/15", border: "border-[#a7c64f]/30", label: "Em dia", icon: CheckCircle2 },
-  atencao: { color: "text-[#f48121]", bg: "bg-[#f48121]/15", border: "border-[#f48121]/30", label: "Atenção", icon: Clock },
-  atrasado: { color: "text-red-400", bg: "bg-red-400/15", border: "border-red-400/30", label: "Atrasado", icon: AlertTriangle },
+  em_dia: { hex: BRAND.green, label: "Em dia", icon: CheckCircle2 },
+  atencao: { hex: BRAND.orange, label: "Atenção", icon: Clock },
+  atrasado: { hex: "#EF4444", label: "Atrasado", icon: AlertTriangle },
 };
 
 const devData = [
@@ -83,23 +83,56 @@ const supportData = [
 ];
 
 const devChartConfig: ChartConfig = {
-  entregas: { label: "Entregas", color: "#38b6ff" },
-  retrabalho: { label: "Retrabalho", color: "#f48121" },
+  entregas: { label: "Entregas", color: BRAND.blue },
+  retrabalho: { label: "Retrabalho", color: BRAND.orange },
 };
 
 const supportChartConfig: ChartConfig = {
-  atendimentos: { label: "Atendimentos", color: "#38b6ff" },
+  atendimentos: { label: "Atendimentos", color: BRAND.blue },
 };
 
-// ── Component ──
+/* ─────────── Growth badge ─────────── */
+const GrowthBadge = ({ value }: { value: string }) => {
+  if (!value) return null;
+  const isNeg = value.startsWith("-");
+  const isPos = value.startsWith("+");
+  if (!isNeg && !isPos) {
+    return (
+      <span className="inline-flex items-center text-[12px] font-semibold text-white/60 bg-white/[0.05] rounded-lg px-2 py-1">
+        {value}
+      </span>
+    );
+  }
+  const color = isNeg ? BRAND.orange : BRAND.green;
+  const Icon = isNeg ? TrendingDown : TrendingUp;
+  return (
+    <span
+      className="inline-flex items-center gap-1 text-[12px] font-semibold rounded-lg px-2 py-1"
+      style={{ color, backgroundColor: `${color}26` }}
+    >
+      <Icon size={12} />
+      {value}
+    </span>
+  );
+};
 
-const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtra, layout, groupHoverBorder }: { 
-  chave: string, 
-  defaultLabel: string, 
-  defaultValue: number,
-  defaultValorExtra?: string,
-  layout: "commercial" | "operacional" | "retrabalho" | "suporte",
-  groupHoverBorder?: string 
+/* ─────────── EditableIndicator ─────────── */
+const EditableIndicator = ({
+  chave,
+  defaultLabel,
+  defaultValue,
+  defaultValorExtra,
+  layout,
+  accent,
+  suffix,
+}: {
+  chave: string;
+  defaultLabel: string;
+  defaultValue: number;
+  defaultValorExtra?: string;
+  layout: "commercial" | "operacional" | "retrabalho" | "suporte";
+  accent?: string;
+  suffix?: string;
 }) => {
   const { isAdmin } = useAuth();
   const { byChave, updateIndicador } = useIndicadores();
@@ -110,7 +143,6 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
   const [saving, setSaving] = useState(false);
   const [prevValor, setPrevValor] = useState<number | null>(null);
 
-  // Carrega o último valor anterior para calcular % automática
   useEffect(() => {
     if (!indicador) return;
     fetchHistorico(indicador.id)
@@ -129,11 +161,6 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
     }
   }, [indicador, defaultValue]);
 
-  const handleEdit = () => {
-    if (!isAdmin) return;
-    setEditing(true);
-  };
-
   const handleCancel = () => {
     setEditing(false);
     if (indicador) {
@@ -143,7 +170,6 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
     }
   };
 
-  // Calcula porcentagem automática com base no histórico
   const computedExtra = (() => {
     if (layout === "retrabalho") return defaultValorExtra || "%";
     const atual = indicador?.valor ?? null;
@@ -155,15 +181,19 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
     return `${sign}${pct.toFixed(0)}%`;
   })();
 
+  const displayLabel = indicador?.label || defaultLabel;
+  const displayValor = indicador?.valor !== null && indicador?.valor !== undefined ? indicador.valor : defaultValue;
+  const displayExtra = computedExtra;
+
   const handleSave = async () => {
     setSaving(true);
     try {
       const num = draftValor === "" ? null : Number(draftValor);
       if (num !== null && Number.isNaN(num)) throw new Error("Valor inválido");
-      
+
       let categoria: "comercial" | "avancos" | "operacional" = "comercial";
       let ordem = 1;
-      
+
       if (layout === "commercial") {
         categoria = "comercial";
         ordem = chave === "erp" ? 1 : 2;
@@ -173,8 +203,8 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
         else if (chave === "retrabalho") ordem = 2;
         else if (chave === "chamados") ordem = 3;
       }
-      
-      await updateIndicador(chave, num, computedExtra || null, displayLabel, categoria, ordem);
+
+      await updateIndicador(chave, num, displayExtra || null, displayLabel, categoria, ordem);
       toast.success("Salvo com sucesso!");
       setEditing(false);
     } catch (e: any) {
@@ -184,292 +214,246 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
     }
   };
 
-  const displayLabel = indicador?.label || defaultLabel;
-  const displayValor = indicador?.valor !== null && indicador?.valor !== undefined ? indicador.valor : defaultValue;
-  const displayExtra = computedExtra;
-  const isPositive = displayExtra.startsWith("+");
-  const isNegative = displayExtra.startsWith("-");
-
-  const renderEditButton = () => isAdmin && !editing && (
-    <button 
-      onClick={handleEdit}
-      className="absolute top-2 right-2 p-1.5 rounded-md bg-white/5 opacity-40 group-hover:opacity-100 transition-opacity hover:bg-white/15 text-white/70 hover:text-white z-20"
+  const editBtn = isAdmin && !editing && (
+    <button
+      onClick={() => setEditing(true)}
+      className="absolute top-3 right-3 p-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/10 text-white/50 hover:text-white"
       title="Editar valor"
     >
-      <Edit2 size={14} />
+      <Edit2 size={13} />
     </button>
   );
 
-  const renderEditControls = () => (
-    <div className="flex justify-between items-center mt-2 border-t border-white/10 pt-2">
-      <div className="text-[9px] text-white/30 flex items-center gap-1">
-        {indicador?.updated_at && <><Clock size={9}/> {new Date(indicador.updated_at).toLocaleDateString('pt-BR')}</>}
+  const editControls = (
+    <div className="flex justify-between items-center mt-3 border-t border-white/10 pt-3">
+      <div className="text-[11px] text-white/40">
+        {indicador?.updated_at && <>Atualizado {new Date(indicador.updated_at).toLocaleDateString("pt-BR")}</>}
       </div>
       <div className="flex gap-2">
-        <button onClick={handleCancel} disabled={saving} className="p-1 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors"><X size={14}/></button>
-        <button onClick={handleSave} disabled={saving} className="p-1 rounded bg-[#a7c64f]/20 hover:bg-[#a7c64f]/40 text-[#a7c64f] transition-colors">
-          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14}/>}
+        <button onClick={handleCancel} disabled={saving} className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 text-white/60 hover:text-white"><X size={13} /></button>
+        <button onClick={handleSave} disabled={saving} className="p-1.5 rounded-md text-white" style={{ backgroundColor: BRAND.blue }}>
+          {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
         </button>
       </div>
     </div>
   );
 
-  const renderFooterInfo = () => isAdmin && indicador?.updated_at && !editing && (
-    <div className="absolute bottom-2 right-2 text-[9px] text-white/40 opacity-50 group-hover:opacity-100 transition-opacity flex items-center gap-1 z-20">
-      <UserIcon size={9}/> {indicador.updated_by_name || 'Admin'}
+  const footerInfo = isAdmin && indicador?.updated_at && !editing && (
+    <div className="mt-3 text-[11px] text-white/35 flex items-center gap-1">
+      <UserIcon size={10} /> {indicador.updated_by_name || "Admin"}
     </div>
   );
 
-  const valorNode = editing ? (
-    <input 
+  const editorInput = (
+    <input
       type="number"
       step="0.1"
       autoFocus
       value={draftValor}
-      onChange={e => setDraftValor(e.target.value)}
-      className="w-32 bg-black/50 border border-[#38b6ff]/60 rounded px-2 py-1 text-3xl font-bold text-white focus:border-[#38b6ff] outline-none"
+      onChange={(e) => setDraftValor(e.target.value)}
+      className="w-40 bg-black/40 border border-white/20 focus:border-[#2563EB] rounded-lg px-3 py-2 text-3xl font-bold text-white outline-none"
       placeholder="Valor"
     />
-  ) : null;
+  );
 
-  const extraBadgeClass = isNegative
-    ? "text-[#f48121] bg-[#f48121]/10 border-[#f48121]/30"
-    : "text-[#a7c64f] bg-[#a7c64f]/10 border-[#a7c64f]/30";
+  const valueColor =
+    layout === "retrabalho" ? BRAND.orange : accent || "#FFFFFF";
 
-  if (layout === "commercial") {
-    return (
-      <div className={`border border-white/10 bg-black/60 p-5 rounded-lg flex flex-col justify-between transition-all duration-300 relative overflow-hidden group ${groupHoverBorder}`}>
-        {renderEditButton()}
-        <div>
-          <span className="text-sm font-bold font-sans text-white/90 uppercase tracking-wider block mb-2 drop-shadow-md pr-8">{displayLabel}</span>
-          <div className="flex items-baseline gap-3 mt-4">
-            {editing ? valorNode : (
-              <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{displayValor}</span>
-            )}
-            {displayExtra && (
-              <span className={`text-sm lg:text-base font-bold font-sans p-1 rounded border ${extraBadgeClass}`}>{displayExtra}</span>
-            )}
-          </div>
+  return (
+    <div className={`${cardBase} relative group flex flex-col justify-between transition-colors hover:border-white/15`}>
+      {editBtn}
+      <div>
+        <span className={`${labelText} block pr-8`}>{displayLabel}</span>
+        <div className="flex items-end gap-3 mt-4">
+          {editing ? (
+            editorInput
+          ) : (
+            <span className={kpiText} style={{ color: valueColor }}>
+              {displayValor}
+              {layout === "retrabalho" && <span className="text-[32px] font-semibold ml-1">%</span>}
+              {suffix && <span className="text-[24px] font-semibold text-white/60 ml-1">{suffix}</span>}
+            </span>
+          )}
+          {!editing && layout !== "retrabalho" && <GrowthBadge value={displayExtra} />}
         </div>
-        {editing ? renderEditControls() : renderFooterInfo()}
       </div>
-    );
-  }
-
-  if (layout === "operacional") {
-    return (
-      <div className="rounded-lg bg-black/60 border border-white/10 p-5 flex flex-col justify-center relative group">
-        {renderEditButton()}
-        <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md pr-8">{displayLabel}</span>
-        {editing ? <div className="mt-3">{valorNode}</div> : (
-          <p className="text-5xl font-bold text-white mt-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.4)]">{displayValor}</p>
-        )}
-        {editing ? renderEditControls() : renderFooterInfo()}
-      </div>
-    );
-  }
-
-  if (layout === "retrabalho") {
-    return (
-      <div className="rounded-lg bg-black/60 border border-white/10 p-5 flex flex-col justify-center relative overflow-hidden group">
-        {renderEditButton()}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#f48121] to-transparent shadow-[0_0_10px_#f48121]" />
-        <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md pr-8">{displayLabel}</span>
-        {editing ? <div className="mt-3">{valorNode}</div> : (
-          <p className="text-5xl font-bold text-[#f48121] mt-3 drop-shadow-[0_0_15px_rgba(244,129,33,0.7)]">{displayValor}{displayExtra}</p>
-        )}
-        {editing ? renderEditControls() : renderFooterInfo()}
-      </div>
-    );
-  }
-
-  if (layout === "suporte") {
-    return (
-      <div className="rounded-lg bg-black/60 border border-white/10 p-5 mb-6 inline-block pr-16 shadow-lg relative group">
-        {renderEditButton()}
-        <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md block mb-3 pr-8">{displayLabel}</span>
-        {editing ? <div>{valorNode}</div> : (
-          <p className="text-5xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] flex items-baseline gap-4">
-            {displayValor}
-            {displayExtra && (
-              <span className={`text-lg font-bold p-1 rounded border ${extraBadgeClass}`}>{displayExtra}</span>
-            )}
-          </p>
-        )}
-        {editing ? renderEditControls() : renderFooterInfo()}
-      </div>
-    );
-  }
-
-  return null;
+      {editing ? editControls : footerInfo}
+    </div>
+  );
 };
 
+/* ─────────── Section header ─────────── */
+const SectionHeader = ({
+  title,
+  accent,
+  action,
+}: {
+  title: string;
+  accent: string;
+  action?: React.ReactNode;
+}) => (
+  <div className="flex items-center justify-between mb-5">
+    <div className="flex items-center gap-3">
+      <span
+        className="w-1.5 h-5 rounded-full"
+        style={{ backgroundColor: accent, boxShadow: `0 0 12px ${accent}66` }}
+      />
+      <h3 className={sectionTitle}>{title}</h3>
+    </div>
+    {action}
+  </div>
+);
+
+/* ─────────── Page ─────────── */
 const DashboardHome = () => {
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="relative min-h-[calc(100vh-4rem)]">
-
-        {/* Fundo Espacial Tech (HUD Backdrop) */}
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-40 overflow-hidden mix-blend-screen">
-          <OrbitalBackground />
+      <div className="space-y-10 pb-10 animate-fade-in-up">
+        {/* Title */}
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h1 className="text-[24px] font-semibold text-white tracking-tight">Visão geral</h1>
+            <p className="text-[14px] font-medium text-white/50 mt-1">
+              Acompanhe os indicadores e o progresso das áreas em tempo real.
+            </p>
+          </div>
         </div>
-        <div className="absolute inset-0 z-0 pointer-events-none bg-background/60 backdrop-blur-sm" />
 
-        {/* Conteúdo HUD Interativo */}
-        <div className="relative z-10 space-y-6 animate-fade-in-up pb-8">
+        {/* ── Painel Comercial ── */}
+        <section>
+          <SectionHeader title="Painel Comercial" accent={BRAND.orange} action={<ReportButton />} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <EditableIndicator
+              chave="erp"
+              defaultLabel="Novos clientes ERP"
+              defaultValue={12}
+              defaultValorExtra="+15%"
+              layout="commercial"
+              accent="#FFFFFF"
+            />
+            <EditableIndicator
+              chave="fabrica"
+              defaultLabel="Serviços Tech (em andamento)"
+              defaultValue={8}
+              defaultValorExtra="+10%"
+              layout="commercial"
+              accent="#FFFFFF"
+            />
+          </div>
+        </section>
 
-          {/* ── Linha 1: Painéis Principais (Comercial & Avanços) ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
-            
-            {/* HUD: Painel Comercial */}
-            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#f48121]/80 transition-all duration-300 hover:shadow-[0_0_25px_rgba(244,129,33,0.3)] flex flex-col">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-[#f48121]/20 blur-2xl rounded-full pointer-events-none" />
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-6 bg-[#f48121] rounded-sm shadow-[0_0_12px_#f48121]" />
-                  <h3 className="font-sans text-base font-bold tracking-[0.2em] text-[#f48121] uppercase drop-shadow-md">PAINEL COMERCIAL</h3>
-                </div>
-                <ReportButton />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4 flex-1">
-                {/* ERP */}
-                <EditableIndicator 
-                  chave="erp" 
-                  defaultLabel="Novos Clientes ERP" 
-                  defaultValue={12}
-                  defaultValorExtra="+15%"
-                  layout="commercial" 
-                  groupHoverBorder="group-hover:border-[#f48121]/50" 
-                />
-                {/* Fábrica */}
-                <EditableIndicator 
-                  chave="fabrica" 
-                  defaultLabel="Serviços Tech (em andamento)" 
-                  defaultValue={8}
-                  defaultValorExtra="+10%"
-                  layout="commercial" 
-                  groupHoverBorder="group-hover:border-[#38b6ff]/50" 
-                />
-              </div>
-            </div>
-
-            {/* HUD: Avanços/Conquistas */}
-            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#a7c64f]/80 transition-all duration-300 hover:shadow-[0_0_25px_rgba(167,198,79,0.3)] flex flex-col">
-              <div className="absolute bottom-0 right-0 w-24 h-24 bg-[#a7c64f]/20 blur-2xl rounded-full pointer-events-none" />
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-2 h-6 bg-[#a7c64f] rounded-sm shadow-[0_0_12px_#a7c64f]" />
-                <h3 className="font-sans text-base font-bold tracking-[0.2em] text-[#a7c64f] uppercase drop-shadow-md">AVANÇOS E CONQUISTAS</h3>
-              </div>
-
-              <div className="space-y-6 flex-1 flex flex-col justify-center">
-                {avancosData.map((avanco, idx) => (
-                  <div key={idx} className="relative z-10 w-full">
-                    <div className="flex justify-between items-baseline mb-2">
-                      <span className="text-sm lg:text-base font-bold font-sans text-white tracking-wider drop-shadow-md">{avanco.projeto}</span>
-                      <span className="text-base font-bold font-sans text-white/90">{avanco.progresso}%</span>
-                    </div>
-                    <div className="h-4 w-full bg-black/60 rounded-full overflow-hidden border border-white/20 shadow-inner">
-                      <div 
-                        className={`h-full ${avanco.cor} relative shadow-[0_0_10px_currentColor]`} 
-                        style={{ width: `${avanco.progresso}%`, transition: 'width 1s ease-in-out' }}
-                      >
-                        <div className="absolute right-0 top-0 bottom-0 w-3 bg-white/60 blur-[2px]" />
-                        <div className="absolute inset-0 bg-white/10 mix-blend-overlay" />
-                      </div>
-                    </div>
+        {/* ── Avanços ── */}
+        <section>
+          <SectionHeader title="Avanços e Conquistas" accent={BRAND.green} />
+          <div className={`${cardBase}`}>
+            <div className="space-y-6">
+              {avancosData.map((avanco, idx) => (
+                <div key={idx}>
+                  <div className="flex justify-between items-baseline mb-2">
+                    <span className="text-[14px] font-medium text-white">{avanco.projeto}</span>
+                    <span className="text-[14px] font-semibold text-white/80">{avanco.progresso}%</span>
                   </div>
-                ))}
-              </div>
+                  <div className="h-2 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-700"
+                      style={{ width: `${avanco.progresso}%`, backgroundColor: avanco.cor }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+        </section>
 
-          {/* ── Linha 2: Operacional ── */}
-          <div className="flex items-center justify-between mt-10 mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-2 h-6 bg-[#38b6ff] rounded-sm shadow-[0_0_12px_#38b6ff]" />
-              <h3 className="font-mono text-base font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">PERFORMANCE OPERACIONAL</h3>
-            </div>
-          </div>
-
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+        {/* ── Performance Operacional ── */}
+        <section>
+          <SectionHeader title="Performance Operacional" accent={BRAND.blue} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {/* Desenvolvimento */}
-            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300">
+            <div className={cardBase}>
               <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <Code2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
-                  <h4 className="font-sans text-sm font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">Desenvolvimento e QA</h4>
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-md" style={{ backgroundColor: `${BRAND.blue}1f` }}>
+                    <Code2 size={16} style={{ color: BRAND.blue }} />
+                  </div>
+                  <h4 className="text-[16px] font-semibold text-white">Desenvolvimento e QA</h4>
                 </div>
                 <ReportButton />
               </div>
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <EditableIndicator 
-                  chave="entregas" 
-                  defaultLabel="Entregas Realizadas" 
+                <EditableIndicator
+                  chave="entregas"
+                  defaultLabel="Entregas realizadas"
                   defaultValue={45}
-                  layout="operacional" 
+                  layout="operacional"
+                  accent="#FFFFFF"
                 />
-                <EditableIndicator 
-                  chave="retrabalho" 
-                  defaultLabel="Retrabalho" 
+                <EditableIndicator
+                  chave="retrabalho"
+                  defaultLabel="Retrabalho"
                   defaultValue={4}
                   defaultValorExtra="%"
-                  layout="retrabalho" 
+                  layout="retrabalho"
                 />
               </div>
-              <ChartContainer config={devChartConfig} className="h-[220px] w-full mt-4">
-                <BarChart data={devData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" vertical={false} />
-                  <XAxis dataKey="week" stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
-                  <YAxis stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
+              <ChartContainer config={devChartConfig} className="h-[220px] w-full">
+                <BarChart data={devData} margin={{ top: 10, right: 8, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <XAxis dataKey="week" stroke="rgba(255,255,255,0.5)" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="rgba(255,255,255,0.5)" fontSize={12} tickLine={false} axisLine={false} />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="entregas" fill="#38b6ff" radius={[4, 4, 0, 0]} barSize={28} />
-                  <Bar dataKey="retrabalho" fill="#f48121" radius={[4, 4, 0, 0]} barSize={28} />
+                  <Bar dataKey="entregas" fill={BRAND.blue} radius={[6, 6, 0, 0]} barSize={18} />
+                  <Bar dataKey="retrabalho" fill={BRAND.orange} radius={[6, 6, 0, 0]} barSize={18} />
                 </BarChart>
               </ChartContainer>
             </div>
 
             {/* Suporte */}
-            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300">
+            <div className={cardBase}>
               <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <Headphones size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
-                  <h4 className="font-sans text-sm font-bold tracking-[0.2em] text-[#38b6ff] uppercase drop-shadow-md">Suporte</h4>
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-md" style={{ backgroundColor: `${BRAND.blue}1f` }}>
+                    <Headphones size={16} style={{ color: BRAND.blue }} />
+                  </div>
+                  <h4 className="text-[16px] font-semibold text-white">Suporte</h4>
                 </div>
                 <ReportButton />
               </div>
-              <EditableIndicator 
-                chave="chamados" 
-                defaultLabel="Chamados Atendidos" 
-                defaultValue={158}
-                defaultValorExtra="+8%"
-                layout="suporte" 
-              />
-              <ChartContainer config={supportChartConfig} className="h-[220px] w-full mt-4">
-                <LineChart data={supportData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" vertical={false} />
-                  <XAxis dataKey="week" stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
-                  <YAxis stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
+              <div className="mb-6">
+                <EditableIndicator
+                  chave="chamados"
+                  defaultLabel="Chamados atendidos"
+                  defaultValue={158}
+                  defaultValorExtra="+8%"
+                  layout="suporte"
+                  accent="#FFFFFF"
+                />
+              </div>
+              <ChartContainer config={supportChartConfig} className="h-[220px] w-full">
+                <LineChart data={supportData} margin={{ top: 10, right: 8, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                  <XAxis dataKey="week" stroke="rgba(255,255,255,0.5)" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="rgba(255,255,255,0.5)" fontSize={12} tickLine={false} axisLine={false} />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Line type="monotone" dataKey="atendimentos" stroke="#38b6ff" strokeWidth={5} dot={{ fill: "#38b6ff", r: 6, strokeWidth: 2, stroke: "#fff" }} activeDot={{ r: 9, fill: "#fff", stroke: "#38b6ff", strokeWidth: 3 }} />
+                  <Line
+                    type="monotone"
+                    dataKey="atendimentos"
+                    stroke={BRAND.blue}
+                    strokeWidth={3}
+                    dot={{ fill: BRAND.blue, r: 4, strokeWidth: 0 }}
+                    activeDot={{ r: 6, fill: "#fff", stroke: BRAND.blue, strokeWidth: 2 }}
+                  />
                 </LineChart>
               </ChartContainer>
             </div>
           </div>
+        </section>
 
-          {/* ── Implantações em Andamento ── */}
-          <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] mt-10 group hover:border-white/40 transition-all duration-300">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-6 bg-white/90 rounded-sm shadow-[0_0_12px_rgba(255,255,255,0.6)]" />
-                <h3 className="font-mono text-base font-bold tracking-[0.2em] text-white uppercase drop-shadow-md">PROJETOS EM IMPLANTAÇÃO</h3>
-              </div>
-              <ReportButton />
-
-            </div>
-            
-            <div className="space-y-5">
+        {/* ── Implantações ── */}
+        <section>
+          <SectionHeader title="Projetos em Implantação" accent="#FFFFFF" action={<ReportButton />} />
+          <div className={cardBase}>
+            <div className="space-y-4">
               {implantacoes.map((item) => {
                 const s = statusConfig[item.status];
                 const StatusIcon = s.icon;
@@ -477,48 +461,53 @@ const DashboardHome = () => {
                 return (
                   <div
                     key={item.cliente}
-                    className="relative rounded-lg border-2 border-white/10 bg-black/60 p-5 transition-all duration-300 hover:border-white/30 overflow-hidden shadow-md"
+                    className="relative rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 transition-colors hover:border-white/15"
                   >
-                    <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor" }} />
-                    <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6 pl-3">
+                    <div
+                      className="absolute left-0 top-3 bottom-3 w-1 rounded-r"
+                      style={{ backgroundColor: s.hex }}
+                    />
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5 pl-3">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <StatusIcon size={20} className={s.color} />
-                        <span className="font-sans text-lg font-bold tracking-wide text-white truncate drop-shadow-sm">{item.cliente}</span>
-                        <span className={`text-xs uppercase font-bold font-sans px-3 py-1 rounded border-2 ${s.border} ${s.color} shadow-sm`}>
+                        <StatusIcon size={18} style={{ color: s.hex }} />
+                        <span className="text-[15px] font-semibold text-white truncate">{item.cliente}</span>
+                        <span
+                          className="text-[11px] font-semibold px-2 py-0.5 rounded-md"
+                          style={{ color: s.hex, backgroundColor: `${s.hex}22` }}
+                        >
                           {s.label}
                         </span>
                       </div>
-                      <div className="flex items-center gap-6 text-sm font-bold font-sans text-white/90">
-                        <span className="uppercase tracking-widest bg-white/10 px-3 py-1 rounded-sm border border-white/10">RESP: {item.responsavel}</span>
-                        <span className="text-xl text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">{item.progresso}%</span>
+                      <div className="flex items-center gap-5 text-[13px] font-medium text-white/70">
+                        <span>Resp: <span className="text-white">{item.responsavel}</span></span>
+                        <span className="text-[18px] font-semibold text-white">{item.progresso}%</span>
                       </div>
                     </div>
-                    {/* Linha do tempo (progress bar com steps engrossada) */}
-                    <div className="relative flex items-center px-4">
-                      {/* Linha base contínua */}
-                      <div className="absolute left-4 right-4 top-2 h-1 bg-white/10 rounded-full z-0" />
-                      {/* Linha de progresso preenchida */}
+
+                    {/* Timeline */}
+                    <div className="relative flex items-center px-3">
+                      <div className="absolute left-3 right-3 top-1.5 h-[2px] bg-white/[0.06] rounded-full z-0" />
                       <div
-                        className="absolute left-4 top-2 h-1 rounded-full z-0 shadow-[0_0_8px_currentColor] transition-all duration-500"
+                        className="absolute left-3 top-1.5 h-[2px] rounded-full z-0 transition-all duration-500"
                         style={{
-                          width: etapaIndex >= 0 ? `calc((100% - 2rem) * ${etapaIndex / (etapas.length - 1)})` : '0%',
-                          backgroundColor: s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor",
+                          width: etapaIndex >= 0 ? `calc((100% - 1.5rem) * ${etapaIndex / (etapas.length - 1)})` : "0%",
+                          backgroundColor: s.hex,
                         }}
                       />
                       {etapas.map((etapa, idx) => {
                         const isCompleted = idx <= etapaIndex;
                         const isCurrent = idx === etapaIndex;
-                        const mainColor = isCompleted ? s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor" : "rgba(255,255,255,0.15)";
-
+                        const color = isCompleted ? s.hex : "rgba(255,255,255,0.15)";
                         return (
                           <div key={etapa} className="flex-1 relative flex flex-col items-center">
-                            <div className="relative flex items-center justify-center w-full mb-3">
-                               <div
-                                className={`w-4 h-4 rounded-sm z-10 transition-all ${isCurrent ? 'shadow-[0_0_15px_currentColor] scale-125' : ''}`}
-                                style={{ backgroundColor: mainColor, transform: 'rotate(45deg)' }}
-                               />
-                            </div>
-                            <span className={`text-xs whitespace-nowrap font-bold font-sans drop-shadow-sm ${isCurrent ? 'text-white' : 'text-white/60'}`}>
+                            <div
+                              className={`w-3 h-3 rounded-full z-10 transition-all ${isCurrent ? "ring-4 scale-110" : ""}`}
+                              style={{
+                                backgroundColor: color,
+                                boxShadow: isCurrent ? `0 0 0 4px ${s.hex}33` : undefined,
+                              }}
+                            />
+                            <span className={`mt-2.5 text-[11px] font-medium whitespace-nowrap ${isCurrent ? "text-white" : "text-white/45"}`}>
                               {etapa}
                             </span>
                           </div>
@@ -530,8 +519,7 @@ const DashboardHome = () => {
               })}
             </div>
           </div>
-
-        </div>
+        </section>
       </div>
     </TooltipProvider>
   );
