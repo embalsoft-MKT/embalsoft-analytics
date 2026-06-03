@@ -29,7 +29,7 @@ const sections: TeamSection[] = [
   {
     title: "Sócios",
     icon: Crown,
-    color: "#f48121",
+    color: "#88c240",
     highlighted: true,
     members: [
       { name: "Júnior Muck", role: "CEO", sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/1978", image: "/junior.png" },
@@ -233,14 +233,14 @@ const Team = () => {
                     key={idx}
                     className={`group relative backdrop-blur-sm border rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 ${
                       member.isPJ
-                        ? "bg-gradient-to-br from-[#f48121]/10 to-card/60 border-dashed border-[#f48121]/40 hover:border-[#f48121] hover:shadow-[0_0_25px_rgba(244,129,33,0.25)]"
+                        ? "bg-gradient-to-br from-[#88c240]/10 to-card/60 border-dashed border-[#88c240]/40 hover:border-[#88c240] hover:shadow-[0_0_25px_rgba(244,129,33,0.25)]"
                         : section.highlighted
-                        ? "bg-card/60 border-[#f48121]/30 hover:border-[#f48121] hover:shadow-[0_0_25px_rgba(244,129,33,0.25)]"
+                        ? "bg-card/60 border-[#88c240]/30 hover:border-[#88c240] hover:shadow-[0_0_25px_rgba(244,129,33,0.25)]"
                         : "bg-card/60 border-white/10 hover:border-[#38b6ff]/50 hover:shadow-[0_0_25px_rgba(56,182,255,0.2)]"
                     }`}
                   >
                     {member.isPJ && (
-                      <span className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#f48121]/20 border border-[#f48121]/50 text-[10px] font-semibold text-[#f48121] uppercase tracking-wider">
+                      <span className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#88c240]/20 border border-[#88c240]/50 text-[10px] font-semibold text-[#88c240] uppercase tracking-wider">
                         <Handshake size={10} /> Parceiro
                       </span>
                     )}
@@ -248,16 +248,16 @@ const Team = () => {
                       <div
                         className="w-14 h-14 rounded-full flex items-center justify-center border-2 shrink-0 overflow-hidden"
                         style={{
-                          borderColor: member.isPJ ? "#f4812150" : `${section.color}50`,
+                          borderColor: member.isPJ ? "#88c24050" : `${section.color}50`,
                           background: member.isPJ
-                            ? "linear-gradient(135deg, #f4812125, transparent)"
+                            ? "linear-gradient(135deg, #88c24025, transparent)"
                             : `linear-gradient(135deg, ${section.color}25, transparent)`,
                         }}
                       >
                         {member.image ? (
                           <img src={member.image} alt={member.name} className="w-full h-full object-cover" />
                         ) : (
-                          <User size={24} style={{ color: member.isPJ ? "#f48121" : section.color }} />
+                          <User size={24} style={{ color: member.isPJ ? "#88c240" : section.color }} />
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -268,7 +268,7 @@ const Team = () => {
                           {member.role}
                         </p>
                         {member.isPJ && member.parceriaDesde && (
-                          <p className="text-[11px] text-[#f48121]/90 mt-0.5 truncate">
+                          <p className="text-[11px] text-[#88c240]/90 mt-0.5 truncate">
                             Parceiro desde {member.parceriaDesde}
                           </p>
                         )}
@@ -278,7 +278,7 @@ const Team = () => {
                       <div className="mt-3 pt-3 border-t border-white/10 space-y-1.5 text-[11px] text-muted-foreground">
                         {member.sede && (
                           <div className="flex items-center gap-1.5">
-                            <MapPin size={12} style={{ color: member.isPJ ? "#f48121" : section.color }} className="shrink-0" />
+                            <MapPin size={12} style={{ color: member.isPJ ? "#88c240" : section.color }} className="shrink-0" />
                             <span>Sede: <span className="text-white/90">{member.sede}</span></span>
                           </div>
                         )}
@@ -296,7 +296,7 @@ const Team = () => {
                         )}
                         {member.aniversario && (
                           <div className="flex items-center gap-1.5">
-                            <Cake size={12} style={{ color: member.isPJ ? "#f48121" : section.color }} className="shrink-0" />
+                            <Cake size={12} style={{ color: member.isPJ ? "#88c240" : section.color }} className="shrink-0" />
                             <span>Aniversário: <span className="text-white/90">{member.aniversario}</span></span>
                           </div>
                         )}
