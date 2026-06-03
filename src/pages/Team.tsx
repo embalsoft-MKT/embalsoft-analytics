@@ -294,6 +294,12 @@ const Team = () => {
                             <span className="truncate text-white/90">{member.tempo}</span>
                           </div>
                         )}
+                        {member.isPJ && member.parceriaDesde && (
+                          <div className="flex items-center gap-1.5">
+                            <Clock size={12} style={{ color: "#88c240" }} className="shrink-0" />
+                            <span className="truncate text-white/90">{calcularTempo(member.parceriaDesde)}</span>
+                          </div>
+                        )}
                         {member.aniversario && (
                           <div className="flex items-center gap-1.5">
                             <Cake size={12} style={{ color: member.isPJ ? "#88c240" : section.color }} className="shrink-0" />
