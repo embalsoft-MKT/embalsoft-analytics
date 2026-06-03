@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon, TrendingUp, TrendingDown } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon, TrendingUp, TrendingDown, Plus, Trash2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -16,6 +16,11 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import OrbitalBackground from "@/components/OrbitalBackground";
 import { useAuth } from "@/contexts/AuthContext";
