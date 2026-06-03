@@ -333,10 +333,10 @@ const Team = () => {
                               <span>Admissão: {member.admissao}</span>
                             </div>
                           )}
-                          {member.tempo && (
+                          {member.admissao && (
                             <div className="flex items-center gap-1.5">
                               <Clock size={12} className="text-white/70 shrink-0" />
-                              <span className="truncate">{member.tempo}</span>
+                              <span className="truncate">{calcularTempo(member.admissao)}</span>
                             </div>
                           )}
                           {member.aniversario && (
