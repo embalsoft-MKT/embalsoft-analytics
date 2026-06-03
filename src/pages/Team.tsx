@@ -25,6 +25,30 @@ interface TeamSection {
   highlighted?: boolean;
 }
 
+const calcularTempo = (data: string): string => {
+  const [d, m, y] = data.split("/").map(Number);
+  const inicio = new Date(y, m - 1, d);
+  const hoje = new Date();
+  if (inicio > hoje) return "0 dias";
+  let anos = hoje.getFullYear() - inicio.getFullYear();
+  let meses = hoje.getMonth() - inicio.getMonth();
+  let dias = hoje.getDate() - inicio.getDate();
+  if (dias < 0) {
+    meses -= 1;
+    const diasMesAnterior = new Date(hoje.getFullYear(), hoje.getMonth(), 0).getDate();
+    dias += diasMesAnterior;
+  }
+  if (meses < 0) {
+    anos -= 1;
+    meses += 12;
+  }
+  const partes: string[] = [];
+  if (anos > 0) partes.push(`${anos} ${anos === 1 ? "ano" : "anos"}`);
+  if (meses > 0) partes.push(`${meses} ${meses === 1 ? "mês" : "meses"}`);
+  if (dias > 0 || partes.length === 0) partes.push(`${dias} ${dias === 1 ? "dia" : "dias"}`);
+  return partes.join(", ");
+};
+
 const sections: TeamSection[] = [
   {
     title: "Sócios",
