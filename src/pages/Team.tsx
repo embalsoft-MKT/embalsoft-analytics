@@ -292,6 +292,15 @@ const Team = () => {
                       key={`leader-${idx}`}
                       className="group relative border rounded-lg p-3 transition-all duration-300 hover:-translate-y-1 border-[#38b6ff] bg-[#38b6ff]/80 hover:bg-[#38b6ff] shadow-[0_0_15px_rgba(56,182,255,0.3)] max-w-[280px]"
                     >
+                      {isAdmin && (
+                        <button
+                          onClick={() => openEdit(sectionIdx, data[sectionIdx].members.indexOf(member))}
+                          aria-label="Editar"
+                          className="absolute top-2 right-2 p-1.5 rounded-md bg-white/20 hover:bg-white/40 text-white transition-colors"
+                        >
+                          <Pencil size={12} />
+                        </button>
+                      )}
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 shrink-0 bg-white/20 border-white/40 overflow-hidden">
                           {member.image ? (
