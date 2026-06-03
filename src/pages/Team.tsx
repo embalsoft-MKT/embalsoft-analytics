@@ -150,6 +150,72 @@ const sections: TeamSection[] = [
 const Team = () => {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
+  const [extras, setExtras] = useState<Record<string, Member[]>>({});
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState<{
+    section: string;
+    name: string;
+    role: string;
+    sede: string;
+    admissao: string;
+    aniversario: string;
+    isPJ: boolean;
+    parceriaDesde: string;
+    isLeader: boolean;
+  }>({
+    section: sections[0].title,
+    name: "",
+    role: "",
+    sede: "",
+    admissao: "",
+    aniversario: "",
+    isPJ: false,
+    parceriaDesde: "",
+    isLeader: false,
+  });
+
+  const resetForm = () =>
+    setForm({
+      section: sections[0].title,
+      name: "",
+      role: "",
+      sede: "",
+      admissao: "",
+      aniversario: "",
+      isPJ: false,
+      parceriaDesde: "",
+      isLeader: false,
+    });
+
+  const handleSave = () => {
+    if (!form.name.trim() || !form.role.trim()) {
+      toast({ title: "Preencha nome e cargo", variant: "destructive" });
+      return;
+    }
+    const newMember: Member = {
+      name: form.name.trim(),
+      role: form.role.trim(),
+      isLeader: form.isLeader || undefined,
+      isPJ: form.isPJ || undefined,
+      parceriaDesde: form.isPJ && form.parceriaDesde ? form.parceriaDesde : undefined,
+      sede: form.sede || undefined,
+      admissao: !form.isPJ && form.admissao ? form.admissao : undefined,
+      tempo: !form.isPJ && form.admissao ? calcularTempo(form.admissao) : undefined,
+      aniversario: form.aniversario || undefined,
+    };
+    setExtras((prev) => ({
+      ...prev,
+      [form.section]: [...(prev[form.section] || []), newMember],
+    }));
+    toast({ title: "Colaborador adicionado", description: `${newMember.name} em ${form.section}` });
+    setOpen(false);
+    resetForm();
+  };
+
+  const mergedSections = sections.map((s) => ({
+    ...s,
+    members: [...s.members, ...(extras[s.title] || [])],
+  }));
 
   return (
     <div className="relative space-y-8 animate-fade-in pb-20">
@@ -165,10 +231,11 @@ const Team = () => {
         </p>
       </div>
 
-      {sections.map((section) => {
+      {mergedSections.map((section) => {
         const Icon = section.icon;
         return (
           <section key={section.title}>
+
             <div className="flex items-center gap-3 mb-4">
               <div
                 className="p-2 rounded-lg border"
