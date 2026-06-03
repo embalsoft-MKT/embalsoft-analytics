@@ -430,7 +430,60 @@ const EditableAvanco = ({ chave, ordem, defaultProjeto, defaultProgresso, cor }:
   );
 };
 
+const emptyImplantacao: Implantacao = { cliente: "", etapa: etapas[0], status: "em_dia", responsavel: "" };
+
 const DashboardHome = () => {
+  const { isAdmin } = useAuth();
+  const [implantacoes, setImplantacoes] = useState<Implantacao[]>(() => {
+    try {
+      const raw = localStorage.getItem(IMPLANTACOES_STORAGE_KEY);
+      if (raw) return JSON.parse(raw) as Implantacao[];
+    } catch {}
+    return implantacoesIniciais;
+  });
+  const [implDialogOpen, setImplDialogOpen] = useState(false);
+  const [editingIdx, setEditingIdx] = useState<number | null>(null);
+  const [implForm, setImplForm] = useState<Implantacao>(emptyImplantacao);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(IMPLANTACOES_STORAGE_KEY, JSON.stringify(implantacoes));
+    } catch {}
+  }, [implantacoes]);
+
+  const openNewImplantacao = () => {
+    setEditingIdx(null);
+    setImplForm(emptyImplantacao);
+    setImplDialogOpen(true);
+  };
+
+  const openEditImplantacao = (idx: number) => {
+    setEditingIdx(idx);
+    setImplForm({ ...implantacoes[idx] });
+    setImplDialogOpen(true);
+  };
+
+  const saveImplantacao = () => {
+    if (!implForm.cliente.trim()) {
+      toast.error("Informe o cliente");
+      return;
+    }
+    setImplantacoes((prev) => {
+      if (editingIdx === null) return [...prev, { ...implForm, cliente: implForm.cliente.trim(), responsavel: implForm.responsavel.trim() }];
+      const next = [...prev];
+      next[editingIdx] = { ...implForm, cliente: implForm.cliente.trim(), responsavel: implForm.responsavel.trim() };
+      return next;
+    });
+    setImplDialogOpen(false);
+    toast.success("Salvo com sucesso!");
+  };
+
+  const removeImplantacao = (idx: number) => {
+    setImplantacoes((prev) => prev.filter((_, i) => i !== idx));
+    setImplDialogOpen(false);
+    toast.success("Removido");
+  };
+
   return (
     <TooltipProvider delayDuration={200}>
       <div className="relative min-h-[calc(100vh-4rem)]">
