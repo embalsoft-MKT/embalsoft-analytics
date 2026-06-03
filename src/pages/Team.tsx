@@ -425,10 +425,10 @@ const Team = () => {
                             <span>Admissão: <span className="text-white/90">{member.admissao}</span></span>
                           </div>
                         )}
-                        {member.tempo && !member.isPJ && (
+                        {member.admissao && !member.isPJ && (
                           <div className="flex items-center gap-1.5">
                             <Clock size={12} style={{ color: section.color }} className="shrink-0" />
-                            <span className="truncate text-white/90">{member.tempo}</span>
+                            <span className="truncate text-white/90">{calcularTempo(member.admissao)}</span>
                           </div>
                         )}
                         {member.isPJ && member.parceriaDesde && (
