@@ -236,6 +236,18 @@ const Team = () => {
     setForm(emptyForm);
   };
 
+  const handleDelete = (sectionIdx: number, memberIdx: number) => {
+    const member = data[sectionIdx].members[memberIdx];
+    if (!member) return;
+    if (!window.confirm(`Excluir ${member.name}?`)) return;
+    setData((prev) => {
+      const next = prev.map((s) => ({ ...s, members: [...s.members] }));
+      next[sectionIdx].members.splice(memberIdx, 1);
+      return next;
+    });
+    toast({ title: "Colaborador excluído", description: member.name });
+  };
+
   return (
     <div className="relative space-y-8 animate-fade-in pb-20">
       <div className="mt-4">
