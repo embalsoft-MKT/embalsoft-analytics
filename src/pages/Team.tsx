@@ -414,6 +414,89 @@ const Team = () => {
           </section>
         );
       })}
+
+      {isAdmin && (
+        <>
+          <button
+            onClick={() => setOpen(true)}
+            aria-label="Adicionar novo colaborador"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full bg-[#88c240] text-white font-semibold shadow-[0_8px_30px_rgba(136,194,64,0.5)] hover:scale-105 hover:shadow-[0_12px_40px_rgba(136,194,64,0.7)] transition-all duration-300 border border-white/20"
+          >
+            <UserPlus size={20} />
+            <span className="hidden sm:inline">Novo colaborador</span>
+          </button>
+
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Adicionar novo colaborador</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 py-2">
+                <div>
+                  <Label>Setor</Label>
+                  <Select value={form.section} onValueChange={(v) => setForm((f) => ({ ...f, section: v }))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {sections.map((s) => (
+                        <SelectItem key={s.title} value={s.title}>{s.title}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Nome</Label>
+                  <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
+                </div>
+                <div>
+                  <Label>Cargo</Label>
+                  <Input value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>Sede</Label>
+                    <Select value={form.sede} onValueChange={(v) => setForm((f) => ({ ...f, sede: v }))}>
+                      <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="RS">RS</SelectItem>
+                        <SelectItem value="SP">SP</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Aniversário</Label>
+                    <Input placeholder="dd/mm/aaaa" value={form.aniversario} onChange={(e) => setForm((f) => ({ ...f, aniversario: e.target.value }))} />
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="isPJ" checked={form.isPJ} onCheckedChange={(c) => setForm((f) => ({ ...f, isPJ: !!c }))} />
+                    <Label htmlFor="isPJ" className="cursor-pointer">Parceiro (PJ)</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="isLeader" checked={form.isLeader} onCheckedChange={(c) => setForm((f) => ({ ...f, isLeader: !!c }))} />
+                    <Label htmlFor="isLeader" className="cursor-pointer">Líder</Label>
+                  </div>
+                </div>
+                {form.isPJ ? (
+                  <div>
+                    <Label>Parceria desde</Label>
+                    <Input placeholder="dd/mm/aaaa" value={form.parceriaDesde} onChange={(e) => setForm((f) => ({ ...f, parceriaDesde: e.target.value }))} />
+                  </div>
+                ) : (
+                  <div>
+                    <Label>Admissão</Label>
+                    <Input placeholder="dd/mm/aaaa" value={form.admissao} onChange={(e) => setForm((f) => ({ ...f, admissao: e.target.value }))} />
+                  </div>
+                )}
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+                <Button onClick={handleSave} className="bg-[#88c240] hover:bg-[#88c240]/90 text-white">Adicionar</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </div>
   );
 };
