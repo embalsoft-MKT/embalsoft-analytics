@@ -475,21 +475,14 @@ const DashboardHome = () => {
 
               <div className="space-y-6 flex-1 flex flex-col justify-center">
                 {avancosData.map((avanco, idx) => (
-                  <div key={idx} className="relative z-10 w-full">
-                    <div className="flex justify-between items-baseline mb-2">
-                      <span className="text-sm lg:text-base font-bold font-sans text-white tracking-wider drop-shadow-md">{avanco.projeto}</span>
-                      <span className="text-base font-bold font-sans text-white/90">{avanco.progresso}%</span>
-                    </div>
-                    <div className="h-4 w-full bg-black/60 rounded-full overflow-hidden border border-white/20 shadow-inner">
-                      <div 
-                        className={`h-full ${avanco.cor} relative shadow-[0_0_10px_currentColor]`} 
-                        style={{ width: `${avanco.progresso}%`, transition: 'width 1s ease-in-out' }}
-                      >
-                        <div className="absolute right-0 top-0 bottom-0 w-3 bg-white/60 blur-[2px]" />
-                        <div className="absolute inset-0 bg-white/10 mix-blend-overlay" />
-                      </div>
-                    </div>
-                  </div>
+                  <EditableAvanco
+                    key={idx}
+                    chave={`avanco_${idx + 1}`}
+                    ordem={idx + 1}
+                    defaultProjeto={avanco.projeto}
+                    defaultProgresso={avanco.progresso}
+                    cor={avanco.cor}
+                  />
                 ))}
               </div>
             </div>
