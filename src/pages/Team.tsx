@@ -394,13 +394,22 @@ const Team = () => {
                       </span>
                     )}
                     {isAdmin && (
-                      <button
-                        onClick={() => openEdit(sectionIdx, data[sectionIdx].members.indexOf(member))}
-                        aria-label="Editar"
-                        className={`absolute ${member.isPJ ? "top-9" : "top-2"} right-2 p-1.5 rounded-md bg-white/10 hover:bg-white/25 text-white/80 hover:text-white transition-colors opacity-0 group-hover:opacity-100`}
-                      >
-                        <Pencil size={12} />
-                      </button>
+                      <div className={`absolute ${member.isPJ ? "top-9" : "top-2"} right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity`}>
+                        <button
+                          onClick={() => openEdit(sectionIdx, data[sectionIdx].members.indexOf(member))}
+                          aria-label="Editar"
+                          className="p-1.5 rounded-md bg-white/10 hover:bg-white/25 text-white/80 hover:text-white transition-colors"
+                        >
+                          <Pencil size={12} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(sectionIdx, data[sectionIdx].members.indexOf(member))}
+                          aria-label="Excluir"
+                          className="p-1.5 rounded-md bg-white/10 hover:bg-red-500/70 text-white/80 hover:text-white transition-colors"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
                     )}
                     <div className="flex items-center gap-4">
                       <div
