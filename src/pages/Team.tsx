@@ -1,7 +1,15 @@
-import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle, MapPin, Calendar, Clock, Cake, Plus, Server, Handshake } from "lucide-react";
+import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle, MapPin, Calendar, Clock, Cake, Plus, Server, Handshake, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "@/hooks/use-toast";
 
 interface Member {
   name: string;
@@ -142,6 +150,72 @@ const sections: TeamSection[] = [
 const Team = () => {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
+  const [extras, setExtras] = useState<Record<string, Member[]>>({});
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState<{
+    section: string;
+    name: string;
+    role: string;
+    sede: string;
+    admissao: string;
+    aniversario: string;
+    isPJ: boolean;
+    parceriaDesde: string;
+    isLeader: boolean;
+  }>({
+    section: sections[0].title,
+    name: "",
+    role: "",
+    sede: "",
+    admissao: "",
+    aniversario: "",
+    isPJ: false,
+    parceriaDesde: "",
+    isLeader: false,
+  });
+
+  const resetForm = () =>
+    setForm({
+      section: sections[0].title,
+      name: "",
+      role: "",
+      sede: "",
+      admissao: "",
+      aniversario: "",
+      isPJ: false,
+      parceriaDesde: "",
+      isLeader: false,
+    });
+
+  const handleSave = () => {
+    if (!form.name.trim() || !form.role.trim()) {
+      toast({ title: "Preencha nome e cargo", variant: "destructive" });
+      return;
+    }
+    const newMember: Member = {
+      name: form.name.trim(),
+      role: form.role.trim(),
+      isLeader: form.isLeader || undefined,
+      isPJ: form.isPJ || undefined,
+      parceriaDesde: form.isPJ && form.parceriaDesde ? form.parceriaDesde : undefined,
+      sede: form.sede || undefined,
+      admissao: !form.isPJ && form.admissao ? form.admissao : undefined,
+      tempo: !form.isPJ && form.admissao ? calcularTempo(form.admissao) : undefined,
+      aniversario: form.aniversario || undefined,
+    };
+    setExtras((prev) => ({
+      ...prev,
+      [form.section]: [...(prev[form.section] || []), newMember],
+    }));
+    toast({ title: "Colaborador adicionado", description: `${newMember.name} em ${form.section}` });
+    setOpen(false);
+    resetForm();
+  };
+
+  const mergedSections = sections.map((s) => ({
+    ...s,
+    members: [...s.members, ...(extras[s.title] || [])],
+  }));
 
   return (
     <div className="relative space-y-8 animate-fade-in pb-20">
@@ -157,10 +231,11 @@ const Team = () => {
         </p>
       </div>
 
-      {sections.map((section) => {
+      {mergedSections.map((section) => {
         const Icon = section.icon;
         return (
           <section key={section.title}>
+
             <div className="flex items-center gap-3 mb-4">
               <div
                 className="p-2 rounded-lg border"
@@ -339,6 +414,89 @@ const Team = () => {
           </section>
         );
       })}
+
+      {isAdmin && (
+        <>
+          <button
+            onClick={() => setOpen(true)}
+            aria-label="Adicionar novo colaborador"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full bg-[#88c240] text-white font-semibold shadow-[0_8px_30px_rgba(136,194,64,0.5)] hover:scale-105 hover:shadow-[0_12px_40px_rgba(136,194,64,0.7)] transition-all duration-300 border border-white/20"
+          >
+            <UserPlus size={20} />
+            <span className="hidden sm:inline">Novo colaborador</span>
+          </button>
+
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Adicionar novo colaborador</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-3 py-2">
+                <div>
+                  <Label>Setor</Label>
+                  <Select value={form.section} onValueChange={(v) => setForm((f) => ({ ...f, section: v }))}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {sections.map((s) => (
+                        <SelectItem key={s.title} value={s.title}>{s.title}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Nome</Label>
+                  <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
+                </div>
+                <div>
+                  <Label>Cargo</Label>
+                  <Input value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>Sede</Label>
+                    <Select value={form.sede} onValueChange={(v) => setForm((f) => ({ ...f, sede: v }))}>
+                      <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="RS">RS</SelectItem>
+                        <SelectItem value="SP">SP</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Aniversário</Label>
+                    <Input placeholder="dd/mm/aaaa" value={form.aniversario} onChange={(e) => setForm((f) => ({ ...f, aniversario: e.target.value }))} />
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="isPJ" checked={form.isPJ} onCheckedChange={(c) => setForm((f) => ({ ...f, isPJ: !!c }))} />
+                    <Label htmlFor="isPJ" className="cursor-pointer">Parceiro (PJ)</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="isLeader" checked={form.isLeader} onCheckedChange={(c) => setForm((f) => ({ ...f, isLeader: !!c }))} />
+                    <Label htmlFor="isLeader" className="cursor-pointer">Líder</Label>
+                  </div>
+                </div>
+                {form.isPJ ? (
+                  <div>
+                    <Label>Parceria desde</Label>
+                    <Input placeholder="dd/mm/aaaa" value={form.parceriaDesde} onChange={(e) => setForm((f) => ({ ...f, parceriaDesde: e.target.value }))} />
+                  </div>
+                ) : (
+                  <div>
+                    <Label>Admissão</Label>
+                    <Input placeholder="dd/mm/aaaa" value={form.admissao} onChange={(e) => setForm((f) => ({ ...f, admissao: e.target.value }))} />
+                  </div>
+                )}
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+                <Button onClick={handleSave} className="bg-[#88c240] hover:bg-[#88c240]/90 text-white">Adicionar</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </div>
   );
 };
