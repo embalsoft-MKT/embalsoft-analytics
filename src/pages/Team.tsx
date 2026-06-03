@@ -150,19 +150,12 @@ const sections: TeamSection[] = [
 const Team = () => {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
-  const [extras, setExtras] = useState<Record<string, Member[]>>({});
+  const [data, setData] = useState<TeamSection[]>(() =>
+    sections.map((s) => ({ ...s, members: s.members.map((m) => ({ ...m })) })),
+  );
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<{
-    section: string;
-    name: string;
-    role: string;
-    sede: string;
-    admissao: string;
-    aniversario: string;
-    isPJ: boolean;
-    parceriaDesde: string;
-    isLeader: boolean;
-  }>({
+  const [editing, setEditing] = useState<{ sectionIdx: number; memberIdx: number } | null>(null);
+  const emptyForm = {
     section: sections[0].title,
     name: "",
     role: "",
@@ -172,20 +165,34 @@ const Team = () => {
     isPJ: false,
     parceriaDesde: "",
     isLeader: false,
-  });
+    image: "",
+  };
+  const [form, setForm] = useState<typeof emptyForm>(emptyForm);
 
-  const resetForm = () =>
+  const openNew = () => {
+    setEditing(null);
+    setForm(emptyForm);
+    setOpen(true);
+  };
+
+  const openEdit = (sectionIdx: number, memberIdx: number) => {
+    const s = data[sectionIdx];
+    const m = s.members[memberIdx];
+    setEditing({ sectionIdx, memberIdx });
     setForm({
-      section: sections[0].title,
-      name: "",
-      role: "",
-      sede: "",
-      admissao: "",
-      aniversario: "",
-      isPJ: false,
-      parceriaDesde: "",
-      isLeader: false,
+      section: s.title,
+      name: m.name,
+      role: m.role,
+      sede: m.sede || "",
+      admissao: m.admissao || "",
+      aniversario: m.aniversario || "",
+      isPJ: !!m.isPJ,
+      parceriaDesde: m.parceriaDesde || "",
+      isLeader: !!m.isLeader,
+      image: m.image || "",
     });
+    setOpen(true);
+  };
 
   const handleSave = () => {
     if (!form.name.trim() || !form.role.trim()) {
@@ -202,20 +209,32 @@ const Team = () => {
       admissao: !form.isPJ && form.admissao ? form.admissao : undefined,
       tempo: !form.isPJ && form.admissao ? calcularTempo(form.admissao) : undefined,
       aniversario: form.aniversario || undefined,
+      image: form.image || undefined,
     };
-    setExtras((prev) => ({
-      ...prev,
-      [form.section]: [...(prev[form.section] || []), newMember],
-    }));
-    toast({ title: "Colaborador adicionado", description: `${newMember.name} em ${form.section}` });
+    setData((prev) => {
+      const next = prev.map((s) => ({ ...s, members: [...s.members] }));
+      const targetIdx = next.findIndex((s) => s.title === form.section);
+      if (targetIdx === -1) return prev;
+      if (editing) {
+        if (next[editing.sectionIdx].title === form.section) {
+          next[editing.sectionIdx].members[editing.memberIdx] = newMember;
+        } else {
+          next[editing.sectionIdx].members.splice(editing.memberIdx, 1);
+          next[targetIdx].members.push(newMember);
+        }
+      } else {
+        next[targetIdx].members.push(newMember);
+      }
+      return next;
+    });
+    toast({
+      title: editing ? "Colaborador atualizado" : "Colaborador adicionado",
+      description: `${newMember.name} em ${form.section}`,
+    });
     setOpen(false);
-    resetForm();
+    setEditing(null);
+    setForm(emptyForm);
   };
-
-  const mergedSections = sections.map((s) => ({
-    ...s,
-    members: [...s.members, ...(extras[s.title] || [])],
-  }));
 
   return (
     <div className="relative space-y-8 animate-fade-in pb-20">
@@ -231,10 +250,11 @@ const Team = () => {
         </p>
       </div>
 
-      {mergedSections.map((section) => {
+      {data.map((section, sectionIdx) => {
         const Icon = section.icon;
         return (
           <section key={section.title}>
+
 
             <div className="flex items-center gap-3 mb-4">
               <div
