@@ -304,6 +304,117 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
   return null;
 };
 
+// Editor inline para cada item de Avanços e Conquistas
+const EditableAvanco = ({ chave, ordem, defaultProjeto, defaultProgresso, cor }: {
+  chave: string;
+  ordem: number;
+  defaultProjeto: string;
+  defaultProgresso: number;
+  cor: string;
+}) => {
+  const { isAdmin } = useAuth();
+  const { byChave, updateIndicador } = useIndicadores();
+  const indicador = byChave(chave);
+
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [draftLabel, setDraftLabel] = useState(defaultProjeto);
+  const [draftValor, setDraftValor] = useState(defaultProgresso.toString());
+
+  useEffect(() => {
+    setDraftLabel(indicador?.label || defaultProjeto);
+    setDraftValor(
+      indicador?.valor !== null && indicador?.valor !== undefined
+        ? indicador.valor.toString()
+        : defaultProgresso.toString()
+    );
+  }, [indicador, defaultProjeto, defaultProgresso]);
+
+  const projeto = indicador?.label || defaultProjeto;
+  const progresso =
+    indicador?.valor !== null && indicador?.valor !== undefined ? indicador.valor : defaultProgresso;
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const num = Number(draftValor);
+      if (Number.isNaN(num)) throw new Error("Valor inválido");
+      const clamped = Math.max(0, Math.min(100, num));
+      await updateIndicador(chave, clamped, null, draftLabel.trim() || defaultProjeto, "avancos", ordem);
+      toast.success("Salvo com sucesso!");
+      setEditing(false);
+    } catch (e: any) {
+      toast.error(e.message || "Erro ao salvar");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setDraftLabel(projeto);
+    setDraftValor(progresso.toString());
+    setEditing(false);
+  };
+
+  return (
+    <div className="relative z-10 w-full group/avanco">
+      {isAdmin && !editing && (
+        <button
+          onClick={() => setEditing(true)}
+          className="absolute -top-1 right-0 p-1.5 rounded-md bg-white/5 opacity-40 group-hover/avanco:opacity-100 transition-opacity hover:bg-white/15 text-white/70 hover:text-white z-20"
+          title="Editar"
+        >
+          <Edit2 size={14} />
+        </button>
+      )}
+      {editing ? (
+        <div className="space-y-2">
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              autoFocus
+              value={draftLabel}
+              onChange={(e) => setDraftLabel(e.target.value)}
+              className="flex-1 bg-black/50 border border-[#a7c64f]/60 rounded px-2 py-1 text-sm font-bold text-white focus:border-[#a7c64f] outline-none"
+              placeholder="Projeto"
+            />
+            <input
+              type="number"
+              min={0}
+              max={100}
+              value={draftValor}
+              onChange={(e) => setDraftValor(e.target.value)}
+              className="w-24 bg-black/50 border border-[#a7c64f]/60 rounded px-2 py-1 text-sm font-bold text-white focus:border-[#a7c64f] outline-none"
+              placeholder="%"
+            />
+            <div className="flex gap-2">
+              <button onClick={handleCancel} disabled={saving} className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white transition-colors"><X size={14}/></button>
+              <button onClick={handleSave} disabled={saving} className="p-1.5 rounded bg-[#a7c64f]/20 hover:bg-[#a7c64f]/40 text-[#a7c64f] transition-colors">
+                {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14}/>}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="flex justify-between items-baseline mb-2 pr-8">
+            <span className="text-sm lg:text-base font-bold font-sans text-white tracking-wider drop-shadow-md">{projeto}</span>
+            <span className="text-base font-bold font-sans text-white/90">{progresso}%</span>
+          </div>
+          <div className="h-4 w-full bg-black/60 rounded-full overflow-hidden border border-white/20 shadow-inner">
+            <div
+              className={`h-full ${cor} relative shadow-[0_0_10px_currentColor]`}
+              style={{ width: `${progresso}%`, transition: 'width 1s ease-in-out' }}
+            >
+              <div className="absolute right-0 top-0 bottom-0 w-3 bg-white/60 blur-[2px]" />
+              <div className="absolute inset-0 bg-white/10 mix-blend-overlay" />
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 const DashboardHome = () => {
   return (
     <TooltipProvider delayDuration={200}>
