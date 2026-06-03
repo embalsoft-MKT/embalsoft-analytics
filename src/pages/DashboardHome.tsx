@@ -438,7 +438,7 @@ const DashboardHome = () => {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-6 bg-[#a7c64f] rounded-sm shadow-[0_0_12px_#a7c64f]" />
-                  <h3 className="font-sans text-base font-bold tracking-normal text-[#a7c64f] drop-shadow-md">Painel comercial</h3>
+                  <h3 className="font-sans text-base font-bold tracking-normal text-[#a7c64f] drop-shadow-md">Painel Comercial</h3>
                 </div>
                 <ReportButton />
               </div>
@@ -470,7 +470,7 @@ const DashboardHome = () => {
               <div className="absolute bottom-0 right-0 w-24 h-24 bg-[#a7c64f]/20 blur-2xl rounded-full pointer-events-none" />
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-2 h-6 bg-[#a7c64f] rounded-sm shadow-[0_0_12px_#a7c64f]" />
-                <h3 className="font-sans text-base font-bold tracking-normal text-[#a7c64f] drop-shadow-md">Avanços e conquistas</h3>
+                <h3 className="font-sans text-base font-bold tracking-normal text-[#a7c64f] drop-shadow-md">Avanços e Conquistas</h3>
               </div>
 
               <div className="space-y-6 flex-1 flex flex-col justify-center">
@@ -567,7 +567,7 @@ const DashboardHome = () => {
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-6 bg-white/90 rounded-sm shadow-[0_0_12px_rgba(255,255,255,0.6)]" />
-                <h3 className="font-mono text-base font-bold tracking-normal text-white drop-shadow-md">Projetos em implantação</h3>
+                <h3 className="font-sans text-base font-bold tracking-normal text-white drop-shadow-md">Projetos em Implantação</h3>
               </div>
               <ReportButton />
 
