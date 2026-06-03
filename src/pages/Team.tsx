@@ -80,7 +80,7 @@ const sections: TeamSection[] = [
       { name: "Éverton Cristiano dos Santos", role: "Desenvolvedor", sede: "RS", admissao: "27/01/2025", tempo: "1 ano, 3 meses e 12 dias", aniversario: "06/05/2025", image: "/everton.png" },
       { name: "Douglas Gnutzmann Santos", role: "Desenvolvedor", sede: "RS", admissao: "08/11/2021", tempo: "4 anos, 6 meses e 1 dia", aniversario: "24/05/1985", image: "/douglas.png" },
       { name: "João Roberto Teixeira Lopes", role: "Desenvolvedor", sede: "SP", admissao: "01/03/2023", tempo: "3 anos, 2 meses e 8 dias", aniversario: "03/06/1986", image: "/joao.png" },
-      { name: "Vinícius Martins", role: "Desenvolvedor", image: "/vinicius.png" },
+      { name: "Vinícius Martins", role: "Desenvolvedor", admissao: "18/08/2025", aniversario: "28/08/1996", image: "/vinicius.png" },
     ],
   },
   {
