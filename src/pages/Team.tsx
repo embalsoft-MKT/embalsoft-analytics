@@ -233,7 +233,7 @@ const Team = () => {
                     key={idx}
                     className={`group relative backdrop-blur-sm border rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 ${
                       member.isPJ
-                        ? "bg-gradient-to-br from-[#88c240]/10 to-card/60 border-dashed border-[#88c240]/40 hover:border-[#88c240] hover:shadow-[0_0_25px_rgba(244,129,33,0.25)]"
+                        ? "bg-gradient-to-br from-[#88c240]/10 to-card/60 border-dashed border-[#88c240]/40 hover:border-[#88c240] hover:shadow-[0_0_25px_rgba(136,194,64,0.25)]"
                         : section.highlighted
                         ? "bg-card/60 border-[#88c240]/30 hover:border-[#88c240] hover:shadow-[0_0_25px_rgba(244,129,33,0.25)]"
                         : "bg-card/60 border-white/10 hover:border-[#38b6ff]/50 hover:shadow-[0_0_25px_rgba(56,182,255,0.2)]"
