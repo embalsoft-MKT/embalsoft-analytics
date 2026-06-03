@@ -100,7 +100,7 @@ const sections: TeamSection[] = [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
       { name: "Marcos Becker", role: "Analista de Implantação", isPJ: true, parceriaDesde: "01/04/2019", sede: "RS", aniversario: "18/02/1982", image: "/marcos.png" },
       { name: "Renan Pires", role: "Consultor de Implantação", isPJ: true, parceriaDesde: "03/06/2024", sede: "SP", aniversario: "25/10/1988", image: "/renan.png" },
-      { name: "Tatiane", role: "Consultora de Projetos", isPJ: true, parceriaDesde: "13/02/2026", sede: "RS" },
+      { name: "Tatiane", role: "Consultora de Projetos", isPJ: true, parceriaDesde: "13/02/2026", sede: "RS", image: "/tatiane.png" },
     ],
   },
   {
@@ -109,7 +109,7 @@ const sections: TeamSection[] = [
     color: "#38b6ff",
     members: [
       { name: "Ismael Barth Hahn", role: "Supervisor", isLeader: true, image: "/ismael.png" },
-      { name: "Raian Guimarães", role: "Analista de Infraestrutura", sede: "RS", admissao: "08/06/2026", aniversario: "17/02/2003" },
+      { name: "Raian Guimarães", role: "Analista de Infraestrutura", sede: "RS", admissao: "08/06/2026", aniversario: "17/02/2003", image: "/raian.png" },
     ],
   },
 ];
