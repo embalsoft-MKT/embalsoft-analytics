@@ -433,11 +433,11 @@ const DashboardHome = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
             
             {/* HUD: Painel Comercial */}
-            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#f48121]/80 transition-all duration-300 hover:shadow-[0_0_25px_rgba(244,129,33,0.3)] flex flex-col">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-[#f48121]/20 blur-2xl rounded-full pointer-events-none" />
+            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#a7c64f]/80 transition-all duration-300 hover:shadow-[0_0_25px_rgba(167,198,79,0.3)] flex flex-col">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-[#a7c64f]/20 blur-2xl rounded-full pointer-events-none" />
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-2 h-6 bg-[#f48121] rounded-sm shadow-[0_0_12px_#f48121]" />
+                  <div className="w-2 h-6 bg-[#a7c64f] rounded-sm shadow-[0_0_12px_#a7c64f]" />
                   <h3 className="font-sans text-base font-bold tracking-normal text-[#a7c64f] drop-shadow-md">Painel comercial</h3>
                 </div>
                 <ReportButton />
@@ -451,7 +451,7 @@ const DashboardHome = () => {
                   defaultValue={12}
                   defaultValorExtra="+15%"
                   layout="commercial" 
-                  groupHoverBorder="group-hover:border-[#f48121]/50" 
+                  groupHoverBorder="group-hover:border-[#a7c64f]/50" 
                 />
                 {/* Fábrica */}
                 <EditableIndicator 
