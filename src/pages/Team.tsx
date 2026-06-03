@@ -1,4 +1,4 @@
-import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle, MapPin, Calendar, Clock, Cake, Plus, Server, Handshake, UserPlus, Pencil } from "lucide-react";
+import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle, MapPin, Calendar, Clock, Cake, Plus, Server, Handshake, UserPlus, Pencil, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
@@ -236,6 +236,18 @@ const Team = () => {
     setForm(emptyForm);
   };
 
+  const handleDelete = (sectionIdx: number, memberIdx: number) => {
+    const member = data[sectionIdx].members[memberIdx];
+    if (!member) return;
+    if (!window.confirm(`Excluir ${member.name}?`)) return;
+    setData((prev) => {
+      const next = prev.map((s) => ({ ...s, members: [...s.members] }));
+      next[sectionIdx].members.splice(memberIdx, 1);
+      return next;
+    });
+    toast({ title: "Colaborador excluído", description: member.name });
+  };
+
   return (
     <div className="relative space-y-8 animate-fade-in pb-20">
       <div className="mt-4">
@@ -293,13 +305,22 @@ const Team = () => {
                       className="group relative border rounded-lg p-3 transition-all duration-300 hover:-translate-y-1 border-[#38b6ff] bg-[#38b6ff]/80 hover:bg-[#38b6ff] shadow-[0_0_15px_rgba(56,182,255,0.3)] max-w-[280px]"
                     >
                       {isAdmin && (
-                        <button
-                          onClick={() => openEdit(sectionIdx, data[sectionIdx].members.indexOf(member))}
-                          aria-label="Editar"
-                          className="absolute top-2 right-2 p-1.5 rounded-md bg-white/20 hover:bg-white/40 text-white transition-colors"
-                        >
-                          <Pencil size={12} />
-                        </button>
+                        <div className="absolute top-2 right-2 flex gap-1">
+                          <button
+                            onClick={() => openEdit(sectionIdx, data[sectionIdx].members.indexOf(member))}
+                            aria-label="Editar"
+                            className="p-1.5 rounded-md bg-white/20 hover:bg-white/40 text-white transition-colors"
+                          >
+                            <Pencil size={12} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(sectionIdx, data[sectionIdx].members.indexOf(member))}
+                            aria-label="Excluir"
+                            className="p-1.5 rounded-md bg-white/20 hover:bg-red-500/70 text-white transition-colors"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
                       )}
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 shrink-0 bg-white/20 border-white/40 overflow-hidden">
@@ -373,13 +394,22 @@ const Team = () => {
                       </span>
                     )}
                     {isAdmin && (
-                      <button
-                        onClick={() => openEdit(sectionIdx, data[sectionIdx].members.indexOf(member))}
-                        aria-label="Editar"
-                        className={`absolute ${member.isPJ ? "top-9" : "top-2"} right-2 p-1.5 rounded-md bg-white/10 hover:bg-white/25 text-white/80 hover:text-white transition-colors opacity-0 group-hover:opacity-100`}
-                      >
-                        <Pencil size={12} />
-                      </button>
+                      <div className={`absolute ${member.isPJ ? "top-9" : "top-2"} right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity`}>
+                        <button
+                          onClick={() => openEdit(sectionIdx, data[sectionIdx].members.indexOf(member))}
+                          aria-label="Editar"
+                          className="p-1.5 rounded-md bg-white/10 hover:bg-white/25 text-white/80 hover:text-white transition-colors"
+                        >
+                          <Pencil size={12} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(sectionIdx, data[sectionIdx].members.indexOf(member))}
+                          aria-label="Excluir"
+                          className="p-1.5 rounded-md bg-white/10 hover:bg-red-500/70 text-white/80 hover:text-white transition-colors"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
                     )}
                     <div className="flex items-center gap-4">
                       <div
