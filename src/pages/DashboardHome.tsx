@@ -359,7 +359,7 @@ const DashboardHome = () => {
               <div className="absolute bottom-0 right-0 w-24 h-24 bg-[#a7c64f]/20 blur-2xl rounded-full pointer-events-none" />
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-2 h-6 bg-[#a7c64f] rounded-sm shadow-[0_0_12px_#a7c64f]" />
-                <h3 className="font-sans text-base font-bold tracking-[0.2em] text-[#a7c64f] uppercase drop-shadow-md">AVANÇOS E CONQUISTAS</h3>
+                <h3 className="font-sans text-base font-bold tracking-normal text-[#a7c64f] drop-shadow-md">Avanços e conquistas</h3>
               </div>
 
               <div className="space-y-6 flex-1 flex flex-col justify-center">
