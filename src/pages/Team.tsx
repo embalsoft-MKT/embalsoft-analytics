@@ -1,4 +1,4 @@
-import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle, MapPin, Calendar, Clock, Cake, Plus, Server, Handshake, UserPlus } from "lucide-react";
+import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckCircle, MapPin, Calendar, Clock, Cake, Plus, Server, Handshake, UserPlus, Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
@@ -150,19 +150,12 @@ const sections: TeamSection[] = [
 const Team = () => {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
-  const [extras, setExtras] = useState<Record<string, Member[]>>({});
+  const [data, setData] = useState<TeamSection[]>(() =>
+    sections.map((s) => ({ ...s, members: s.members.map((m) => ({ ...m })) })),
+  );
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<{
-    section: string;
-    name: string;
-    role: string;
-    sede: string;
-    admissao: string;
-    aniversario: string;
-    isPJ: boolean;
-    parceriaDesde: string;
-    isLeader: boolean;
-  }>({
+  const [editing, setEditing] = useState<{ sectionIdx: number; memberIdx: number } | null>(null);
+  const emptyForm = {
     section: sections[0].title,
     name: "",
     role: "",
@@ -172,20 +165,34 @@ const Team = () => {
     isPJ: false,
     parceriaDesde: "",
     isLeader: false,
-  });
+    image: "",
+  };
+  const [form, setForm] = useState<typeof emptyForm>(emptyForm);
 
-  const resetForm = () =>
+  const openNew = () => {
+    setEditing(null);
+    setForm(emptyForm);
+    setOpen(true);
+  };
+
+  const openEdit = (sectionIdx: number, memberIdx: number) => {
+    const s = data[sectionIdx];
+    const m = s.members[memberIdx];
+    setEditing({ sectionIdx, memberIdx });
     setForm({
-      section: sections[0].title,
-      name: "",
-      role: "",
-      sede: "",
-      admissao: "",
-      aniversario: "",
-      isPJ: false,
-      parceriaDesde: "",
-      isLeader: false,
+      section: s.title,
+      name: m.name,
+      role: m.role,
+      sede: m.sede || "",
+      admissao: m.admissao || "",
+      aniversario: m.aniversario || "",
+      isPJ: !!m.isPJ,
+      parceriaDesde: m.parceriaDesde || "",
+      isLeader: !!m.isLeader,
+      image: m.image || "",
     });
+    setOpen(true);
+  };
 
   const handleSave = () => {
     if (!form.name.trim() || !form.role.trim()) {
@@ -202,20 +209,32 @@ const Team = () => {
       admissao: !form.isPJ && form.admissao ? form.admissao : undefined,
       tempo: !form.isPJ && form.admissao ? calcularTempo(form.admissao) : undefined,
       aniversario: form.aniversario || undefined,
+      image: form.image || undefined,
     };
-    setExtras((prev) => ({
-      ...prev,
-      [form.section]: [...(prev[form.section] || []), newMember],
-    }));
-    toast({ title: "Colaborador adicionado", description: `${newMember.name} em ${form.section}` });
+    setData((prev) => {
+      const next = prev.map((s) => ({ ...s, members: [...s.members] }));
+      const targetIdx = next.findIndex((s) => s.title === form.section);
+      if (targetIdx === -1) return prev;
+      if (editing) {
+        if (next[editing.sectionIdx].title === form.section) {
+          next[editing.sectionIdx].members[editing.memberIdx] = newMember;
+        } else {
+          next[editing.sectionIdx].members.splice(editing.memberIdx, 1);
+          next[targetIdx].members.push(newMember);
+        }
+      } else {
+        next[targetIdx].members.push(newMember);
+      }
+      return next;
+    });
+    toast({
+      title: editing ? "Colaborador atualizado" : "Colaborador adicionado",
+      description: `${newMember.name} em ${form.section}`,
+    });
     setOpen(false);
-    resetForm();
+    setEditing(null);
+    setForm(emptyForm);
   };
-
-  const mergedSections = sections.map((s) => ({
-    ...s,
-    members: [...s.members, ...(extras[s.title] || [])],
-  }));
 
   return (
     <div className="relative space-y-8 animate-fade-in pb-20">
@@ -231,10 +250,11 @@ const Team = () => {
         </p>
       </div>
 
-      {mergedSections.map((section) => {
+      {data.map((section, sectionIdx) => {
         const Icon = section.icon;
         return (
           <section key={section.title}>
+
 
             <div className="flex items-center gap-3 mb-4">
               <div
@@ -272,6 +292,15 @@ const Team = () => {
                       key={`leader-${idx}`}
                       className="group relative border rounded-lg p-3 transition-all duration-300 hover:-translate-y-1 border-[#38b6ff] bg-[#38b6ff]/80 hover:bg-[#38b6ff] shadow-[0_0_15px_rgba(56,182,255,0.3)] max-w-[280px]"
                     >
+                      {isAdmin && (
+                        <button
+                          onClick={() => openEdit(sectionIdx, data[sectionIdx].members.indexOf(member))}
+                          aria-label="Editar"
+                          className="absolute top-2 right-2 p-1.5 rounded-md bg-white/20 hover:bg-white/40 text-white transition-colors"
+                        >
+                          <Pencil size={12} />
+                        </button>
+                      )}
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full flex items-center justify-center border-2 shrink-0 bg-white/20 border-white/40 overflow-hidden">
                           {member.image ? (
@@ -342,6 +371,15 @@ const Team = () => {
                       <span className="absolute top-2 right-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#88c240]/20 border border-[#88c240]/50 text-[10px] font-semibold text-[#88c240] uppercase tracking-wider">
                         <Handshake size={10} /> Parceiro
                       </span>
+                    )}
+                    {isAdmin && (
+                      <button
+                        onClick={() => openEdit(sectionIdx, data[sectionIdx].members.indexOf(member))}
+                        aria-label="Editar"
+                        className={`absolute ${member.isPJ ? "top-9" : "top-2"} right-2 p-1.5 rounded-md bg-white/10 hover:bg-white/25 text-white/80 hover:text-white transition-colors opacity-0 group-hover:opacity-100`}
+                      >
+                        <Pencil size={12} />
+                      </button>
                     )}
                     <div className="flex items-center gap-4">
                       <div
@@ -418,7 +456,7 @@ const Team = () => {
       {isAdmin && (
         <>
           <button
-            onClick={() => setOpen(true)}
+            onClick={openNew}
             aria-label="Adicionar novo colaborador"
             className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full bg-[#88c240] text-white font-semibold shadow-[0_8px_30px_rgba(136,194,64,0.5)] hover:scale-105 hover:shadow-[0_12px_40px_rgba(136,194,64,0.7)] transition-all duration-300 border border-white/20"
           >
@@ -426,10 +464,10 @@ const Team = () => {
             <span className="hidden sm:inline">Novo colaborador</span>
           </button>
 
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditing(null); }}>
             <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>Adicionar novo colaborador</DialogTitle>
+                <DialogTitle>{editing ? "Editar colaborador" : "Adicionar novo colaborador"}</DialogTitle>
               </DialogHeader>
               <div className="space-y-3 py-2">
                 <div>
@@ -491,7 +529,7 @@ const Team = () => {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-                <Button onClick={handleSave} className="bg-[#88c240] hover:bg-[#88c240]/90 text-white">Adicionar</Button>
+                <Button onClick={handleSave} className="bg-[#88c240] hover:bg-[#88c240]/90 text-white">{editing ? "Salvar" : "Adicionar"}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
