@@ -33,7 +33,7 @@ const sections: TeamSection[] = [
     highlighted: true,
     members: [
       { name: "Júnior Muck", role: "CEO", sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/1978", image: "/junior.png" },
-      { name: "Rose Muck", role: "Cofundadora e peça fundamental na consolidação da cultura e dos valores da Embalsoft.", sede: "RS", image: "/rose.png" },
+      { name: "Rose Muck", role: "Cofundadora", sede: "RS", image: "/rose.png" },
       { name: "Gerson Muck", role: "Cofundador", sede: "RS", image: "/gerson.png" },
     ],
   },
