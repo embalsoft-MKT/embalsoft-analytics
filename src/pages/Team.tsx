@@ -529,7 +529,7 @@ const Team = () => {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-                <Button onClick={handleSave} className="bg-[#88c240] hover:bg-[#88c240]/90 text-white">Adicionar</Button>
+                <Button onClick={handleSave} className="bg-[#88c240] hover:bg-[#88c240]/90 text-white">{editing ? "Salvar" : "Adicionar"}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
