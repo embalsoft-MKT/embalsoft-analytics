@@ -58,12 +58,22 @@ const entregas = { valor: 45 };
 const retrabalho = { valor: 4, valor_extra: "%" };
 const chamados = { valor: 158, valor_extra: "+8%" };
 
-const implantacoes = [
-  { cliente: "Ind. Nova Era", etapa: "Go Live", progresso: 100, status: "em_dia" as const, responsavel: "Marcos" },
-  { cliente: "Distribuidora Sol", etapa: "Testes", progresso: 70, status: "atencao" as const, responsavel: "Renan" },
-  { cliente: "Metalúrgica Forte", etapa: "Imersão Geral", progresso: 35, status: "em_dia" as const, responsavel: "Marcos" },
-  { cliente: "Alimentos Vida", etapa: "Kick-off", progresso: 10, status: "atrasado" as const, responsavel: "Renan" },
+type ImplantacaoStatus = "em_dia" | "atencao" | "atrasado";
+interface Implantacao {
+  cliente: string;
+  etapa: string;
+  status: ImplantacaoStatus;
+  responsavel: string;
+}
+
+const implantacoesIniciais: Implantacao[] = [
+  { cliente: "Ind. Nova Era", etapa: "Go Live", status: "em_dia", responsavel: "Marcos" },
+  { cliente: "Distribuidora Sol", etapa: "Testes", status: "atencao", responsavel: "Renan" },
+  { cliente: "Metalúrgica Forte", etapa: "Imersão Geral", status: "em_dia", responsavel: "Marcos" },
+  { cliente: "Alimentos Vida", etapa: "Kick-off", status: "atrasado", responsavel: "Renan" },
 ];
+
+const IMPLANTACOES_STORAGE_KEY = "embalconnect:implantacoes";
 
 const etapas = ["Kick-off", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Go Live"];
 
