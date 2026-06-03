@@ -456,7 +456,7 @@ const Team = () => {
       {isAdmin && (
         <>
           <button
-            onClick={() => setOpen(true)}
+            onClick={openNew}
             aria-label="Adicionar novo colaborador"
             className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full bg-[#88c240] text-white font-semibold shadow-[0_8px_30px_rgba(136,194,64,0.5)] hover:scale-105 hover:shadow-[0_12px_40px_rgba(136,194,64,0.7)] transition-all duration-300 border border-white/20"
           >
@@ -464,10 +464,10 @@ const Team = () => {
             <span className="hidden sm:inline">Novo colaborador</span>
           </button>
 
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditing(null); }}>
             <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>Adicionar novo colaborador</DialogTitle>
+                <DialogTitle>{editing ? "Editar colaborador" : "Adicionar novo colaborador"}</DialogTitle>
               </DialogHeader>
               <div className="space-y-3 py-2">
                 <div>
