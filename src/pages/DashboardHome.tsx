@@ -503,7 +503,7 @@ const DashboardHome = () => {
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
                   <Code2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
-                  <h4 className="font-sans text-sm font-bold tracking-normal text-[#38b6ff] drop-shadow-md">Desenvolvimento e qa</h4>
+                  <h4 className="font-sans text-sm font-bold tracking-normal text-[#38b6ff] drop-shadow-md">Desenvolvimento e QA</h4>
                 </div>
                 <ReportButton />
               </div>
