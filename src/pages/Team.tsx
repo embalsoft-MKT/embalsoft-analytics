@@ -372,6 +372,15 @@ const Team = () => {
                         <Handshake size={10} /> Parceiro
                       </span>
                     )}
+                    {isAdmin && (
+                      <button
+                        onClick={() => openEdit(sectionIdx, data[sectionIdx].members.indexOf(member))}
+                        aria-label="Editar"
+                        className={`absolute ${member.isPJ ? "top-9" : "top-2"} right-2 p-1.5 rounded-md bg-white/10 hover:bg-white/25 text-white/80 hover:text-white transition-colors opacity-0 group-hover:opacity-100`}
+                      >
+                        <Pencil size={12} />
+                      </button>
+                    )}
                     <div className="flex items-center gap-4">
                       <div
                         className="w-14 h-14 rounded-full flex items-center justify-center border-2 shrink-0 overflow-hidden"
