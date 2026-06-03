@@ -33,8 +33,8 @@ const sections: TeamSection[] = [
     highlighted: true,
     members: [
       { name: "Júnior Muck", role: "CEO", sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/1978", image: "/junior.png" },
-      { name: "Rose Muck", role: "Cofundadora", image: "/rose.png" },
-      { name: "Gerson Muck", role: "Cofundador", image: "/gerson.png" },
+      { name: "Rose Muck", role: "Cofundadora e peça fundamental na consolidação da cultura e dos valores da Embalsoft.", sede: "RS", image: "/rose.png" },
+      { name: "Gerson Muck", role: "Cofundador", sede: "RS", image: "/gerson.png" },
     ],
   },
   {
@@ -53,7 +53,7 @@ const sections: TeamSection[] = [
     color: "#38b6ff",
     members: [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
-      { name: "Luís Fernando Teixeira da Silva", role: "Analista de Suporte", isPJ: true, parceriaDesde: "01/04/2012", sede: "RS", aniversario: "10/11/1963", image: "/luis-fernando.png" },
+      { name: "Luís da Silva", role: "Analista de Suporte", isPJ: true, parceriaDesde: "01/04/2012", sede: "RS", aniversario: "10/11/1963", image: "/luis-fernando.png" },
       { name: "Casiana Walter Braga", role: "Analista de Suporte de Produto", sede: "RS", admissao: "01/04/2013", tempo: "13 anos, 1 mês e 8 dias", aniversario: "31/01/1985", image: "/casiana.png" },
       { name: "Gabriel Pereira Lazarin", role: "Analista de Suporte de Produto", sede: "SP", admissao: "28/08/2023", tempo: "2 anos, 8 meses e 11 dias", aniversario: "19/03/1997", image: "/gabriel-lazarin.png" },
     ],
@@ -65,8 +65,8 @@ const sections: TeamSection[] = [
     members: [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
       { name: "Cíntia Villar", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "01/09/2021", sede: "RS", aniversario: "10/05/2023", image: "/cintia.png" },
-      { name: "Jacqueline Fontoura", role: "Consultor de Vendas", isPJ: true, image: "/jacqueline.png" },
-      { name: "Luiz Fagam", role: "Consultor de Vendas", isPJ: true, image: "/luiz-fagam.png" },
+      { name: "Jacqueline Fontoura", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "13/02/2026", image: "/jacqueline.png" },
+      { name: "Luiz Fagam", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "08/05/2026", image: "/luiz-fagam.png" },
     ],
   },
   {
@@ -100,7 +100,7 @@ const sections: TeamSection[] = [
       { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
       { name: "Marcos Becker", role: "Analista de Implantação", isPJ: true, parceriaDesde: "01/04/2019", sede: "RS", aniversario: "18/02/1982", image: "/marcos.png" },
       { name: "Renan Pires", role: "Consultor de Implantação", isPJ: true, parceriaDesde: "03/06/2024", sede: "SP", aniversario: "25/10/1988", image: "/renan.png" },
-      { name: "Tatiane", role: "Analista de Implantação", isPJ: true },
+      { name: "Tatiane", role: "Consultora de Projetos", isPJ: true, parceriaDesde: "13/02/2026", sede: "RS" },
     ],
   },
   {
