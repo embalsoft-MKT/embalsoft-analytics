@@ -714,10 +714,10 @@ const DashboardHome = () => {
           </div>
 
           {/* Dialog de edição de implantação */}
-          <Dialog open={implDialogOpen} onOpenChange={(o) => { setImplDialogOpen(o); if (!o) setEditingIdx(null); }}>
+          <Dialog open={implDialogOpen} onOpenChange={(o) => { setImplDialogOpen(o); if (!o) setEditingId(null); }}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{editingIdx === null ? "Nova implantação" : "Editar implantação"}</DialogTitle>
+                <DialogTitle>{editingId === null ? "Nova implantação" : "Editar implantação"}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-2">
                 <div className="space-y-2">
