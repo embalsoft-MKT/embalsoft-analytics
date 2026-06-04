@@ -444,7 +444,7 @@ const Team = () => {
                   <Select value={form.section} onValueChange={(v) => setForm((f) => ({ ...f, section: v }))}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {sections.map((s) => (
+                      {sectionsMeta.map((s) => (
                         <SelectItem key={s.title} value={s.title}>{s.title}</SelectItem>
                       ))}
                     </SelectContent>
