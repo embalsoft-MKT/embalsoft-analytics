@@ -421,54 +421,55 @@ const emptyImplantacao: Implantacao = { cliente: "", etapa: etapas[0], status: "
 
 const DashboardHome = () => {
   const { isAdmin } = useAuth();
-  const [implantacoes, setImplantacoes] = useState<Implantacao[]>(() => {
-    try {
-      const raw = localStorage.getItem(IMPLANTACOES_STORAGE_KEY);
-      if (raw) return JSON.parse(raw) as Implantacao[];
-    } catch {}
-    return implantacoesIniciais;
-  });
+  const { implantacoes, addImplantacao, updateImplantacao, deleteImplantacao } = useImplantacoes();
   const [implDialogOpen, setImplDialogOpen] = useState(false);
-  const [editingIdx, setEditingIdx] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [implForm, setImplForm] = useState<Implantacao>(emptyImplantacao);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(IMPLANTACOES_STORAGE_KEY, JSON.stringify(implantacoes));
-    } catch {}
-  }, [implantacoes]);
-
   const openNewImplantacao = () => {
-    setEditingIdx(null);
+    setEditingId(null);
     setImplForm(emptyImplantacao);
     setImplDialogOpen(true);
   };
 
-  const openEditImplantacao = (idx: number) => {
-    setEditingIdx(idx);
-    setImplForm({ ...implantacoes[idx] });
+  const openEditImplantacao = (item: Implantacao) => {
+    setEditingId(item.id ?? null);
+    setImplForm({ ...item });
     setImplDialogOpen(true);
   };
 
-  const saveImplantacao = () => {
+  const saveImplantacao = async () => {
     if (!implForm.cliente.trim()) {
       toast.error("Informe o cliente");
       return;
     }
-    setImplantacoes((prev) => {
-      if (editingIdx === null) return [...prev, { ...implForm, cliente: implForm.cliente.trim(), responsavel: implForm.responsavel.trim() }];
-      const next = [...prev];
-      next[editingIdx] = { ...implForm, cliente: implForm.cliente.trim(), responsavel: implForm.responsavel.trim() };
-      return next;
-    });
-    setImplDialogOpen(false);
-    toast.success("Salvo com sucesso!");
+    const payload = {
+      cliente: implForm.cliente.trim(),
+      etapa: implForm.etapa,
+      status: implForm.status,
+      responsavel: implForm.responsavel.trim(),
+    };
+    try {
+      if (editingId) {
+        await updateImplantacao(editingId, payload);
+      } else {
+        await addImplantacao(payload as Implantacao);
+      }
+      setImplDialogOpen(false);
+      toast.success("Salvo com sucesso!");
+    } catch (e: any) {
+      toast.error("Erro ao salvar: " + (e?.message || ""));
+    }
   };
 
-  const removeImplantacao = (idx: number) => {
-    setImplantacoes((prev) => prev.filter((_, i) => i !== idx));
-    setImplDialogOpen(false);
-    toast.success("Removido");
+  const removeImplantacao = async (id: string) => {
+    try {
+      await deleteImplantacao(id);
+      setImplDialogOpen(false);
+      toast.success("Removido");
+    } catch (e: any) {
+      toast.error("Erro ao excluir: " + (e?.message || ""));
+    }
   };
 
   return (
