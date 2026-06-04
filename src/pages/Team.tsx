@@ -88,13 +88,20 @@ const fromDb = (m: DbMember): Member => ({
 const Team = () => {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
-  const [data, setData] = useState<TeamSection[]>(() =>
-    sections.map((s) => ({ ...s, members: s.members.map((m) => ({ ...m })) })),
-  );
+  const { members, addMember, updateMember, deleteMember } = useTeam();
+
+  // Constrói as seções a partir dos membros do banco
+  const data: TeamSection[] = useMemo(() => {
+    return sectionsMeta.map((meta) => ({
+      ...meta,
+      members: members.filter((m) => m.section === meta.title).map(fromDb),
+    }));
+  }, [members]);
+
   const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<{ sectionIdx: number; memberIdx: number } | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const emptyForm = {
-    section: sections[0].title,
+    section: sectionsMeta[0].title,
     name: "",
     role: "",
     sede: "",
@@ -108,7 +115,7 @@ const Team = () => {
   const [form, setForm] = useState<typeof emptyForm>(emptyForm);
 
   const openNew = () => {
-    setEditing(null);
+    setEditingId(null);
     setForm(emptyForm);
     setOpen(true);
   };
@@ -116,7 +123,8 @@ const Team = () => {
   const openEdit = (sectionIdx: number, memberIdx: number) => {
     const s = data[sectionIdx];
     const m = s.members[memberIdx];
-    setEditing({ sectionIdx, memberIdx });
+    if (!m?.id) return;
+    setEditingId(m.id);
     setForm({
       section: s.title,
       name: m.name,
@@ -132,58 +140,51 @@ const Team = () => {
     setOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.name.trim() || !form.role.trim()) {
       toast({ title: "Preencha nome e cargo", variant: "destructive" });
       return;
     }
-    const newMember: Member = {
+    const payload: DbMember = {
+      section: form.section,
       name: form.name.trim(),
       role: form.role.trim(),
-      isLeader: form.isLeader || undefined,
-      isPJ: form.isPJ || undefined,
-      parceriaDesde: form.isPJ && form.parceriaDesde ? form.parceriaDesde : undefined,
-      sede: form.sede || undefined,
-      admissao: !form.isPJ && form.admissao ? form.admissao : undefined,
-      tempo: !form.isPJ && form.admissao ? calcularTempo(form.admissao) : undefined,
-      aniversario: form.aniversario || undefined,
-      image: form.image || undefined,
+      is_leader: form.isLeader || false,
+      is_pj: form.isPJ || false,
+      parceria_desde: form.isPJ && form.parceriaDesde ? form.parceriaDesde : null,
+      sede: form.sede || null,
+      admissao: !form.isPJ && form.admissao ? form.admissao : null,
+      aniversario: form.aniversario || null,
+      image: form.image || null,
     };
-    setData((prev) => {
-      const next = prev.map((s) => ({ ...s, members: [...s.members] }));
-      const targetIdx = next.findIndex((s) => s.title === form.section);
-      if (targetIdx === -1) return prev;
-      if (editing) {
-        if (next[editing.sectionIdx].title === form.section) {
-          next[editing.sectionIdx].members[editing.memberIdx] = newMember;
-        } else {
-          next[editing.sectionIdx].members.splice(editing.memberIdx, 1);
-          next[targetIdx].members.push(newMember);
-        }
+    try {
+      if (editingId) {
+        await updateMember(editingId, payload);
       } else {
-        next[targetIdx].members.push(newMember);
+        await addMember(payload);
       }
-      return next;
-    });
-    toast({
-      title: editing ? "Colaborador atualizado" : "Colaborador adicionado",
-      description: `${newMember.name} em ${form.section}`,
-    });
-    setOpen(false);
-    setEditing(null);
-    setForm(emptyForm);
+      toast({
+        title: editingId ? "Colaborador atualizado" : "Colaborador adicionado",
+        description: `${payload.name} em ${form.section}`,
+      });
+      setOpen(false);
+      setEditingId(null);
+      setForm(emptyForm);
+    } catch (e: any) {
+      toast({ title: "Erro ao salvar", description: e?.message, variant: "destructive" });
+    }
   };
 
-  const handleDelete = (sectionIdx: number, memberIdx: number) => {
+  const handleDelete = async (sectionIdx: number, memberIdx: number) => {
     const member = data[sectionIdx].members[memberIdx];
-    if (!member) return;
+    if (!member?.id) return;
     if (!window.confirm(`Excluir ${member.name}?`)) return;
-    setData((prev) => {
-      const next = prev.map((s) => ({ ...s, members: [...s.members] }));
-      next[sectionIdx].members.splice(memberIdx, 1);
-      return next;
-    });
-    toast({ title: "Colaborador excluído", description: member.name });
+    try {
+      await deleteMember(member.id);
+      toast({ title: "Colaborador excluído", description: member.name });
+    } catch (e: any) {
+      toast({ title: "Erro ao excluir", description: e?.message, variant: "destructive" });
+    }
   };
 
   return (
