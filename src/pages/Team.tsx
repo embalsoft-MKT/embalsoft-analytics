@@ -433,10 +433,10 @@ const Team = () => {
             <span className="hidden sm:inline">Novo colaborador</span>
           </button>
 
-          <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditing(null); }}>
+          <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditingId(null); }}>
             <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>{editing ? "Editar colaborador" : "Adicionar novo colaborador"}</DialogTitle>
+                <DialogTitle>{editingId ? "Editar colaborador" : "Adicionar novo colaborador"}</DialogTitle>
               </DialogHeader>
               <div className="space-y-3 py-2">
                 <div>
