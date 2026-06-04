@@ -25,6 +25,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import OrbitalBackground from "@/components/OrbitalBackground";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIndicadores, fetchHistorico } from "@/hooks/useIndicadores";
+import { useImplantacoes, Implantacao as ImplantacaoRow, ImplantacaoStatus as ImplStatus } from "@/hooks/useImplantacoes";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
