@@ -654,7 +654,7 @@ const DashboardHome = () => {
                     <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor" }} />
                     {isAdmin && (
                       <button
-                        onClick={() => openEditImplantacao(idx)}
+                        onClick={() => openEditImplantacao(item)}
                         className="absolute top-2 right-2 p-1.5 rounded-md bg-white/5 opacity-40 group-hover/impl:opacity-100 transition-opacity hover:bg-white/15 text-white/70 hover:text-white z-20"
                         title="Editar implantação"
                       >
