@@ -208,7 +208,7 @@ const Updates = () => {
     }
   }, [location.state]);
 
-  const categories: (Category | 'Todas')[] = ['Todas', 'Comunicado', 'Boas práticas', 'Aniversário', 'Feriado'];
+  const categories: (Category | 'Todas')[] = ['Todas', 'Comunicado', 'Boas práticas', 'Aniversário', 'Feriado', 'Bem-estar'];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
