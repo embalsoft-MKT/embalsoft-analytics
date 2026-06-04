@@ -12,7 +12,8 @@ const categoryConfig: Record<Category | 'Todas', { color: string, border: string
   'Boas práticas': { color: 'text-[#a7c64f]', border: 'border-[#a7c64f]/30', bg: 'bg-[#a7c64f]/10', tag: 'text-[#a7c64f] bg-[#a7c64f]/10 border-[#a7c64f]/30' },
   'Aniversário': { color: 'text-[#f48121]', border: 'border-[#f48121]/30', bg: 'bg-[#f48121]/10', tag: 'text-[#f48121] bg-[#f48121]/10 border-[#f48121]/30' },
   'Feriado': { color: 'text-[#38b6ff]', border: 'border-[#38b6ff]/30', bg: 'bg-[#38b6ff]/10', tag: 'text-[#38b6ff] bg-[#38b6ff]/10 border-[#38b6ff]/30' },
-  'Links úteis': { color: 'text-muted-foreground', border: 'border-white/20', bg: 'bg-white/5', tag: 'text-white bg-white/10 border-white/20' }
+  'Links úteis': { color: 'text-muted-foreground', border: 'border-white/20', bg: 'bg-white/5', tag: 'text-white bg-white/10 border-white/20' },
+  'Bem-estar': { color: 'text-[#ec4899]', border: 'border-[#ec4899]/30', bg: 'bg-[#ec4899]/10', tag: 'text-[#ec4899] bg-[#ec4899]/10 border-[#ec4899]/30' }
 };
 
 const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => void }> = ({ item, onEdit }) => {
