@@ -753,8 +753,8 @@ const DashboardHome = () => {
               </div>
               <DialogFooter className="flex sm:justify-between gap-2">
                 <div>
-                  {editingIdx !== null && (
-                    <Button variant="destructive" onClick={() => removeImplantacao(editingIdx)}>
+                  {editingId !== null && (
+                    <Button variant="destructive" onClick={() => removeImplantacao(editingId)}>
                       <Trash2 size={14} className="mr-1" /> Excluir
                     </Button>
                   )}
