@@ -2,7 +2,7 @@ import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckC
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,8 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
+import { useTeam, TeamMember as DbMember } from "@/hooks/useTeam";
 
 interface Member {
+  id?: string;
   name: string;
   role: string;
   isLeader?: boolean;
@@ -23,7 +25,6 @@ interface Member {
   aniversario?: string;
   image?: string;
 }
-
 
 interface TeamSection {
   title: string;
@@ -57,106 +58,50 @@ const calcularTempo = (data: string): string => {
   return partes.join(", ");
 };
 
-const sections: TeamSection[] = [
-  {
-    title: "Sócios",
-    icon: Crown,
-    color: "#88c240",
-    highlighted: true,
-    members: [
-      { name: "Júnior Muck", role: "CEO", sede: "SP", admissao: "01/02/1997", tempo: "29 anos, 3 meses e 8 dias", aniversario: "02/06/1978", image: "/junior.png" },
-      { name: "Rose Muck", role: "Cofundadora", sede: "RS", image: "/rose.png" },
-      { name: "Gerson Muck", role: "Cofundador", sede: "RS", image: "/gerson.png" },
-    ],
-  },
-  {
-    title: "Administrativo",
-    icon: Briefcase,
-    color: "#38b6ff",
-    members: [
-      { name: "Gisele Muck", role: "Gerente Financeiro (Supervisora Setor ADM)", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1983", image: "/gisele.png" },
-      { name: "Juliana de Oliveira Dias Charão", role: "Generalista de RH", sede: "RS", admissao: "01/03/2022", tempo: "4 anos, 2 meses e 8 dias", aniversario: "26/10/1982", image: "/juliana.png" },
-      { name: "Patricia Fernandes Barbosa", role: "Marketing", sede: "RS", admissao: "18/09/2023", tempo: "2 anos, 7 meses e 21 dias", aniversario: "23/04/1999", image: "/patricia.png" },
-    ],
-  },
-  {
-    title: "Suporte",
-    icon: Headphones,
-    color: "#38b6ff",
-    members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
-      { name: "Luís da Silva", role: "Analista de Suporte", isPJ: true, parceriaDesde: "01/04/2012", sede: "RS", aniversario: "10/11/1963", image: "/luis-fernando.png" },
-      { name: "Casiana Walter Braga", role: "Analista de Suporte de Produto", sede: "RS", admissao: "01/04/2013", tempo: "13 anos, 1 mês e 8 dias", aniversario: "31/01/1985", image: "/casiana.png" },
-      { name: "Gabriel Pereira Lazarin", role: "Analista de Suporte de Produto", sede: "SP", admissao: "28/08/2023", tempo: "2 anos, 8 meses e 11 dias", aniversario: "19/03/1997", image: "/gabriel-lazarin.png" },
-    ],
-  },
-  {
-    title: "Comercial",
-    icon: TrendingUp,
-    color: "#38b6ff",
-    members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
-      { name: "Cíntia Villar", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "01/09/2021", sede: "RS", aniversario: "10/05/2023", image: "/cintia.png" },
-      { name: "Jacqueline Fontoura", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "13/02/2026", image: "/jacqueline.png" },
-      { name: "Luiz Fagam", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "08/05/2026", image: "/luiz-fagam.png" },
-    ],
-  },
-  {
-    title: "Desenvolvimento",
-    icon: Code2,
-    color: "#38b6ff",
-    members: [
-      { name: "Ismael Barth Hahn", role: "Coordenador Desenvolvimento", isLeader: true, sede: "RS", admissao: "01/06/2005", tempo: "20 anos, 11 meses e 8 dias", aniversario: "09/06/1981", image: "/ismael.png" },
-      { name: "Pedro Henrique Lemos", role: "Tech Lead", isLeader: true, sede: "RS", admissao: "01/06/2007", tempo: "18 anos, 11 meses e 8 dias", aniversario: "03/06/1987", image: "/pedro.png" },
-      { name: "Marcelo Luvizotto", role: "Desenvolvedor", sede: "SP", admissao: "01/06/2023", tempo: "2 anos, 11 meses e 8 dias", aniversario: "11/03/1965", image: "/macelo.png" },
-      { name: "Éverton Cristiano dos Santos", role: "Desenvolvedor", sede: "RS", admissao: "27/01/2025", tempo: "1 ano, 3 meses e 12 dias", aniversario: "06/05/2025", image: "/everton.png" },
-      { name: "Douglas Gnutzmann Santos", role: "Desenvolvedor", sede: "RS", admissao: "08/11/2021", tempo: "4 anos, 6 meses e 1 dia", aniversario: "24/05/1985", image: "/douglas.png" },
-      { name: "João Roberto Teixeira Lopes", role: "Desenvolvedor", sede: "SP", admissao: "01/03/2023", tempo: "3 anos, 2 meses e 8 dias", aniversario: "03/06/1986", image: "/joao.png" },
-      { name: "Vinícius Martins", role: "Desenvolvedor", sede: "RS", admissao: "18/08/2025", tempo: "9 meses e 16 dias", aniversario: "28/08/1996", image: "/vinicius.png" },
-    ],
-  },
-  {
-    title: "Qualidade",
-    icon: CheckCircle,
-    color: "#38b6ff",
-    members: [
-      { name: "Ismael Barth Hahn", role: "Supervisor", isLeader: true, image: "/ismael.png" },
-      { name: "Gabriel Rodrigues Justin", role: "Analista de Testes", sede: "RS", admissao: "18/03/2024", tempo: "2 anos, 1 mês e 21 dias", aniversario: "19/08/1995", image: "/gabriel-justin.png" },
-    ],
-  },
-  {
-    title: "Implantação",
-    icon: Settings,
-    color: "#38b6ff",
-    members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
-      { name: "Marcos Becker", role: "Analista de Implantação", isPJ: true, parceriaDesde: "01/04/2019", sede: "RS", aniversario: "18/02/1982", image: "/marcos.png" },
-      { name: "Renan Pires", role: "Consultor de Implantação", isPJ: true, parceriaDesde: "03/06/2024", sede: "SP", aniversario: "25/10/1988", image: "/renan.png" },
-      { name: "Tatiane", role: "Consultora de Projetos", isPJ: true, parceriaDesde: "13/02/2026", sede: "RS", image: "/tatiane.png" },
-    ],
-  },
-  {
-    title: "Infraestrutura",
-    icon: Server,
-    color: "#38b6ff",
-    members: [
-      { name: "Ismael Barth Hahn", role: "Supervisor", isLeader: true, image: "/ismael.png" },
-      { name: "Raian Guimarães", role: "Analista de Infraestrutura", sede: "RS", admissao: "08/06/2026", aniversario: "17/02/2003", image: "/raian.png" },
-    ],
-  },
+// Metadados das seções (membros vêm do banco)
+const sectionsMeta: Omit<TeamSection, "members">[] = [
+  { title: "Sócios", icon: Crown, color: "#88c240", highlighted: true },
+  { title: "Administrativo", icon: Briefcase, color: "#38b6ff" },
+  { title: "Suporte", icon: Headphones, color: "#38b6ff" },
+  { title: "Comercial", icon: TrendingUp, color: "#38b6ff" },
+  { title: "Desenvolvimento", icon: Code2, color: "#38b6ff" },
+  { title: "Qualidade", icon: CheckCircle, color: "#38b6ff" },
+  { title: "Implantação", icon: Settings, color: "#38b6ff" },
+  { title: "Infraestrutura", icon: Server, color: "#38b6ff" },
 ];
+
+const fromDb = (m: DbMember): Member => ({
+  id: m.id,
+  name: m.name,
+  role: m.role,
+  isLeader: !!m.is_leader,
+  isPJ: !!m.is_pj,
+  parceriaDesde: m.parceria_desde || undefined,
+  sede: m.sede || undefined,
+  admissao: m.admissao || undefined,
+  tempo: m.admissao ? calcularTempo(m.admissao) : undefined,
+  aniversario: m.aniversario || undefined,
+  image: m.image || undefined,
+});
 
 
 const Team = () => {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
-  const [data, setData] = useState<TeamSection[]>(() =>
-    sections.map((s) => ({ ...s, members: s.members.map((m) => ({ ...m })) })),
-  );
+  const { members, addMember, updateMember, deleteMember } = useTeam();
+
+  // Constrói as seções a partir dos membros do banco
+  const data: TeamSection[] = useMemo(() => {
+    return sectionsMeta.map((meta) => ({
+      ...meta,
+      members: members.filter((m) => m.section === meta.title).map(fromDb),
+    }));
+  }, [members]);
+
   const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<{ sectionIdx: number; memberIdx: number } | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const emptyForm = {
-    section: sections[0].title,
+    section: sectionsMeta[0].title,
     name: "",
     role: "",
     sede: "",
@@ -170,7 +115,7 @@ const Team = () => {
   const [form, setForm] = useState<typeof emptyForm>(emptyForm);
 
   const openNew = () => {
-    setEditing(null);
+    setEditingId(null);
     setForm(emptyForm);
     setOpen(true);
   };
@@ -178,7 +123,8 @@ const Team = () => {
   const openEdit = (sectionIdx: number, memberIdx: number) => {
     const s = data[sectionIdx];
     const m = s.members[memberIdx];
-    setEditing({ sectionIdx, memberIdx });
+    if (!m?.id) return;
+    setEditingId(m.id);
     setForm({
       section: s.title,
       name: m.name,
@@ -194,58 +140,51 @@ const Team = () => {
     setOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.name.trim() || !form.role.trim()) {
       toast({ title: "Preencha nome e cargo", variant: "destructive" });
       return;
     }
-    const newMember: Member = {
+    const payload: DbMember = {
+      section: form.section,
       name: form.name.trim(),
       role: form.role.trim(),
-      isLeader: form.isLeader || undefined,
-      isPJ: form.isPJ || undefined,
-      parceriaDesde: form.isPJ && form.parceriaDesde ? form.parceriaDesde : undefined,
-      sede: form.sede || undefined,
-      admissao: !form.isPJ && form.admissao ? form.admissao : undefined,
-      tempo: !form.isPJ && form.admissao ? calcularTempo(form.admissao) : undefined,
-      aniversario: form.aniversario || undefined,
-      image: form.image || undefined,
+      is_leader: form.isLeader || false,
+      is_pj: form.isPJ || false,
+      parceria_desde: form.isPJ && form.parceriaDesde ? form.parceriaDesde : null,
+      sede: form.sede || null,
+      admissao: !form.isPJ && form.admissao ? form.admissao : null,
+      aniversario: form.aniversario || null,
+      image: form.image || null,
     };
-    setData((prev) => {
-      const next = prev.map((s) => ({ ...s, members: [...s.members] }));
-      const targetIdx = next.findIndex((s) => s.title === form.section);
-      if (targetIdx === -1) return prev;
-      if (editing) {
-        if (next[editing.sectionIdx].title === form.section) {
-          next[editing.sectionIdx].members[editing.memberIdx] = newMember;
-        } else {
-          next[editing.sectionIdx].members.splice(editing.memberIdx, 1);
-          next[targetIdx].members.push(newMember);
-        }
+    try {
+      if (editingId) {
+        await updateMember(editingId, payload);
       } else {
-        next[targetIdx].members.push(newMember);
+        await addMember(payload);
       }
-      return next;
-    });
-    toast({
-      title: editing ? "Colaborador atualizado" : "Colaborador adicionado",
-      description: `${newMember.name} em ${form.section}`,
-    });
-    setOpen(false);
-    setEditing(null);
-    setForm(emptyForm);
+      toast({
+        title: editingId ? "Colaborador atualizado" : "Colaborador adicionado",
+        description: `${payload.name} em ${form.section}`,
+      });
+      setOpen(false);
+      setEditingId(null);
+      setForm(emptyForm);
+    } catch (e: any) {
+      toast({ title: "Erro ao salvar", description: e?.message, variant: "destructive" });
+    }
   };
 
-  const handleDelete = (sectionIdx: number, memberIdx: number) => {
+  const handleDelete = async (sectionIdx: number, memberIdx: number) => {
     const member = data[sectionIdx].members[memberIdx];
-    if (!member) return;
+    if (!member?.id) return;
     if (!window.confirm(`Excluir ${member.name}?`)) return;
-    setData((prev) => {
-      const next = prev.map((s) => ({ ...s, members: [...s.members] }));
-      next[sectionIdx].members.splice(memberIdx, 1);
-      return next;
-    });
-    toast({ title: "Colaborador excluído", description: member.name });
+    try {
+      await deleteMember(member.id);
+      toast({ title: "Colaborador excluído", description: member.name });
+    } catch (e: any) {
+      toast({ title: "Erro ao excluir", description: e?.message, variant: "destructive" });
+    }
   };
 
   return (
@@ -494,10 +433,10 @@ const Team = () => {
             <span className="hidden sm:inline">Novo colaborador</span>
           </button>
 
-          <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditing(null); }}>
+          <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setEditingId(null); }}>
             <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>{editing ? "Editar colaborador" : "Adicionar novo colaborador"}</DialogTitle>
+                <DialogTitle>{editingId ? "Editar colaborador" : "Adicionar novo colaborador"}</DialogTitle>
               </DialogHeader>
               <div className="space-y-3 py-2">
                 <div>
@@ -505,7 +444,7 @@ const Team = () => {
                   <Select value={form.section} onValueChange={(v) => setForm((f) => ({ ...f, section: v }))}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {sections.map((s) => (
+                      {sectionsMeta.map((s) => (
                         <SelectItem key={s.title} value={s.title}>{s.title}</SelectItem>
                       ))}
                     </SelectContent>
@@ -559,7 +498,7 @@ const Team = () => {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
-                <Button onClick={handleSave} className="bg-[#88c240] hover:bg-[#88c240]/90 text-white">{editing ? "Salvar" : "Adicionar"}</Button>
+                <Button onClick={handleSave} className="bg-[#88c240] hover:bg-[#88c240]/90 text-white">{editingId ? "Salvar" : "Adicionar"}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>

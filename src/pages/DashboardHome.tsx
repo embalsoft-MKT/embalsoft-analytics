@@ -25,6 +25,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import OrbitalBackground from "@/components/OrbitalBackground";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIndicadores, fetchHistorico } from "@/hooks/useIndicadores";
+import { useImplantacoes, Implantacao as ImplantacaoRow, ImplantacaoStatus as ImplStatus } from "@/hooks/useImplantacoes";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -58,22 +59,8 @@ const entregas = { valor: 45 };
 const retrabalho = { valor: 4, valor_extra: "%" };
 const chamados = { valor: 158, valor_extra: "+8%" };
 
-type ImplantacaoStatus = "em_dia" | "atencao" | "atrasado";
-interface Implantacao {
-  cliente: string;
-  etapa: string;
-  status: ImplantacaoStatus;
-  responsavel: string;
-}
-
-const implantacoesIniciais: Implantacao[] = [
-  { cliente: "Ind. Nova Era", etapa: "Go Live", status: "em_dia", responsavel: "Marcos" },
-  { cliente: "Distribuidora Sol", etapa: "Testes", status: "atencao", responsavel: "Renan" },
-  { cliente: "Metalúrgica Forte", etapa: "Imersão Geral", status: "em_dia", responsavel: "Marcos" },
-  { cliente: "Alimentos Vida", etapa: "Kick-off", status: "atrasado", responsavel: "Renan" },
-];
-
-const IMPLANTACOES_STORAGE_KEY = "embalconnect:implantacoes";
+type ImplantacaoStatus = ImplStatus;
+type Implantacao = ImplantacaoRow;
 
 const etapas = ["Kick-off", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Go Live"];
 
@@ -434,54 +421,55 @@ const emptyImplantacao: Implantacao = { cliente: "", etapa: etapas[0], status: "
 
 const DashboardHome = () => {
   const { isAdmin } = useAuth();
-  const [implantacoes, setImplantacoes] = useState<Implantacao[]>(() => {
-    try {
-      const raw = localStorage.getItem(IMPLANTACOES_STORAGE_KEY);
-      if (raw) return JSON.parse(raw) as Implantacao[];
-    } catch {}
-    return implantacoesIniciais;
-  });
+  const { implantacoes, addImplantacao, updateImplantacao, deleteImplantacao } = useImplantacoes();
   const [implDialogOpen, setImplDialogOpen] = useState(false);
-  const [editingIdx, setEditingIdx] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [implForm, setImplForm] = useState<Implantacao>(emptyImplantacao);
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(IMPLANTACOES_STORAGE_KEY, JSON.stringify(implantacoes));
-    } catch {}
-  }, [implantacoes]);
-
   const openNewImplantacao = () => {
-    setEditingIdx(null);
+    setEditingId(null);
     setImplForm(emptyImplantacao);
     setImplDialogOpen(true);
   };
 
-  const openEditImplantacao = (idx: number) => {
-    setEditingIdx(idx);
-    setImplForm({ ...implantacoes[idx] });
+  const openEditImplantacao = (item: Implantacao) => {
+    setEditingId(item.id ?? null);
+    setImplForm({ ...item });
     setImplDialogOpen(true);
   };
 
-  const saveImplantacao = () => {
+  const saveImplantacao = async () => {
     if (!implForm.cliente.trim()) {
       toast.error("Informe o cliente");
       return;
     }
-    setImplantacoes((prev) => {
-      if (editingIdx === null) return [...prev, { ...implForm, cliente: implForm.cliente.trim(), responsavel: implForm.responsavel.trim() }];
-      const next = [...prev];
-      next[editingIdx] = { ...implForm, cliente: implForm.cliente.trim(), responsavel: implForm.responsavel.trim() };
-      return next;
-    });
-    setImplDialogOpen(false);
-    toast.success("Salvo com sucesso!");
+    const payload = {
+      cliente: implForm.cliente.trim(),
+      etapa: implForm.etapa,
+      status: implForm.status,
+      responsavel: implForm.responsavel.trim(),
+    };
+    try {
+      if (editingId) {
+        await updateImplantacao(editingId, payload);
+      } else {
+        await addImplantacao(payload as Implantacao);
+      }
+      setImplDialogOpen(false);
+      toast.success("Salvo com sucesso!");
+    } catch (e: any) {
+      toast.error("Erro ao salvar: " + (e?.message || ""));
+    }
   };
 
-  const removeImplantacao = (idx: number) => {
-    setImplantacoes((prev) => prev.filter((_, i) => i !== idx));
-    setImplDialogOpen(false);
-    toast.success("Removido");
+  const removeImplantacao = async (id: string) => {
+    try {
+      await deleteImplantacao(id);
+      setImplDialogOpen(false);
+      toast.success("Removido");
+    } catch (e: any) {
+      toast.error("Erro ao excluir: " + (e?.message || ""));
+    }
   };
 
   return (
@@ -666,7 +654,7 @@ const DashboardHome = () => {
                     <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor" }} />
                     {isAdmin && (
                       <button
-                        onClick={() => openEditImplantacao(idx)}
+                        onClick={() => openEditImplantacao(item)}
                         className="absolute top-2 right-2 p-1.5 rounded-md bg-white/5 opacity-40 group-hover/impl:opacity-100 transition-opacity hover:bg-white/15 text-white/70 hover:text-white z-20"
                         title="Editar implantação"
                       >
@@ -726,10 +714,10 @@ const DashboardHome = () => {
           </div>
 
           {/* Dialog de edição de implantação */}
-          <Dialog open={implDialogOpen} onOpenChange={(o) => { setImplDialogOpen(o); if (!o) setEditingIdx(null); }}>
+          <Dialog open={implDialogOpen} onOpenChange={(o) => { setImplDialogOpen(o); if (!o) setEditingId(null); }}>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>{editingIdx === null ? "Nova implantação" : "Editar implantação"}</DialogTitle>
+                <DialogTitle>{editingId === null ? "Nova implantação" : "Editar implantação"}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-2">
                 <div className="space-y-2">
@@ -765,8 +753,8 @@ const DashboardHome = () => {
               </div>
               <DialogFooter className="flex sm:justify-between gap-2">
                 <div>
-                  {editingIdx !== null && (
-                    <Button variant="destructive" onClick={() => removeImplantacao(editingIdx)}>
+                  {editingId !== null && (
+                    <Button variant="destructive" onClick={() => removeImplantacao(editingId)}>
                       <Trash2 size={14} className="mr-1" /> Excluir
                     </Button>
                   )}
