@@ -364,7 +364,7 @@ const Updates = () => {
             key={cat}
             onClick={() => setFilter(cat)}
             className={cn(
-              "px-4 py-2 rounded-full text-xs md:text-sm font-bold font-mono tracking-wider border-2 transition-all duration-300",
+              "px-4 py-2 rounded-full text-xs md:text-sm font-bold font-sans tracking-wider border-2 transition-all duration-300",
               filter === cat 
                 ? cn(categoryConfig[cat].border, categoryConfig[cat].bg, categoryConfig[cat].color, "scale-105") 
                 : "border-white/10 text-muted-foreground hover:border-white/30 hover:text-white bg-black/40"
