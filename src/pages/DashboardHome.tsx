@@ -59,22 +59,8 @@ const entregas = { valor: 45 };
 const retrabalho = { valor: 4, valor_extra: "%" };
 const chamados = { valor: 158, valor_extra: "+8%" };
 
-type ImplantacaoStatus = "em_dia" | "atencao" | "atrasado";
-interface Implantacao {
-  cliente: string;
-  etapa: string;
-  status: ImplantacaoStatus;
-  responsavel: string;
-}
-
-const implantacoesIniciais: Implantacao[] = [
-  { cliente: "Ind. Nova Era", etapa: "Go Live", status: "em_dia", responsavel: "Marcos" },
-  { cliente: "Distribuidora Sol", etapa: "Testes", status: "atencao", responsavel: "Renan" },
-  { cliente: "Metalúrgica Forte", etapa: "Imersão Geral", status: "em_dia", responsavel: "Marcos" },
-  { cliente: "Alimentos Vida", etapa: "Kick-off", status: "atrasado", responsavel: "Renan" },
-];
-
-const IMPLANTACOES_STORAGE_KEY = "embalconnect:implantacoes";
+type ImplantacaoStatus = ImplStatus;
+type Implantacao = ImplantacaoRow;
 
 const etapas = ["Kick-off", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Go Live"];
 
