@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useMemo, useEffect, useCall
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 
-export type Category = 'Comunicado' | 'Aniversário' | 'Feriado' | 'Boas práticas' | 'Links úteis';
+export type Category = 'Comunicado' | 'Aniversário' | 'Feriado' | 'Boas práticas' | 'Links úteis' | 'Bem-estar';
 
 export interface UpdateItem {
   id: string;
