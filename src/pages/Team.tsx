@@ -171,6 +171,51 @@ const Team = () => {
   };
   const [form, setForm] = useState<typeof emptyForm>(emptyForm);
 
+  // Carrega membros do Supabase. Se a tabela existir e tiver dados, usa eles.
+  // Caso contrário mantém o seed local (fallback).
+  const fetchMembers = useCallback(async () => {
+    try {
+      const { data: rows, error } = await supabase
+        .from("team_members")
+        .select("*")
+        .order("section")
+        .order("ordem");
+      if (error) throw error;
+      if (!rows || rows.length === 0) return; // mantém seed local
+      const bySection = new Map<string, Member[]>();
+      rows.forEach((r: any) => {
+        const m: Member = {
+          id: r.id,
+          name: r.name,
+          role: r.role,
+          isLeader: r.is_leader || undefined,
+          isPJ: r.is_pj || undefined,
+          parceriaDesde: r.parceria_desde || undefined,
+          sede: r.sede || undefined,
+          admissao: r.admissao || undefined,
+          tempo: r.admissao ? calcularTempo(r.admissao) : undefined,
+          aniversario: r.aniversario || undefined,
+          image: r.image || undefined,
+        };
+        const arr = bySection.get(r.section) || [];
+        arr.push(m);
+        bySection.set(r.section, arr);
+      });
+      setData(
+        sections.map((s) => ({
+          ...s,
+          members: bySection.get(s.title) || [],
+        })),
+      );
+    } catch (e) {
+      console.warn("Falha ao carregar team_members do Supabase, usando dados locais:", e);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchMembers();
+  }, [fetchMembers]);
+
   const openNew = () => {
     setEditing(null);
     setForm(emptyForm);
@@ -196,59 +241,104 @@ const Team = () => {
     setOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.name.trim() || !form.role.trim()) {
       toast({ title: "Preencha nome e cargo", variant: "destructive" });
       return;
     }
-    const newMember: Member = {
+    const payload = {
+      section: form.section,
       name: form.name.trim(),
       role: form.role.trim(),
-      isLeader: form.isLeader || undefined,
-      isPJ: form.isPJ || undefined,
-      parceriaDesde: form.isPJ && form.parceriaDesde ? form.parceriaDesde : undefined,
-      sede: form.sede || undefined,
-      admissao: !form.isPJ && form.admissao ? form.admissao : undefined,
-      tempo: !form.isPJ && form.admissao ? calcularTempo(form.admissao) : undefined,
-      aniversario: form.aniversario || undefined,
-      image: form.image || undefined,
+      is_leader: !!form.isLeader,
+      is_pj: !!form.isPJ,
+      parceria_desde: form.isPJ && form.parceriaDesde ? form.parceriaDesde : null,
+      sede: form.sede || null,
+      admissao: !form.isPJ && form.admissao ? form.admissao : null,
+      aniversario: form.aniversario || null,
+      image: form.image || null,
     };
-    setData((prev) => {
-      const next = prev.map((s) => ({ ...s, members: [...s.members] }));
-      const targetIdx = next.findIndex((s) => s.title === form.section);
-      if (targetIdx === -1) return prev;
-      if (editing) {
-        if (next[editing.sectionIdx].title === form.section) {
-          next[editing.sectionIdx].members[editing.memberIdx] = newMember;
+
+    const existingId = editing ? data[editing.sectionIdx].members[editing.memberIdx]?.id : undefined;
+
+    try {
+      if (editing && existingId) {
+        const { error } = await supabase.from("team_members").update(payload).eq("id", existingId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("team_members").insert([payload]);
+        if (error) throw error;
+      }
+      await fetchMembers();
+      toast({
+        title: editing ? "Colaborador atualizado" : "Colaborador adicionado",
+        description: `${payload.name} em ${form.section}`,
+      });
+    } catch (e: any) {
+      console.warn("Falha ao salvar no Supabase, salvando apenas localmente:", e);
+      // Fallback local (caso tabela ainda não exista)
+      const newMember: Member = {
+        name: payload.name,
+        role: payload.role,
+        isLeader: form.isLeader || undefined,
+        isPJ: form.isPJ || undefined,
+        parceriaDesde: form.isPJ && form.parceriaDesde ? form.parceriaDesde : undefined,
+        sede: form.sede || undefined,
+        admissao: !form.isPJ && form.admissao ? form.admissao : undefined,
+        tempo: !form.isPJ && form.admissao ? calcularTempo(form.admissao) : undefined,
+        aniversario: form.aniversario || undefined,
+        image: form.image || undefined,
+      };
+      setData((prev) => {
+        const next = prev.map((s) => ({ ...s, members: [...s.members] }));
+        const targetIdx = next.findIndex((s) => s.title === form.section);
+        if (targetIdx === -1) return prev;
+        if (editing) {
+          if (next[editing.sectionIdx].title === form.section) {
+            next[editing.sectionIdx].members[editing.memberIdx] = newMember;
+          } else {
+            next[editing.sectionIdx].members.splice(editing.memberIdx, 1);
+            next[targetIdx].members.push(newMember);
+          }
         } else {
-          next[editing.sectionIdx].members.splice(editing.memberIdx, 1);
           next[targetIdx].members.push(newMember);
         }
-      } else {
-        next[targetIdx].members.push(newMember);
-      }
-      return next;
-    });
-    toast({
-      title: editing ? "Colaborador atualizado" : "Colaborador adicionado",
-      description: `${newMember.name} em ${form.section}`,
-    });
+        return next;
+      });
+      toast({
+        title: "Salvo localmente",
+        description: "A tabela team_members ainda não está criada no Supabase.",
+      });
+    }
+
     setOpen(false);
     setEditing(null);
     setForm(emptyForm);
   };
 
-  const handleDelete = (sectionIdx: number, memberIdx: number) => {
+  const handleDelete = async (sectionIdx: number, memberIdx: number) => {
     const member = data[sectionIdx].members[memberIdx];
     if (!member) return;
     if (!window.confirm(`Excluir ${member.name}?`)) return;
-    setData((prev) => {
-      const next = prev.map((s) => ({ ...s, members: [...s.members] }));
-      next[sectionIdx].members.splice(memberIdx, 1);
-      return next;
-    });
-    toast({ title: "Colaborador excluído", description: member.name });
+    try {
+      if (member.id) {
+        const { error } = await supabase.from("team_members").delete().eq("id", member.id);
+        if (error) throw error;
+        await fetchMembers();
+      } else {
+        setData((prev) => {
+          const next = prev.map((s) => ({ ...s, members: [...s.members] }));
+          next[sectionIdx].members.splice(memberIdx, 1);
+          return next;
+        });
+      }
+      toast({ title: "Colaborador excluído", description: member.name });
+    } catch (e) {
+      console.warn("Falha ao excluir no Supabase:", e);
+      toast({ title: "Erro ao excluir", variant: "destructive" });
+    }
   };
+
 
   return (
     <div className="relative space-y-8 animate-fade-in pb-20">
