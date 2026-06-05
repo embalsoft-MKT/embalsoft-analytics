@@ -126,6 +126,23 @@ const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => voi
                 </div>
               )}
             </div>
+
+            <div className="flex justify-end mb-3">
+              <button
+                onClick={handleMarkAsRead}
+                disabled={item.read}
+                className={cn(
+                  "inline-flex items-center gap-2 px-3 py-1.5 rounded-md border text-xs font-mono font-bold uppercase tracking-wider transition-all",
+                  item.read
+                    ? "bg-white/5 border-white/10 text-white/40 cursor-default"
+                    : "bg-[#a7c64f]/10 border-[#a7c64f]/40 text-[#a7c64f] hover:bg-[#a7c64f]/20"
+                )}
+                title={item.read ? "Já lido" : "Marcar como lido"}
+              >
+                <CheckCheck size={14} />
+                {item.read ? 'Lido' : 'Marcar como lido'}
+              </button>
+            </div>
             
             <h3 className={cn("text-xl md:text-2xl font-bold font-sans tracking-wide transition-colors", item.read ? "text-white/80" : "text-white drop-shadow-md")}>
               {item.title}
