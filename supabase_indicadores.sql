@@ -135,3 +135,66 @@ create policy "inf_all_admin" on public.informativos for all to authenticated us
 -- Grants para informativos
 grant all privileges on public.informativos to authenticated, service_role;
 
+-- ============================================================
+-- Tabela: team_members (Equipe)
+-- ============================================================
+create table if not exists public.team_members (
+  id uuid primary key default gen_random_uuid(),
+  section text not null,
+  name text not null,
+  role text not null,
+  is_leader boolean default false,
+  is_pj boolean default false,
+  parceria_desde text,
+  sede text,
+  admissao text,
+  aniversario text,
+  image text,
+  ordem int default 0,
+  created_at timestamptz not null default now()
+);
+
+alter table public.team_members enable row level security;
+grant all privileges on public.team_members to authenticated, service_role;
+
+drop policy if exists "tm_select" on public.team_members;
+create policy "tm_select" on public.team_members for select to authenticated using (true);
+
+drop policy if exists "tm_all_admin" on public.team_members;
+create policy "tm_all_admin" on public.team_members for all to authenticated using (
+  exists (select 1 from public.profiles where profiles.id = auth.uid() and profiles.role = 'admin')
+  or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
+) with check (
+  exists (select 1 from public.profiles where profiles.id = auth.uid() and profiles.role = 'admin')
+  or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
+);
+
+-- ============================================================
+-- Tabela: implantacoes (Projetos em Implantação)
+-- ============================================================
+create table if not exists public.implantacoes (
+  id uuid primary key default gen_random_uuid(),
+  cliente text not null,
+  etapa text not null,
+  status text not null,
+  responsavel text,
+  ordem int default 0,
+  created_at timestamptz not null default now()
+);
+
+alter table public.implantacoes enable row level security;
+grant all privileges on public.implantacoes to authenticated, service_role;
+
+drop policy if exists "impl_select" on public.implantacoes;
+create policy "impl_select" on public.implantacoes for select to authenticated using (true);
+
+drop policy if exists "impl_all_admin" on public.implantacoes;
+create policy "impl_all_admin" on public.implantacoes for all to authenticated using (
+  exists (select 1 from public.profiles where profiles.id = auth.uid() and profiles.role = 'admin')
+  or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
+) with check (
+  exists (select 1 from public.profiles where profiles.id = auth.uid() and profiles.role = 'admin')
+  or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
+);
+
+
