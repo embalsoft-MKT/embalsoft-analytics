@@ -61,6 +61,7 @@ const chamados = { valor: 158, valor_extra: "+8%" };
 
 type ImplantacaoStatus = "em_dia" | "atencao" | "atrasado";
 interface Implantacao {
+  id?: string;
   cliente: string;
   etapa: string;
   status: ImplantacaoStatus;
