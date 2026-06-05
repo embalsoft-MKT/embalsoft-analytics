@@ -25,8 +25,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import OrbitalBackground from "@/components/OrbitalBackground";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIndicadores, fetchHistorico } from "@/hooks/useIndicadores";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 // Botão de relatório padrão (desativado por enquanto)
 const ReportButton = () => (
