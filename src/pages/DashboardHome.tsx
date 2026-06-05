@@ -446,12 +446,46 @@ const DashboardHome = () => {
   const [implDialogOpen, setImplDialogOpen] = useState(false);
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [implForm, setImplForm] = useState<Implantacao>(emptyImplantacao);
+  const [implSupabaseAvailable, setImplSupabaseAvailable] = useState(false);
+
+  const fetchImplantacoes = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from("implantacoes")
+        .select("*")
+        .order("ordem")
+        .order("created_at");
+      if (error) throw error;
+      setImplSupabaseAvailable(true);
+      if (data && data.length > 0) {
+        setImplantacoes(
+          data.map((r: any) => ({
+            id: r.id,
+            cliente: r.cliente,
+            etapa: r.etapa,
+            status: r.status as ImplantacaoStatus,
+            responsavel: r.responsavel || "",
+          })),
+        );
+      } else {
+        setImplantacoes([]);
+      }
+    } catch (e) {
+      console.warn("Falha ao carregar implantacoes do Supabase, usando localStorage:", e);
+      setImplSupabaseAvailable(false);
+    }
+  }, []);
 
   useEffect(() => {
+    fetchImplantacoes();
+  }, [fetchImplantacoes]);
+
+  useEffect(() => {
+    if (implSupabaseAvailable) return; // se está no Supabase, não persiste localmente
     try {
       localStorage.setItem(IMPLANTACOES_STORAGE_KEY, JSON.stringify(implantacoes));
     } catch {}
-  }, [implantacoes]);
+  }, [implantacoes, implSupabaseAvailable]);
 
   const openNewImplantacao = () => {
     setEditingIdx(null);
@@ -465,26 +499,62 @@ const DashboardHome = () => {
     setImplDialogOpen(true);
   };
 
-  const saveImplantacao = () => {
+  const saveImplantacao = async () => {
     if (!implForm.cliente.trim()) {
       toast.error("Informe o cliente");
       return;
     }
-    setImplantacoes((prev) => {
-      if (editingIdx === null) return [...prev, { ...implForm, cliente: implForm.cliente.trim(), responsavel: implForm.responsavel.trim() }];
-      const next = [...prev];
-      next[editingIdx] = { ...implForm, cliente: implForm.cliente.trim(), responsavel: implForm.responsavel.trim() };
-      return next;
-    });
+    const payload = {
+      cliente: implForm.cliente.trim(),
+      etapa: implForm.etapa,
+      status: implForm.status,
+      responsavel: implForm.responsavel.trim(),
+    };
+
+    try {
+      if (editingIdx !== null && implantacoes[editingIdx]?.id) {
+        const { error } = await supabase
+          .from("implantacoes")
+          .update(payload)
+          .eq("id", implantacoes[editingIdx].id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("implantacoes").insert([payload]);
+        if (error) throw error;
+      }
+      await fetchImplantacoes();
+      toast.success("Salvo com sucesso!");
+    } catch (e) {
+      console.warn("Falha ao salvar no Supabase, salvando localmente:", e);
+      setImplantacoes((prev) => {
+        if (editingIdx === null) return [...prev, { ...payload }];
+        const next = [...prev];
+        next[editingIdx] = { ...next[editingIdx], ...payload };
+        return next;
+      });
+      toast.success("Salvo localmente");
+    }
     setImplDialogOpen(false);
-    toast.success("Salvo com sucesso!");
   };
 
-  const removeImplantacao = (idx: number) => {
-    setImplantacoes((prev) => prev.filter((_, i) => i !== idx));
+  const removeImplantacao = async (idx: number) => {
+    const item = implantacoes[idx];
+    try {
+      if (item?.id) {
+        const { error } = await supabase.from("implantacoes").delete().eq("id", item.id);
+        if (error) throw error;
+        await fetchImplantacoes();
+      } else {
+        setImplantacoes((prev) => prev.filter((_, i) => i !== idx));
+      }
+      toast.success("Removido");
+    } catch (e) {
+      console.warn("Falha ao remover no Supabase:", e);
+      toast.error("Erro ao remover");
+    }
     setImplDialogOpen(false);
-    toast.success("Removido");
   };
+
 
   return (
     <TooltipProvider delayDuration={200}>
