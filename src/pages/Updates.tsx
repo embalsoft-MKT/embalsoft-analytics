@@ -21,8 +21,31 @@ const categoryConfig: Record<Category | 'Todas', { color: string, border: string
 const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => void }> = ({ item, onEdit }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { markAsRead, deleteUpdate } = useUpdates();
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const conf = categoryConfig[item.category];
+
+  const handleMarkAsRead = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (item.read) return;
+    markAsRead(item.id);
+
+    if (item.category === 'Bem-estar') {
+      try {
+        const { error } = await supabase.from('informativo_leituras').insert([{
+          user_id: user?.id || null,
+          user_email: user?.email || null,
+          informativo_id: item.id,
+          informativo_title: item.title,
+          category: item.category,
+          read_at: new Date().toISOString(),
+        }]);
+        if (error) throw error;
+      } catch (err) {
+        console.warn('Falha ao registrar leitura Bem-estar:', err);
+      }
+    }
+    toast.success('Marcado como lido');
+  };
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
