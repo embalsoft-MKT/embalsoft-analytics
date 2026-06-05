@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useUpdates, Category, UpdateItem } from "../contexts/UpdatesContext";
 import { useLocation } from "react-router-dom";
-import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2, X, Upload, FileText, Trash2, Edit3, User, Clock } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2, X, Upload, FileText, Trash2, Edit3, User, Clock, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 // Configurations for HUD aesthetics by category
 const categoryConfig: Record<Category | 'Todas', { color: string, border: string, bg: string, tag: string }> = {
@@ -19,8 +21,31 @@ const categoryConfig: Record<Category | 'Todas', { color: string, border: string
 const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => void }> = ({ item, onEdit }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { markAsRead, deleteUpdate } = useUpdates();
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const conf = categoryConfig[item.category];
+
+  const handleMarkAsRead = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (item.read) return;
+    markAsRead(item.id);
+
+    if (item.category === 'Bem-estar') {
+      try {
+        const { error } = await supabase.from('informativo_leituras').insert([{
+          user_id: user?.id || null,
+          user_email: user?.email || null,
+          informativo_id: item.id,
+          informativo_title: item.title,
+          category: item.category,
+          read_at: new Date().toISOString(),
+        }]);
+        if (error) throw error;
+      } catch (err) {
+        console.warn('Falha ao registrar leitura Bem-estar:', err);
+      }
+    }
+    toast.success('Marcado como lido');
+  };
 
   const handleToggle = () => {
     setIsExpanded(!isExpanded);
@@ -100,6 +125,23 @@ const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => voi
                   </button>
                 </div>
               )}
+            </div>
+
+            <div className="flex justify-end mb-3">
+              <button
+                onClick={handleMarkAsRead}
+                disabled={item.read}
+                className={cn(
+                  "inline-flex items-center gap-2 px-3 py-1.5 rounded-md border text-xs font-mono font-bold uppercase tracking-wider transition-all",
+                  item.read
+                    ? "bg-white/5 border-white/10 text-white/40 cursor-default"
+                    : "bg-[#a7c64f]/10 border-[#a7c64f]/40 text-[#a7c64f] hover:bg-[#a7c64f]/20"
+                )}
+                title={item.read ? "Já lido" : "Marcar como lido"}
+              >
+                <CheckCheck size={14} />
+                {item.read ? 'Lido' : 'Marcar como lido'}
+              </button>
             </div>
             
             <h3 className={cn("text-xl md:text-2xl font-bold font-sans tracking-wide transition-colors", item.read ? "text-white/80" : "text-white drop-shadow-md")}>
