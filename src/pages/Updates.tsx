@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useUpdates, Category, UpdateItem } from "../contexts/UpdatesContext";
 import { useLocation } from "react-router-dom";
-import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2, X, Upload, FileText, Trash2, Edit3, User, Clock } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, ExternalLink, Calendar, Plus, RefreshCw, Layers, Phone, GraduationCap, BookOpen, Book, Image as ImageIcon, Linkedin, Mail, Cake, Link2, X, Upload, FileText, Trash2, Edit3, User, Clock, CheckCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 // Configurations for HUD aesthetics by category
 const categoryConfig: Record<Category | 'Todas', { color: string, border: string, bg: string, tag: string }> = {
