@@ -340,14 +340,14 @@ const Updates = () => {
             </div>
 
             {[
-              { icon: GraduationCap, label: "Embalsoft Academia" },
-              { icon: BookOpen, label: "Wiki Antiga" },
-              { icon: Book, label: "Wiki Nova" },
-              { icon: ImageIcon, label: "Fundo Teams 2026" },
-              { icon: Linkedin, label: "Capa LinkedIn" },
-              { icon: Mail, label: "Assinaturas de email" },
+              { icon: GraduationCap, label: "Embalsoft Academia", href: "https://academy.embalsoft.com.br/moodle/" },
+              { icon: BookOpen, label: "Wiki Antiga", href: "#" },
+              { icon: Book, label: "Wiki Nova", href: "http://wiki.embalsoft.int/xwiki/bin/login/XWiki/XWikiLogin;jsessionid=950FED68ED3BD38B8250D2813CA9074C?srid=mXLZMz8g&xredirect=%2Fxwiki%2Fbin%2Fview%2FBase%2520de%2520Conhecimento%2520%2F%3Fsrid%3DmXLZMz8g" },
+              { icon: ImageIcon, label: "Fundo Teams 2026", href: "https://embalsoftcombr-my.sharepoint.com/personal/patricia_fernandes_embalsoft_com_br/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fpatricia%5Ffernandes%5Fembalsoft%5Fcom%5Fbr%2FDocuments%2FMateriais%202026%2FArtes%202026%2FFundo%20Teams%202026%2Epng&parent=%2Fpersonal%2Fpatricia%5Ffernandes%5Fembalsoft%5Fcom%5Fbr%2FDocuments%2FMateriais%202026%2FArtes%202026&ga=1" },
+              { icon: Linkedin, label: "Capa LinkedIn", href: "https://embalsoftcombr-my.sharepoint.com/personal/patricia_fernandes_embalsoft_com_br/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fpatricia%5Ffernandes%5Fembalsoft%5Fcom%5Fbr%2FDocuments%2FMateriais%202026%2FArtes%202026%2FCapa%20linkedin%2Epng&parent=%2Fpersonal%2Fpatricia%5Ffernandes%5Fembalsoft%5Fcom%5Fbr%2FDocuments%2FMateriais%202026%2FArtes%202026&ga=1" },
+              { icon: Mail, label: "Assinaturas de email", href: "https://embalsoftcombr-my.sharepoint.com/personal/patricia_fernandes_embalsoft_com_br/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fpatricia%5Ffernandes%5Fembalsoft%5Fcom%5Fbr%2FDocuments%2FMateriais%202026%2FArtes%202026%2FAss%20de%20email%202026&ga=1" },
             ].map((l) => (
-              <a key={l.label} href="#" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-[#38b6ff] hover:bg-[#38b6ff]/10 border border-transparent hover:border-[#38b6ff]/30 transition-all group">
+              <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:text-[#38b6ff] hover:bg-[#38b6ff]/10 border border-transparent hover:border-[#38b6ff]/30 transition-all group">
                 <l.icon size={16} className="shrink-0 text-muted-foreground group-hover:text-[#38b6ff]" />
                 <span className="flex-1">{l.label}</span>
                 <ExternalLink size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
