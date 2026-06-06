@@ -147,61 +147,35 @@ export const UpdatesProvider: React.FC<{ children: React.ReactNode }> = ({ child
     fetchUpdates();
   }, [fetchUpdates]);
 
-  // Seed Links úteis padrão (uma única vez por navegador)
+  // Limpeza única: remove os cards de Links úteis criados anteriormente por seed
   useEffect(() => {
     if (loading) return;
-    const SEED_KEY = 'embalsoft_seed_links_uteis_v1';
-    if (localStorage.getItem(SEED_KEY)) return;
+    const CLEANUP_KEY = 'embalsoft_cleanup_links_uteis_v1';
+    if (localStorage.getItem(CLEANUP_KEY)) return;
 
-    const seeds: Array<{ title: string; link: string; shortDescription: string }> = [
-      {
-        title: 'Embalsoft Academia',
-        link: 'https://academy.embalsoft.com.br/moodle/',
-        shortDescription: 'Plataforma de cursos e treinamentos da Embalsoft.'
-      },
-      {
-        title: 'Wiki Nova',
-        link: 'http://wiki.embalsoft.int/xwiki/bin/login/XWiki/XWikiLogin;jsessionid=950FED68ED3BD38B8250D2813CA9074C?srid=mXLZMz8g&xredirect=%2Fxwiki%2Fbin%2Fview%2FBase%2520de%2520Conhecimento%2520%2F%3Fsrid%3DmXLZMz8g',
-        shortDescription: 'Base de conhecimento interna da Embalsoft.'
-      },
-      {
-        title: 'Fundo Teams 2026',
-        link: 'https://embalsoftcombr-my.sharepoint.com/personal/patricia_fernandes_embalsoft_com_br/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fpatricia%5Ffernandes%5Fembalsoft%5Fcom%5Fbr%2FDocuments%2FMateriais%202026%2FArtes%202026%2FFundo%20Teams%202026%2Epng&parent=%2Fpersonal%2Fpatricia%5Ffernandes%5Fembalsoft%5Fcom%5Fbr%2FDocuments%2FMateriais%202026%2FArtes%202026&ga=1',
-        shortDescription: 'Plano de fundo oficial para Microsoft Teams - 2026.'
-      },
-      {
-        title: 'Capa Linkedin p/ colaboradores',
-        link: 'https://embalsoftcombr-my.sharepoint.com/personal/patricia_fernandes_embalsoft_com_br/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fpatricia%5Ffernandes%5Fembalsoft%5Fcom%5Fbr%2FDocuments%2FMateriais%202026%2FArtes%202026%2FCapa%20linkedin%2Epng&parent=%2Fpersonal%2Fpatricia%5Ffernandes%5Fembalsoft%5Fcom%5Fbr%2FDocuments%2FMateriais%202026%2FArtes%202026&ga=1',
-        shortDescription: 'Capa oficial do LinkedIn para colaboradores Embalsoft.'
-      },
-      {
-        title: 'Assinaturas de email',
-        link: 'https://embalsoftcombr-my.sharepoint.com/personal/patricia_fernandes_embalsoft_com_br/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fpatricia%5Ffernandes%5Fembalsoft%5Fcom%5Fbr%2FDocuments%2FMateriais%202026%2FArtes%202026%2FAss%20de%20email%202026&ga=1',
-        shortDescription: 'Modelos oficiais de assinatura de e-mail 2026.'
-      }
+    const titlesToRemove = [
+      'Embalsoft Academia',
+      'Wiki Nova',
+      'Fundo Teams 2026',
+      'Capa Linkedin p/ colaboradores',
+      'Assinaturas de email',
     ];
 
-    const missing = seeds.filter(s => !updates.some(u => u.title === s.title));
-    if (missing.length === 0) {
-      localStorage.setItem(SEED_KEY, '1');
+    const toDelete = updates.filter(u => u.category === 'Links úteis' && titlesToRemove.includes(u.title));
+    if (toDelete.length === 0) {
+      localStorage.setItem(CLEANUP_KEY, '1');
       return;
     }
 
     (async () => {
-      for (const s of missing) {
-        await addUpdate({
-          title: s.title,
-          category: 'Links úteis',
-          shortDescription: s.shortDescription,
-          link: s.link,
-          authorName: 'Adm Embalsoft',
-          authorPhoto: '/icon-e.png'
-        });
+      for (const u of toDelete) {
+        await deleteUpdate(u.id);
       }
-      localStorage.setItem(SEED_KEY, '1');
+      localStorage.setItem(CLEANUP_KEY, '1');
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading]);
+
 
   const updatesWithRead = useMemo(() => {
     return updates.map(u => ({
