@@ -76,7 +76,7 @@ const sections: TeamSection[] = [
     icon: Briefcase,
     color: "#38b6ff",
     members: [
-      { name: "Gisele Muck", role: "Gerente Financeiro (Supervisora Setor ADM)", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1983", image: "/gisele.png" },
+      { name: "Gisele Muck", role: "Gerente Financeiro (Coordenadora Setor ADM)", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1983", image: "/gisele.png" },
       { name: "Juliana de Oliveira Dias Charão", role: "Generalista de RH", sede: "RS", admissao: "01/03/2022", tempo: "4 anos, 2 meses e 8 dias", aniversario: "26/10/1982", image: "/juliana.png" },
       { name: "Patricia Fernandes Barbosa", role: "Marketing", sede: "RS", admissao: "18/09/2023", tempo: "2 anos, 7 meses e 21 dias", aniversario: "23/04/1999", image: "/patricia.png" },
     ],
@@ -86,7 +86,7 @@ const sections: TeamSection[] = [
     icon: Headphones,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
+      { name: "Júnior Muck", role: "Coordenador", isLeader: true, image: "/junior.png" },
       { name: "Luís da Silva", role: "Analista de Suporte", isPJ: true, parceriaDesde: "01/04/2012", sede: "RS", aniversario: "10/11/1963", image: "/luis-fernando.png" },
       { name: "Casiana Walter Braga", role: "Analista de Suporte de Produto", sede: "RS", admissao: "01/04/2013", tempo: "13 anos, 1 mês e 8 dias", aniversario: "31/01/1985", image: "/casiana.png" },
       { name: "Gabriel Pereira Lazarin", role: "Analista de Suporte de Produto", sede: "SP", admissao: "28/08/2023", tempo: "2 anos, 8 meses e 11 dias", aniversario: "19/03/1997", image: "/gabriel-lazarin.png" },
@@ -97,7 +97,7 @@ const sections: TeamSection[] = [
     icon: TrendingUp,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
+      { name: "Júnior Muck", role: "Coordenador", isLeader: true, image: "/junior.png" },
       { name: "Cíntia Villar", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "01/09/2021", sede: "RS", aniversario: "10/05/2023", image: "/cintia.png" },
       { name: "Jacqueline Fontoura", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "13/02/2026", image: "/jacqueline.png" },
       { name: "Luiz Fagam", role: "Consultor de Vendas", isPJ: true, parceriaDesde: "08/05/2026", image: "/luiz-fagam.png" },
@@ -122,7 +122,7 @@ const sections: TeamSection[] = [
     icon: CheckCircle,
     color: "#38b6ff",
     members: [
-      { name: "Ismael Barth Hahn", role: "Supervisor", isLeader: true, image: "/ismael.png" },
+      { name: "Ismael Barth Hahn", role: "Coordenador", isLeader: true, image: "/ismael.png" },
       { name: "Gabriel Rodrigues Justin", role: "Analista de Testes", sede: "RS", admissao: "18/03/2024", tempo: "2 anos, 1 mês e 21 dias", aniversario: "19/08/1995", image: "/gabriel-justin.png" },
     ],
   },
@@ -131,7 +131,7 @@ const sections: TeamSection[] = [
     icon: Settings,
     color: "#38b6ff",
     members: [
-      { name: "Júnior Muck", role: "Supervisor", isLeader: true, image: "/junior.png" },
+      { name: "Júnior Muck", role: "Coordenador", isLeader: true, image: "/junior.png" },
       { name: "Marcos Becker", role: "Analista de Implantação", isPJ: true, parceriaDesde: "01/04/2019", sede: "RS", aniversario: "18/02/1982", image: "/marcos.png" },
       { name: "Renan Pires", role: "Consultor de Implantação", isPJ: true, parceriaDesde: "03/06/2024", sede: "SP", aniversario: "25/10/1988", image: "/renan.png" },
       { name: "Tatiane", role: "Consultora de Projetos", isPJ: true, parceriaDesde: "13/02/2026", sede: "RS", image: "/tatiane.png" },
@@ -142,7 +142,7 @@ const sections: TeamSection[] = [
     icon: Server,
     color: "#38b6ff",
     members: [
-      { name: "Ismael Barth Hahn", role: "Supervisor", isLeader: true, image: "/ismael.png" },
+      { name: "Ismael Barth Hahn", role: "Coordenador", isLeader: true, image: "/ismael.png" },
       { name: "Raian Guimarães", role: "Analista de Infraestrutura", sede: "RS", admissao: "08/06/2026", aniversario: "17/02/2003", image: "/raian.png" },
     ],
   },
