@@ -737,13 +737,26 @@ const DashboardHome = () => {
                   >
                     <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor" }} />
                     {isAdmin && (
-                      <button
-                        onClick={() => openEditImplantacao(idx)}
-                        className="absolute top-2 right-2 p-1.5 rounded-md bg-white/5 opacity-40 group-hover/impl:opacity-100 transition-opacity hover:bg-white/15 text-white/70 hover:text-white z-20"
-                        title="Editar implantação"
-                      >
-                        <Edit2 size={14} />
-                      </button>
+                      <div className="absolute top-2 right-2 flex items-center gap-1 z-20">
+                        <button
+                          onClick={() => openEditImplantacao(idx)}
+                          className="p-1.5 rounded-md bg-white/5 opacity-40 group-hover/impl:opacity-100 transition-opacity hover:bg-white/15 text-white/70 hover:text-white"
+                          title="Editar implantação"
+                        >
+                          <Edit2 size={14} />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (window.confirm(`Excluir implantação de "${item.cliente}"?`)) {
+                              removeImplantacao(idx);
+                            }
+                          }}
+                          className="p-1.5 rounded-md bg-white/5 opacity-40 group-hover/impl:opacity-100 transition-opacity hover:bg-red-500/20 text-white/70 hover:text-red-300"
+                          title="Excluir implantação"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     )}
                     <div className="flex flex-col md:flex-row md:items-center gap-4 mb-6 pl-3 pr-8">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
