@@ -630,6 +630,44 @@ const Team = () => {
                   <Label>Cargo</Label>
                   <Input value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} />
                 </div>
+                <div>
+                  <Label>Foto do colaborador</Label>
+                  <div className="flex items-center gap-3 mt-1">
+                    <div className="w-16 h-16 rounded-full overflow-hidden border border-white/20 bg-white/5 flex items-center justify-center shrink-0">
+                      {form.image ? (
+                        <img src={form.image} alt="preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <User size={24} className="text-white/40" />
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-2 flex-1">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          if (file.size > 2 * 1024 * 1024) {
+                            toast({ title: "Imagem muito grande", description: "Máx. 2MB", variant: "destructive" });
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onload = () => setForm((f) => ({ ...f, image: String(reader.result || "") }));
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                      {form.image && (
+                        <button
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, image: "" }))}
+                          className="text-xs text-red-400 hover:text-red-300 self-start"
+                        >
+                          Remover foto
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Label>Sede</Label>
