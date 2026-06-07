@@ -200,41 +200,29 @@ create policy "impl_all_admin" on public.implantacoes for all to authenticated u
 
 
 -- ============================================================
--- Tabela: suporte_tickets (Registro mensal de tickets do suporte)
+-- Histórico de "Chamados Atendidos" (op_chamados)
+-- Tickets do Suporte por mês — registrados no histórico do indicador
 -- ============================================================
-create table if not exists public.suporte_tickets (
-  id uuid primary key default gen_random_uuid(),
-  ano int not null,
-  mes int not null,
-  mes_nome text not null,
-  quantidade int not null,
-  observacao text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  unique (ano, mes)
-);
 
-alter table public.suporte_tickets enable row level security;
-grant all privileges on public.suporte_tickets to authenticated, service_role;
+-- Garante que o indicador exista
+insert into public.indicadores (chave, label, categoria, valor, valor_extra, ordem)
+values ('op_chamados', 'Chamados Atendidos', 'operacional', 286, null, 3)
+on conflict (chave) do nothing;
 
-drop policy if exists "sup_select" on public.suporte_tickets;
-create policy "sup_select" on public.suporte_tickets for select to authenticated using (true);
+-- Atualiza valor atual para o mês mais recente (Maio/2025)
+update public.indicadores
+   set valor = 286, valor_extra = null
+ where chave = 'op_chamados';
 
-drop policy if exists "sup_all_admin" on public.suporte_tickets;
-create policy "sup_all_admin" on public.suporte_tickets for all to authenticated using (
-  exists (select 1 from public.profiles where profiles.id = auth.uid() and profiles.role = 'admin')
-  or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
-) with check (
-  exists (select 1 from public.profiles where profiles.id = auth.uid() and profiles.role = 'admin')
-  or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
-);
-
--- Seed dos meses informados (2025)
-insert into public.suporte_tickets (ano, mes, mes_nome, quantidade) values
-  (2025, 3, 'Março', 466),
-  (2025, 4, 'Abril', 289),
-  (2025, 5, 'Maio', 286)
-on conflict (ano, mes) do update set
-  quantidade = excluded.quantidade,
-  mes_nome = excluded.mes_nome,
-  updated_at = now();
+-- Insere registros históricos manuais (Março, Abril, Maio de 2025)
+insert into public.indicadores_historico
+  (indicador_id, chave, valor_anterior, valor_extra_anterior,
+   valor_novo, valor_extra_novo, alterado_em)
+select i.id, 'op_chamados', null, null, v.valor, null, v.alterado_em
+  from public.indicadores i
+  cross join (values
+    (466::numeric, '2025-03-31 23:59:00-03'::timestamptz),
+    (289::numeric, '2025-04-30 23:59:00-03'::timestamptz),
+    (286::numeric, '2025-05-31 23:59:00-03'::timestamptz)
+  ) as v(valor, alterado_em)
+ where i.chave = 'op_chamados';
