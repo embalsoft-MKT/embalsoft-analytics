@@ -182,6 +182,25 @@ const Team = () => {
         .order("ordem");
       if (error) throw error;
       if (!rows || rows.length === 0) return; // mantém seed local
+
+      // Normalização de cargos legados (Supervisor -> Coordenador; Gisele)
+      const updates: Promise<any>[] = [];
+      rows.forEach((r: any) => {
+        let novoRole: string | null = null;
+        if (r.name === "Gisele Muck" && r.role !== "Gerente Financeiro/Coordenadora ADM") {
+          novoRole = "Gerente Financeiro/Coordenadora ADM";
+        } else if (/supervisor/i.test(r.role || "")) {
+          novoRole = (r.role as string)
+            .replace(/Supervisora/gi, "Coordenadora")
+            .replace(/Supervisor/gi, "Coordenador");
+        }
+        if (novoRole && novoRole !== r.role) {
+          updates.push(supabase.from("team_members").update({ role: novoRole }).eq("id", r.id));
+          r.role = novoRole;
+        }
+      });
+      if (updates.length) await Promise.allSettled(updates);
+
       const bySection = new Map<string, Member[]>();
       rows.forEach((r: any) => {
         const m: Member = {
