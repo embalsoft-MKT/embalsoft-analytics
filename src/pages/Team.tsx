@@ -76,7 +76,7 @@ const sections: TeamSection[] = [
     icon: Briefcase,
     color: "#38b6ff",
     members: [
-      { name: "Gisele Muck", role: "Gerente Financeiro (Coordenadora Setor ADM)", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1983", image: "/gisele.png" },
+      { name: "Gisele Muck", role: "Gerente Financeiro/Coordenadora ADM", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1983", image: "/gisele.png" },
       { name: "Juliana de Oliveira Dias Charão", role: "Generalista de RH", sede: "RS", admissao: "01/03/2022", tempo: "4 anos, 2 meses e 8 dias", aniversario: "26/10/1982", image: "/juliana.png" },
       { name: "Patricia Fernandes Barbosa", role: "Marketing", sede: "RS", admissao: "18/09/2023", tempo: "2 anos, 7 meses e 21 dias", aniversario: "23/04/1999", image: "/patricia.png" },
     ],
