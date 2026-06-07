@@ -195,7 +195,7 @@ const Team = () => {
             .replace(/Supervisor/gi, "Coordenador");
         }
         if (novoRole && novoRole !== r.role) {
-          updates.push(supabase.from("team_members").update({ role: novoRole }).eq("id", r.id));
+          updates.push(Promise.resolve(supabase.from("team_members").update({ role: novoRole }).eq("id", r.id)));
           r.role = novoRole;
         }
       });
