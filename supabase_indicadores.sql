@@ -198,3 +198,43 @@ create policy "impl_all_admin" on public.implantacoes for all to authenticated u
 );
 
 
+
+-- ============================================================
+-- Tabela: suporte_tickets (Registro mensal de tickets do suporte)
+-- ============================================================
+create table if not exists public.suporte_tickets (
+  id uuid primary key default gen_random_uuid(),
+  ano int not null,
+  mes int not null,
+  mes_nome text not null,
+  quantidade int not null,
+  observacao text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (ano, mes)
+);
+
+alter table public.suporte_tickets enable row level security;
+grant all privileges on public.suporte_tickets to authenticated, service_role;
+
+drop policy if exists "sup_select" on public.suporte_tickets;
+create policy "sup_select" on public.suporte_tickets for select to authenticated using (true);
+
+drop policy if exists "sup_all_admin" on public.suporte_tickets;
+create policy "sup_all_admin" on public.suporte_tickets for all to authenticated using (
+  exists (select 1 from public.profiles where profiles.id = auth.uid() and profiles.role = 'admin')
+  or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
+) with check (
+  exists (select 1 from public.profiles where profiles.id = auth.uid() and profiles.role = 'admin')
+  or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
+);
+
+-- Seed dos meses informados (2025)
+insert into public.suporte_tickets (ano, mes, mes_nome, quantidade) values
+  (2025, 3, 'Março', 466),
+  (2025, 4, 'Abril', 289),
+  (2025, 5, 'Maio', 286)
+on conflict (ano, mes) do update set
+  quantidade = excluded.quantidade,
+  mes_nome = excluded.mes_nome,
+  updated_at = now();
