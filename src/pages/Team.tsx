@@ -76,7 +76,7 @@ const sections: TeamSection[] = [
     icon: Briefcase,
     color: "#38b6ff",
     members: [
-      { name: "Gisele Muck", role: "Gerente Financeiro (Coordenadora Setor ADM)", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1983", image: "/gisele.png" },
+      { name: "Gisele Muck", role: "Gerente Financeiro/Coordenadora ADM", isLeader: true, sede: "SP", admissao: "29/01/2020", tempo: "6 anos, 3 meses e 10 dias", aniversario: "10/01/1983", image: "/gisele.png" },
       { name: "Juliana de Oliveira Dias Charão", role: "Generalista de RH", sede: "RS", admissao: "01/03/2022", tempo: "4 anos, 2 meses e 8 dias", aniversario: "26/10/1982", image: "/juliana.png" },
       { name: "Patricia Fernandes Barbosa", role: "Marketing", sede: "RS", admissao: "18/09/2023", tempo: "2 anos, 7 meses e 21 dias", aniversario: "23/04/1999", image: "/patricia.png" },
     ],
@@ -182,6 +182,25 @@ const Team = () => {
         .order("ordem");
       if (error) throw error;
       if (!rows || rows.length === 0) return; // mantém seed local
+
+      // Normalização de cargos legados (Supervisor -> Coordenador; Gisele)
+      const updates: Promise<any>[] = [];
+      rows.forEach((r: any) => {
+        let novoRole: string | null = null;
+        if (r.name === "Gisele Muck" && r.role !== "Gerente Financeiro/Coordenadora ADM") {
+          novoRole = "Gerente Financeiro/Coordenadora ADM";
+        } else if (/supervisor/i.test(r.role || "")) {
+          novoRole = (r.role as string)
+            .replace(/Supervisora/gi, "Coordenadora")
+            .replace(/Supervisor/gi, "Coordenador");
+        }
+        if (novoRole && novoRole !== r.role) {
+          updates.push(Promise.resolve(supabase.from("team_members").update({ role: novoRole }).eq("id", r.id)));
+          r.role = novoRole;
+        }
+      });
+      if (updates.length) await Promise.allSettled(updates);
+
       const bySection = new Map<string, Member[]>();
       rows.forEach((r: any) => {
         const m: Member = {
@@ -610,6 +629,44 @@ const Team = () => {
                 <div>
                   <Label>Cargo</Label>
                   <Input value={form.role} onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))} />
+                </div>
+                <div>
+                  <Label>Foto do colaborador</Label>
+                  <div className="flex items-center gap-3 mt-1">
+                    <div className="w-16 h-16 rounded-full overflow-hidden border border-white/20 bg-white/5 flex items-center justify-center shrink-0">
+                      {form.image ? (
+                        <img src={form.image} alt="preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <User size={24} className="text-white/40" />
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-2 flex-1">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          if (file.size > 2 * 1024 * 1024) {
+                            toast({ title: "Imagem muito grande", description: "Máx. 2MB", variant: "destructive" });
+                            return;
+                          }
+                          const reader = new FileReader();
+                          reader.onload = () => setForm((f) => ({ ...f, image: String(reader.result || "") }));
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                      {form.image && (
+                        <button
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, image: "" }))}
+                          className="text-xs text-red-400 hover:text-red-300 self-start"
+                        >
+                          Remover foto
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
