@@ -110,14 +110,17 @@ const supportChartConfig: ChartConfig = {
 
 // ── Component ──
 
-const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtra, layout, groupHoverBorder }: { 
+const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtra, layout, groupHoverBorder, overrideValue, overrideExtra }: { 
   chave: string, 
   defaultLabel: string, 
   defaultValue: number,
   defaultValorExtra?: string,
   layout: "commercial" | "operacional" | "retrabalho" | "suporte",
-  groupHoverBorder?: string 
+  groupHoverBorder?: string,
+  overrideValue?: number | null,
+  overrideExtra?: string,
 }) => {
+
   const { isAdmin } = useAuth();
   const { byChave, updateIndicador } = useIndicadores();
   const indicador = byChave(chave);
