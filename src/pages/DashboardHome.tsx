@@ -25,9 +25,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import OrbitalBackground from "@/components/OrbitalBackground";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIndicadores, fetchHistorico } from "@/hooks/useIndicadores";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useOutletContext } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
+
 
 // Botão de relatório padrão (desativado por enquanto)
 const ReportButton = () => (
@@ -110,14 +112,17 @@ const supportChartConfig: ChartConfig = {
 
 // ── Component ──
 
-const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtra, layout, groupHoverBorder }: { 
+const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtra, layout, groupHoverBorder, overrideValue, overrideExtra }: { 
   chave: string, 
   defaultLabel: string, 
   defaultValue: number,
   defaultValorExtra?: string,
   layout: "commercial" | "operacional" | "retrabalho" | "suporte",
-  groupHoverBorder?: string 
+  groupHoverBorder?: string,
+  overrideValue?: number | null,
+  overrideExtra?: string,
 }) => {
+
   const { isAdmin } = useAuth();
   const { byChave, updateIndicador } = useIndicadores();
   const indicador = byChave(chave);
@@ -202,10 +207,12 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
   };
 
   const displayLabel = indicador?.label || defaultLabel;
-  const displayValor = indicador?.valor !== null && indicador?.valor !== undefined ? indicador.valor : defaultValue;
-  const displayExtra = computedExtra;
+  const baseValor = indicador?.valor !== null && indicador?.valor !== undefined ? indicador.valor : defaultValue;
+  const displayValor = overrideValue !== undefined && overrideValue !== null ? overrideValue : baseValor;
+  const displayExtra = overrideExtra !== undefined ? overrideExtra : computedExtra;
   const isPositive = displayExtra.startsWith("+");
   const isNegative = displayExtra.startsWith("-");
+
 
   const renderEditButton = () => isAdmin && !editing && (
     <button 
@@ -436,6 +443,52 @@ const emptyImplantacao: Implantacao = { cliente: "", etapa: etapas[0], status: "
 
 const DashboardHome = () => {
   const { isAdmin } = useAuth();
+  const { byChave } = useIndicadores();
+  const outletCtx = useOutletContext<{ selectedFilter?: string } | null>();
+  const selectedFilter = outletCtx?.selectedFilter || "ÚLTIMOS 30 DIAS";
+
+  // ── Suporte: histórico filtrado por período ──
+  const chamadosIndicador = byChave("chamados");
+  const [chamadosHist, setChamadosHist] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!chamadosIndicador?.id) return;
+    fetchHistorico(chamadosIndicador.id)
+      .then((h) => setChamadosHist(h))
+      .catch(() => setChamadosHist([]));
+  }, [chamadosIndicador?.id, chamadosIndicador?.updated_at]);
+
+  const suporteFiltered = useMemo(() => {
+    const now = new Date();
+    let startDate = new Date(0);
+    if (selectedFilter === "HOJE") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    } else if (selectedFilter === "ÚLTIMOS 7 DIAS") {
+      startDate = new Date(now); startDate.setDate(now.getDate() - 7);
+    } else if (selectedFilter === "ÚLTIMOS 30 DIAS") {
+      startDate = new Date(now); startDate.setDate(now.getDate() - 30);
+    } else if (selectedFilter === "ESTE ANO") {
+      startDate = new Date(now.getFullYear(), 0, 1);
+    }
+
+    const rows = (chamadosHist || [])
+      .filter((r) => r.valor_novo !== null && r.valor_novo !== undefined)
+      .map((r) => ({ ...r, _date: new Date(r.alterado_em) }))
+      .filter((r) => r._date >= startDate && r._date <= now)
+      .sort((a, b) => a._date.getTime() - b._date.getTime());
+
+    const mesesNomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+    const chartData = rows.map((r) => ({
+      week: `${mesesNomes[r._date.getMonth()]}/${String(r._date.getFullYear()).slice(-2)}`,
+      atendimentos: Number(r.valor_novo),
+    }));
+
+    const total = rows.reduce((sum, r) => sum + Number(r.valor_novo), 0);
+    const hasData = rows.length > 0;
+
+    return { chartData, total, hasData };
+  }, [chamadosHist, selectedFilter]);
+
   const [implantacoes, setImplantacoes] = useState<Implantacao[]>(() => {
     try {
       const raw = localStorage.getItem(IMPLANTACOES_STORAGE_KEY);
@@ -444,6 +497,7 @@ const DashboardHome = () => {
     return implantacoesIniciais;
   });
   const [implDialogOpen, setImplDialogOpen] = useState(false);
+
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [implForm, setImplForm] = useState<Implantacao>(emptyImplantacao);
   const [implSupabaseAvailable, setImplSupabaseAvailable] = useState(false);
@@ -688,10 +742,12 @@ const DashboardHome = () => {
                 defaultLabel="Chamados Atendidos" 
                 defaultValue={158}
                 defaultValorExtra="+8%"
-                layout="suporte" 
+                layout="suporte"
+                overrideValue={suporteFiltered.hasData ? suporteFiltered.total : undefined}
+                overrideExtra={suporteFiltered.hasData ? selectedFilter : undefined}
               />
               <ChartContainer config={supportChartConfig} className="h-[220px] w-full mt-4">
-                <LineChart data={supportData}>
+                <LineChart data={suporteFiltered.hasData ? suporteFiltered.chartData : supportData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" vertical={false} />
                   <XAxis dataKey="week" stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
                   <YAxis stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
@@ -699,6 +755,7 @@ const DashboardHome = () => {
                   <Line type="monotone" dataKey="atendimentos" stroke="#38b6ff" strokeWidth={5} dot={{ fill: "#38b6ff", r: 6, strokeWidth: 2, stroke: "#fff" }} activeDot={{ r: 9, fill: "#fff", stroke: "#38b6ff", strokeWidth: 3 }} />
                 </LineChart>
               </ChartContainer>
+
             </div>
           </div>
 
