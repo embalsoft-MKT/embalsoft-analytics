@@ -443,6 +443,52 @@ const emptyImplantacao: Implantacao = { cliente: "", etapa: etapas[0], status: "
 
 const DashboardHome = () => {
   const { isAdmin } = useAuth();
+  const { byChave } = useIndicadores();
+  const outletCtx = useOutletContext<{ selectedFilter?: string } | null>();
+  const selectedFilter = outletCtx?.selectedFilter || "ÚLTIMOS 30 DIAS";
+
+  // ── Suporte: histórico filtrado por período ──
+  const chamadosIndicador = byChave("chamados");
+  const [chamadosHist, setChamadosHist] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!chamadosIndicador?.id) return;
+    fetchHistorico(chamadosIndicador.id)
+      .then((h) => setChamadosHist(h))
+      .catch(() => setChamadosHist([]));
+  }, [chamadosIndicador?.id, chamadosIndicador?.updated_at]);
+
+  const suporteFiltered = useMemo(() => {
+    const now = new Date();
+    let startDate = new Date(0);
+    if (selectedFilter === "HOJE") {
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    } else if (selectedFilter === "ÚLTIMOS 7 DIAS") {
+      startDate = new Date(now); startDate.setDate(now.getDate() - 7);
+    } else if (selectedFilter === "ÚLTIMOS 30 DIAS") {
+      startDate = new Date(now); startDate.setDate(now.getDate() - 30);
+    } else if (selectedFilter === "ESTE ANO") {
+      startDate = new Date(now.getFullYear(), 0, 1);
+    }
+
+    const rows = (chamadosHist || [])
+      .filter((r) => r.valor_novo !== null && r.valor_novo !== undefined)
+      .map((r) => ({ ...r, _date: new Date(r.alterado_em) }))
+      .filter((r) => r._date >= startDate && r._date <= now)
+      .sort((a, b) => a._date.getTime() - b._date.getTime());
+
+    const mesesNomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+    const chartData = rows.map((r) => ({
+      week: `${mesesNomes[r._date.getMonth()]}/${String(r._date.getFullYear()).slice(-2)}`,
+      atendimentos: Number(r.valor_novo),
+    }));
+
+    const total = rows.reduce((sum, r) => sum + Number(r.valor_novo), 0);
+    const hasData = rows.length > 0;
+
+    return { chartData, total, hasData };
+  }, [chamadosHist, selectedFilter]);
+
   const [implantacoes, setImplantacoes] = useState<Implantacao[]>(() => {
     try {
       const raw = localStorage.getItem(IMPLANTACOES_STORAGE_KEY);
@@ -451,6 +497,7 @@ const DashboardHome = () => {
     return implantacoesIniciais;
   });
   const [implDialogOpen, setImplDialogOpen] = useState(false);
+
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [implForm, setImplForm] = useState<Implantacao>(emptyImplantacao);
   const [implSupabaseAvailable, setImplSupabaseAvailable] = useState(false);
