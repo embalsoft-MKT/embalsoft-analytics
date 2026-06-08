@@ -742,10 +742,12 @@ const DashboardHome = () => {
                 defaultLabel="Chamados Atendidos" 
                 defaultValue={158}
                 defaultValorExtra="+8%"
-                layout="suporte" 
+                layout="suporte"
+                overrideValue={suporteFiltered.hasData ? suporteFiltered.total : undefined}
+                overrideExtra={suporteFiltered.hasData ? selectedFilter : undefined}
               />
               <ChartContainer config={supportChartConfig} className="h-[220px] w-full mt-4">
-                <LineChart data={supportData}>
+                <LineChart data={suporteFiltered.hasData ? suporteFiltered.chartData : supportData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" vertical={false} />
                   <XAxis dataKey="week" stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
                   <YAxis stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
@@ -753,6 +755,7 @@ const DashboardHome = () => {
                   <Line type="monotone" dataKey="atendimentos" stroke="#38b6ff" strokeWidth={5} dot={{ fill: "#38b6ff", r: 6, strokeWidth: 2, stroke: "#fff" }} activeDot={{ r: 9, fill: "#fff", stroke: "#38b6ff", strokeWidth: 3 }} />
                 </LineChart>
               </ChartContainer>
+
             </div>
           </div>
 
