@@ -200,29 +200,43 @@ create policy "impl_all_admin" on public.implantacoes for all to authenticated u
 
 
 -- ============================================================
--- Histórico de "Chamados Atendidos" (op_chamados)
--- Tickets do Suporte por mês — registrados no histórico do indicador
+-- Histórico de "Chamados Atendidos" (chave: chamados)
+-- Tickets do Suporte por mês — Março, Abril e Maio/2025
 -- ============================================================
 
 -- Garante que o indicador exista
 insert into public.indicadores (chave, label, categoria, valor, valor_extra, ordem)
-values ('op_chamados', 'Chamados Atendidos', 'operacional', 286, null, 3)
+values ('chamados', 'Chamados Atendidos', 'operacional', 286, null, 3)
 on conflict (chave) do nothing;
 
 -- Atualiza valor atual para o mês mais recente (Maio/2025)
 update public.indicadores
-   set valor = 286, valor_extra = null
- where chave = 'op_chamados';
+   set valor = 286,
+       valor_extra = null,
+       label = 'Chamados Atendidos',
+       categoria = 'operacional',
+       ordem = 3
+ where chave = 'chamados';
 
--- Insere registros históricos manuais (Março, Abril, Maio de 2025)
+-- Limpa históricos manuais anteriores (idempotente)
+delete from public.indicadores_historico
+ where chave = 'chamados'
+   and alterado_em in (
+     '2025-03-31 23:59:00-03'::timestamptz,
+     '2025-04-30 23:59:00-03'::timestamptz,
+     '2025-05-31 23:59:00-03'::timestamptz
+   );
+
+-- Insere registros históricos manuais (Março=466, Abril=289, Maio=286)
 insert into public.indicadores_historico
   (indicador_id, chave, valor_anterior, valor_extra_anterior,
    valor_novo, valor_extra_novo, alterado_em)
-select i.id, 'op_chamados', null, null, v.valor, null, v.alterado_em
+select i.id, 'chamados', v.valor_anterior, null, v.valor_novo, null, v.alterado_em
   from public.indicadores i
   cross join (values
-    (466::numeric, '2025-03-31 23:59:00-03'::timestamptz),
-    (289::numeric, '2025-04-30 23:59:00-03'::timestamptz),
-    (286::numeric, '2025-05-31 23:59:00-03'::timestamptz)
-  ) as v(valor, alterado_em)
- where i.chave = 'op_chamados';
+    (null::numeric, 466::numeric, '2025-03-31 23:59:00-03'::timestamptz),
+    (466::numeric,  289::numeric, '2025-04-30 23:59:00-03'::timestamptz),
+    (289::numeric,  286::numeric, '2025-05-31 23:59:00-03'::timestamptz)
+  ) as v(valor_anterior, valor_novo, alterado_em)
+ where i.chave = 'chamados';
+
