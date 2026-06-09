@@ -237,10 +237,14 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
 
   const displayLabel = indicador?.label || defaultLabel;
   const baseValor = indicador?.valor !== null && indicador?.valor !== undefined ? indicador.valor : defaultValue;
-  const displayValor = overrideValue !== undefined && overrideValue !== null ? overrideValue : baseValor;
+  const displayValor =
+    overrideValue !== undefined && overrideValue !== null
+      ? overrideValue
+      : (filterOverrideValue !== null ? filterOverrideValue : baseValor);
   const displayExtra = overrideExtra !== undefined ? overrideExtra : computedExtra;
   const isPositive = displayExtra.startsWith("+");
   const isNegative = displayExtra.startsWith("-");
+
 
 
   const renderEditButton = () => isAdmin && !editing && (
