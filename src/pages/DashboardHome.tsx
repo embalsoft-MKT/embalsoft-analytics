@@ -132,13 +132,14 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
   const [editing, setEditing] = useState(false);
   const [draftValor, setDraftValor] = useState("");
   const [saving, setSaving] = useState(false);
-  const [history, setHistory] = useState<IndHistoryRow[]>([]);
+  const [history, setHistory] = useState<Array<{ valor_anterior: number | null; valor_novo: number | null; alterado_em: string }>>([]);
 
   // Carrega o histórico completo do indicador
   useEffect(() => {
     if (!indicador) { setHistory([]); return; }
     fetchHistorico(indicador.id)
-      .then((h) => setHistory((h as unknown as IndHistoryRow[]) || []))
+      .then((h) => setHistory((h as any[]) || []))
+
       .catch(() => setHistory([]));
   }, [indicador?.id, indicador?.updated_at]);
 
