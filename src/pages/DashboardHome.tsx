@@ -149,23 +149,39 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
   }, [history]);
 
   // Override do valor exibido conforme filtro de período (apenas se houver histórico)
+  // Regra: se não houver registros no período, usa o registro mais recente disponível.
+  // Nunca calcula médias nem usa valores mockados.
   const filterOverrideValue = useMemo<number | null>(() => {
     if (!history || history.length === 0) return null;
+
+    const validRows = [...history]
+      .filter((r) => r.valor_novo !== null && r.valor_novo !== undefined)
+      .sort((a, b) => new Date(b.alterado_em).getTime() - new Date(a.alterado_em).getTime());
+
+    if (validRows.length === 0) return null;
+
+    // Fallback: registro mais recente disponível
+    const mostRecent = Number(validRows[0].valor_novo);
+
+    if (selectedFilter === "HOJE") {
+      const now = new Date();
+      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const todayRows = validRows.filter((r) => new Date(r.alterado_em) >= startOfDay);
+      return todayRows.length > 0 ? Number(todayRows[0].valor_novo) : mostRecent;
+    }
+    if (selectedFilter === "ÚLTIMOS 7 DIAS") {
+      const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
+      const rows7 = validRows.filter((r) => new Date(r.alterado_em) >= cutoff);
+      return rows7.length > 0 ? Number(rows7[0].valor_novo) : mostRecent;
+    }
     if (selectedFilter === "ÚLTIMOS 30 DIAS") {
-      const sorted = [...history]
-        .filter((r) => r.valor_novo !== null && r.valor_novo !== undefined)
-        .sort((a, b) => new Date(b.alterado_em).getTime() - new Date(a.alterado_em).getTime());
-      return sorted.length > 0 ? Number(sorted[0].valor_novo) : null;
+      return mostRecent;
     }
     if (selectedFilter === "ESTE ANO") {
       const year = new Date().getFullYear();
-      const rows = history.filter(
-        (r) =>
-          r.valor_novo !== null &&
-          r.valor_novo !== undefined &&
-          new Date(r.alterado_em).getFullYear() === year,
-      );
-      if (rows.length === 0) return null;
+      const rows = validRows.filter((r) => new Date(r.alterado_em).getFullYear() === year);
+      // Para "Este Ano" soma acumulada faz sentido; se vazio, usa o mais recente
+      if (rows.length === 0) return mostRecent;
       return rows.reduce((s, r) => s + Number(r.valor_novo), 0);
     }
     return null;
@@ -492,6 +508,7 @@ const DashboardHome = () => {
   }, [chamadosIndicador?.id, chamadosIndicador?.updated_at]);
 
   const suporteFiltered = useMemo(() => {
+    // Ordena do mais antigo ao mais recente (para o gráfico)
     const validRows = (chamadosHist || [])
       .filter((r) => r.valor_novo !== null && r.valor_novo !== undefined)
       .map((r) => ({ ...r, _date: new Date(r.alterado_em) }))
@@ -499,17 +516,32 @@ const DashboardHome = () => {
 
     const mesesNomes = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 
+    // Registro mais recente disponível (fallback quando período não tem dados)
+    const mostRecentRow = validRows.length > 0 ? validRows[validRows.length - 1] : null;
+
     let rows = validRows;
     let total = 0;
+    let usedFallback = false;
 
     if (selectedFilter === "ESTE ANO") {
       const year = new Date().getFullYear();
-      rows = validRows.filter((r) => r._date.getFullYear() === year);
-      total = rows.reduce((sum, r) => sum + Number(r.valor_novo), 0);
+      const yearRows = validRows.filter((r) => r._date.getFullYear() === year);
+      if (yearRows.length > 0) {
+        rows = yearRows;
+        total = yearRows.reduce((sum, r) => sum + Number(r.valor_novo), 0);
+      } else if (mostRecentRow) {
+        // Sem dados no ano: mostra o registro mais recente disponível
+        rows = [mostRecentRow];
+        total = Number(mostRecentRow.valor_novo);
+        usedFallback = true;
+      } else {
+        rows = [];
+        total = 0;
+      }
     } else if (selectedFilter === "ÚLTIMOS 30 DIAS") {
-      const last = validRows[validRows.length - 1];
-      rows = last ? [last] : [];
-      total = last ? Number(last.valor_novo) : 0;
+      // Usa o registro mais recente disponível (snapshot atual)
+      rows = mostRecentRow ? [mostRecentRow] : [];
+      total = mostRecentRow ? Number(mostRecentRow.valor_novo) : 0;
     } else {
       const now = new Date();
       let startDate = new Date(0);
@@ -518,8 +550,19 @@ const DashboardHome = () => {
       } else if (selectedFilter === "ÚLTIMOS 7 DIAS") {
         startDate = new Date(now); startDate.setDate(now.getDate() - 7);
       }
-      rows = validRows.filter((r) => r._date >= startDate && r._date <= now);
-      total = rows.reduce((sum, r) => sum + Number(r.valor_novo), 0);
+      const periodRows = validRows.filter((r) => r._date >= startDate && r._date <= now);
+      if (periodRows.length > 0) {
+        rows = periodRows;
+        total = periodRows.reduce((sum, r) => sum + Number(r.valor_novo), 0);
+      } else if (mostRecentRow) {
+        // Sem dados no período: usa o registro mais recente disponível
+        rows = [mostRecentRow];
+        total = Number(mostRecentRow.valor_novo);
+        usedFallback = true;
+      } else {
+        rows = [];
+        total = 0;
+      }
     }
 
     const chartData = rows.map((r) => ({
@@ -528,7 +571,7 @@ const DashboardHome = () => {
     }));
 
     const hasData = rows.length > 0;
-    return { chartData, total, hasData };
+    return { chartData, total, hasData, usedFallback };
   }, [chamadosHist, selectedFilter]);
 
   const [implantacoes, setImplantacoes] = useState<Implantacao[]>(() => {
