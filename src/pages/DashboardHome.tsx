@@ -126,22 +126,50 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
   const { isAdmin } = useAuth();
   const { byChave, updateIndicador } = useIndicadores();
   const indicador = byChave(chave);
+  const outletCtx = useOutletContext<{ selectedFilter?: string } | null>();
+  const selectedFilter = outletCtx?.selectedFilter || "";
 
   const [editing, setEditing] = useState(false);
   const [draftValor, setDraftValor] = useState("");
   const [saving, setSaving] = useState(false);
-  const [prevValor, setPrevValor] = useState<number | null>(null);
+  const [history, setHistory] = useState<Array<{ valor_anterior: number | null; valor_novo: number | null; alterado_em: string }>>([]);
 
-  // Carrega o último valor anterior para calcular % automática
+  // Carrega o histórico completo do indicador
   useEffect(() => {
-    if (!indicador) return;
+    if (!indicador) { setHistory([]); return; }
     fetchHistorico(indicador.id)
-      .then((h) => {
-        const last = h.find((x) => x.valor_anterior !== null);
-        setPrevValor(last?.valor_anterior ?? null);
-      })
-      .catch(() => setPrevValor(null));
+      .then((h) => setHistory((h as any[]) || []))
+
+      .catch(() => setHistory([]));
   }, [indicador?.id, indicador?.updated_at]);
+
+  const prevValor = useMemo(() => {
+    const last = history.find((x) => x.valor_anterior !== null && x.valor_anterior !== undefined);
+    return last?.valor_anterior ?? null;
+  }, [history]);
+
+  // Override do valor exibido conforme filtro de período (apenas se houver histórico)
+  const filterOverrideValue = useMemo<number | null>(() => {
+    if (!history || history.length === 0) return null;
+    if (selectedFilter === "ÚLTIMOS 30 DIAS") {
+      const sorted = [...history]
+        .filter((r) => r.valor_novo !== null && r.valor_novo !== undefined)
+        .sort((a, b) => new Date(b.alterado_em).getTime() - new Date(a.alterado_em).getTime());
+      return sorted.length > 0 ? Number(sorted[0].valor_novo) : null;
+    }
+    if (selectedFilter === "ESTE ANO") {
+      const year = new Date().getFullYear();
+      const rows = history.filter(
+        (r) =>
+          r.valor_novo !== null &&
+          r.valor_novo !== undefined &&
+          new Date(r.alterado_em).getFullYear() === year,
+      );
+      if (rows.length === 0) return null;
+      return rows.reduce((s, r) => s + Number(r.valor_novo), 0);
+    }
+    return null;
+  }, [history, selectedFilter]);
 
   useEffect(() => {
     if (indicador) {
@@ -177,6 +205,7 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
     return `${sign}${pct.toFixed(0)}%`;
   })();
 
+
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -208,10 +237,14 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
 
   const displayLabel = indicador?.label || defaultLabel;
   const baseValor = indicador?.valor !== null && indicador?.valor !== undefined ? indicador.valor : defaultValue;
-  const displayValor = overrideValue !== undefined && overrideValue !== null ? overrideValue : baseValor;
+  const displayValor =
+    overrideValue !== undefined && overrideValue !== null
+      ? overrideValue
+      : (filterOverrideValue !== null ? filterOverrideValue : baseValor);
   const displayExtra = overrideExtra !== undefined ? overrideExtra : computedExtra;
   const isPositive = displayExtra.startsWith("+");
   const isNegative = displayExtra.startsWith("-");
+
 
 
   const renderEditButton = () => isAdmin && !editing && (
