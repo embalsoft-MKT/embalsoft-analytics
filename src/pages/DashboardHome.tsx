@@ -126,22 +126,49 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
   const { isAdmin } = useAuth();
   const { byChave, updateIndicador } = useIndicadores();
   const indicador = byChave(chave);
+  const outletCtx = useOutletContext<{ selectedFilter?: string } | null>();
+  const selectedFilter = outletCtx?.selectedFilter || "";
 
   const [editing, setEditing] = useState(false);
   const [draftValor, setDraftValor] = useState("");
   const [saving, setSaving] = useState(false);
-  const [prevValor, setPrevValor] = useState<number | null>(null);
+  const [history, setHistory] = useState<IndHistoryRow[]>([]);
 
-  // Carrega o último valor anterior para calcular % automática
+  // Carrega o histórico completo do indicador
   useEffect(() => {
-    if (!indicador) return;
+    if (!indicador) { setHistory([]); return; }
     fetchHistorico(indicador.id)
-      .then((h) => {
-        const last = h.find((x) => x.valor_anterior !== null);
-        setPrevValor(last?.valor_anterior ?? null);
-      })
-      .catch(() => setPrevValor(null));
+      .then((h) => setHistory((h as unknown as IndHistoryRow[]) || []))
+      .catch(() => setHistory([]));
   }, [indicador?.id, indicador?.updated_at]);
+
+  const prevValor = useMemo(() => {
+    const last = history.find((x) => x.valor_anterior !== null && x.valor_anterior !== undefined);
+    return last?.valor_anterior ?? null;
+  }, [history]);
+
+  // Override do valor exibido conforme filtro de período (apenas se houver histórico)
+  const filterOverrideValue = useMemo<number | null>(() => {
+    if (!history || history.length === 0) return null;
+    if (selectedFilter === "ÚLTIMOS 30 DIAS") {
+      const sorted = [...history]
+        .filter((r) => r.valor_novo !== null && r.valor_novo !== undefined)
+        .sort((a, b) => new Date(b.alterado_em).getTime() - new Date(a.alterado_em).getTime());
+      return sorted.length > 0 ? Number(sorted[0].valor_novo) : null;
+    }
+    if (selectedFilter === "ESTE ANO") {
+      const year = new Date().getFullYear();
+      const rows = history.filter(
+        (r) =>
+          r.valor_novo !== null &&
+          r.valor_novo !== undefined &&
+          new Date(r.alterado_em).getFullYear() === year,
+      );
+      if (rows.length === 0) return null;
+      return rows.reduce((s, r) => s + Number(r.valor_novo), 0);
+    }
+    return null;
+  }, [history, selectedFilter]);
 
   useEffect(() => {
     if (indicador) {
@@ -176,6 +203,7 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
     const sign = pct >= 0 ? "+" : "";
     return `${sign}${pct.toFixed(0)}%`;
   })();
+
 
   const handleSave = async () => {
     setSaving(true);
