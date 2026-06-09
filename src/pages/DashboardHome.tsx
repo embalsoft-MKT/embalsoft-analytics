@@ -151,6 +151,7 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
   // Override do valor exibido conforme filtro de período (apenas se houver histórico)
   // Regra: se não houver registros no período, usa o registro mais recente disponível.
   // Nunca calcula médias nem usa valores mockados.
+  // Filtros disponíveis: "ÚLTIMOS 30 DIAS" | "ESTE ANO"
   const filterOverrideValue = useMemo<number | null>(() => {
     if (!history || history.length === 0) return null;
 
@@ -163,17 +164,6 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
     // Fallback: registro mais recente disponível
     const mostRecent = Number(validRows[0].valor_novo);
 
-    if (selectedFilter === "HOJE") {
-      const now = new Date();
-      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const todayRows = validRows.filter((r) => new Date(r.alterado_em) >= startOfDay);
-      return todayRows.length > 0 ? Number(todayRows[0].valor_novo) : mostRecent;
-    }
-    if (selectedFilter === "ÚLTIMOS 7 DIAS") {
-      const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
-      const rows7 = validRows.filter((r) => new Date(r.alterado_em) >= cutoff);
-      return rows7.length > 0 ? Number(rows7[0].valor_novo) : mostRecent;
-    }
     if (selectedFilter === "ÚLTIMOS 30 DIAS") {
       return mostRecent;
     }
@@ -362,10 +352,10 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
         {renderEditButton()}
         <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md block mb-3 pr-8">{displayLabel}</span>
         {editing ? <div>{valorNode}</div> : (
-          <p className="text-5xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] flex items-baseline gap-4">
+          <p className="text-5xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.4)] flex items-baseline gap-3">
             {displayValor}
             {displayExtra && (
-              <span className={`text-lg font-bold p-1 rounded border ${extraBadgeClass}`}>{displayExtra}</span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${extraBadgeClass} opacity-80`}>{displayExtra}</span>
             )}
           </p>
         )}
@@ -543,26 +533,10 @@ const DashboardHome = () => {
       rows = mostRecentRow ? [mostRecentRow] : [];
       total = mostRecentRow ? Number(mostRecentRow.valor_novo) : 0;
     } else {
-      const now = new Date();
-      let startDate = new Date(0);
-      if (selectedFilter === "HOJE") {
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      } else if (selectedFilter === "ÚLTIMOS 7 DIAS") {
-        startDate = new Date(now); startDate.setDate(now.getDate() - 7);
-      }
-      const periodRows = validRows.filter((r) => r._date >= startDate && r._date <= now);
-      if (periodRows.length > 0) {
-        rows = periodRows;
-        total = periodRows.reduce((sum, r) => sum + Number(r.valor_novo), 0);
-      } else if (mostRecentRow) {
-        // Sem dados no período: usa o registro mais recente disponível
-        rows = [mostRecentRow];
-        total = Number(mostRecentRow.valor_novo);
-        usedFallback = true;
-      } else {
-        rows = [];
-        total = 0;
-      }
+      // Filtro desconhecido: fallback para mais recente
+      rows = mostRecentRow ? [mostRecentRow] : [];
+      total = mostRecentRow ? Number(mostRecentRow.valor_novo) : 0;
+      usedFallback = true;
     }
 
     const chartData = rows.map((r) => ({

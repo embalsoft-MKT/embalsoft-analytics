@@ -76,7 +76,7 @@ const DashboardLayout = () => {
           {/* Dropdown Funcional */}
           {filterOpen && (
             <div className="absolute top-[120%] right-0 w-60 bg-card/95 backdrop-blur-xl border-2 border-[#38b6ff]/30 shadow-[0_15px_40px_rgba(0,0,0,0.9)] rounded-md flex flex-col p-1.5 z-50 animate-fade-in">
-               {["HOJE", "ÚLTIMOS 7 DIAS", "ÚLTIMOS 30 DIAS", "ESTE ANO"].map(option => (
+               {["ÚLTIMOS 30 DIAS", "ESTE ANO"].map(option => (
                  <button
                    key={option}
                    onClick={() => { setSelectedFilter(option); setFilterOpen(false); }}
