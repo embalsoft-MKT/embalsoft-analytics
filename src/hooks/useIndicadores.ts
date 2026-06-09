@@ -101,12 +101,13 @@ export const useIndicadores = () => {
 };
 
 export const fetchHistorico = async (indicadorId: string) => {
+  // Sem limite: necessário para cálculo anual com granularidade mensal.
+  // Históricos mensais = até 12 registros/ano por indicador — volume controlado.
   const { data, error } = await supabase
     .from("indicadores_historico")
     .select("*")
     .eq("indicador_id", indicadorId)
-    .order("alterado_em", { ascending: false })
-    .limit(20);
+    .order("alterado_em", { ascending: false });
   if (error) throw error;
   const enriched = await enrichWithNames(data || [], "alterado_por", "alterado_por_name");
   return enriched as IndicadorHistorico[];
