@@ -115,25 +115,38 @@ create table if not exists public.informativos (
 -- RLS para informativos
 alter table public.informativos enable row level security;
 
--- Policies para informativos
-drop policy if exists "inf_select" on public.informativos;
-create policy "inf_select" on public.informativos for select to authenticated using (true);
-
-drop policy if exists "inf_all_admin" on public.informativos;
-create policy "inf_all_admin" on public.informativos for all to authenticated using (
-  exists (
-    select 1 from public.profiles 
-    where profiles.id = auth.uid() and profiles.role = 'admin'
-  ) or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
-) with check (
-  exists (
-    select 1 from public.profiles 
-    where profiles.id = auth.uid() and profiles.role = 'admin'
-  ) or auth.jwt() ->> 'email' in ('embalsofterp@gmail.com', 'embalsoft.erp@gmail.com', 'patricia.fernandes@embalsoft.com.br')
-);
-
 -- Grants para informativos
 grant all privileges on public.informativos to authenticated, service_role;
+
+-- Policies para informativos
+-- Autorização centralizada exclusivamente em profiles.role = 'admin'
+drop policy if exists "inf_select"    on public.informativos;
+drop policy if exists "inf_all_admin" on public.informativos;
+
+create policy "inf_select"
+  on public.informativos
+  for select
+  to authenticated
+  using (true);
+
+create policy "inf_all_admin"
+  on public.informativos
+  for all
+  to authenticated
+  using (
+    exists (
+      select 1 from public.profiles
+       where profiles.id = auth.uid()
+         and profiles.role = 'admin'
+    )
+  )
+  with check (
+    exists (
+      select 1 from public.profiles
+       where profiles.id = auth.uid()
+         and profiles.role = 'admin'
+    )
+  );
 
 -- ============================================================
 -- Tabela: team_members (Equipe)
