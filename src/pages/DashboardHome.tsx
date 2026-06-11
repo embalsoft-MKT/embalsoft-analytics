@@ -914,7 +914,7 @@ const DashboardHome = () => {
               <div className="space-y-4 py-2">
                 <div className="space-y-2">
                   <Label>Cliente</Label>
-                  <Input value={implForm.cliente} onChange={(e) => setImplForm({ ...implForm, cliente: e.target.value })} placeholder="Nome do cliente" />
+                  <Input value={implForm.empresa} onChange={(e) => setImplForm({ ...implForm, empresa: e.target.value })} placeholder="Nome do cliente" />
                 </div>
                 <div className="space-y-2">
                   <Label>Responsável</Label>
