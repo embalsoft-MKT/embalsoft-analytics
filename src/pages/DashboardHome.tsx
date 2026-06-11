@@ -842,7 +842,7 @@ const DashboardHome = () => {
                         </button>
                         <button
                           onClick={() => {
-                            if (window.confirm(`Excluir implantação de "${item.cliente}"?`)) {
+                            if (window.confirm(`Excluir implantação de "${item.empresa}"?`)) {
                               removeImplantacao(idx);
                             }
                           }}
