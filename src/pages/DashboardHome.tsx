@@ -469,7 +469,7 @@ const EditableAvanco = ({ chave, ordem, defaultProjeto, defaultProgresso, cor }:
   );
 };
 
-const emptyImplantacao: Implantacao = { cliente: "", etapa: etapas[0], status: "em_dia", responsavel: "" };
+const emptyImplantacao: Implantacao = { empresa: "", etapa: etapas[0], status: "em_dia", responsavel: "" };
 
 const DashboardHome = () => {
   const { isAdmin } = useAuth();
