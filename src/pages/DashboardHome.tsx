@@ -549,7 +549,6 @@ const DashboardHome = () => {
     const { data, error } = await supabase
       .from("implantacoes")
       .select("*")
-      .order("ordem")
       .order("created_at");
     if (error) {
       console.error("Erro ao carregar implantacoes:", error);
@@ -558,8 +557,8 @@ const DashboardHome = () => {
     setImplantacoes(
       (data || []).map((r: any) => ({
         id: r.id,
-        cliente: r.cliente,
-        etapa: r.etapa,
+        empresa: r.empresa,
+        etapa: r.etapa_atual,
         status: r.status as ImplantacaoStatus,
         responsavel: r.responsavel || "",
       })),
@@ -568,8 +567,6 @@ const DashboardHome = () => {
 
   useEffect(() => {
     fetchImplantacoes();
-    // Limpa cache local antigo para evitar divergência entre usuários
-    try { localStorage.removeItem(IMPLANTACOES_STORAGE_KEY); } catch {}
 
     // Realtime: propaga alterações para todos os usuários
     const channel = supabase
@@ -596,27 +593,31 @@ const DashboardHome = () => {
   };
 
   const saveImplantacao = async () => {
-    if (!implForm.cliente.trim()) {
+    if (!implForm.empresa.trim()) {
       toast.error("Informe o cliente");
       return;
     }
     const payload = {
-      cliente: implForm.cliente.trim(),
-      etapa: implForm.etapa,
+      empresa: implForm.empresa.trim(),
+      etapa_atual: implForm.etapa,
       status: implForm.status,
       responsavel: implForm.responsavel.trim(),
     };
 
+    console.log("Payload enviado:", payload);
     try {
       if (editingIdx !== null && implantacoes[editingIdx]?.id) {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("implantacoes")
           .update(payload)
-          .eq("id", implantacoes[editingIdx].id);
-        if (error) throw error;
+          .eq("id", implantacoes[editingIdx].id)
+          .select();
+        console.log("Resposta Supabase (update):", data);
+        if (error) { console.error("Erro Supabase:", error); throw error; }
       } else {
-        const { error } = await supabase.from("implantacoes").insert([payload]);
-        if (error) throw error;
+        const { data, error } = await supabase.from("implantacoes").insert([payload]).select();
+        console.log("Resposta Supabase (insert):", data);
+        if (error) { console.error("Erro Supabase:", error); throw error; }
       }
       await fetchImplantacoes();
       toast.success("Salvo com sucesso!");
@@ -626,6 +627,7 @@ const DashboardHome = () => {
       toast.error(`Erro ao salvar: ${e?.message || "verifique suas permissões"}`);
     }
   };
+
 
   const removeImplantacao = async (idx: number) => {
     const item = implantacoes[idx];
