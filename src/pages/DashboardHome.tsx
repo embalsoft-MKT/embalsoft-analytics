@@ -64,20 +64,11 @@ const chamados = { valor: 158, valor_extra: "+8%" };
 type ImplantacaoStatus = "em_dia" | "atencao" | "atrasado";
 interface Implantacao {
   id?: string;
-  cliente: string;
+  empresa: string;
   etapa: string;
   status: ImplantacaoStatus;
   responsavel: string;
 }
-
-const implantacoesIniciais: Implantacao[] = [
-  { cliente: "Ind. Nova Era", etapa: "Go Live", status: "em_dia", responsavel: "Marcos" },
-  { cliente: "Distribuidora Sol", etapa: "Testes", status: "atencao", responsavel: "Renan" },
-  { cliente: "Metalúrgica Forte", etapa: "Imersão Geral", status: "em_dia", responsavel: "Marcos" },
-  { cliente: "Alimentos Vida", etapa: "Kick-off", status: "atrasado", responsavel: "Renan" },
-];
-
-const IMPLANTACOES_STORAGE_KEY = "embalconnect:implantacoes";
 
 const etapas = ["Kick-off", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Go Live"];
 
@@ -478,7 +469,7 @@ const EditableAvanco = ({ chave, ordem, defaultProjeto, defaultProgresso, cor }:
   );
 };
 
-const emptyImplantacao: Implantacao = { cliente: "", etapa: etapas[0], status: "em_dia", responsavel: "" };
+const emptyImplantacao: Implantacao = { empresa: "", etapa: etapas[0], status: "em_dia", responsavel: "" };
 
 const DashboardHome = () => {
   const { isAdmin } = useAuth();
@@ -558,7 +549,6 @@ const DashboardHome = () => {
     const { data, error } = await supabase
       .from("implantacoes")
       .select("*")
-      .order("ordem")
       .order("created_at");
     if (error) {
       console.error("Erro ao carregar implantacoes:", error);
@@ -567,8 +557,8 @@ const DashboardHome = () => {
     setImplantacoes(
       (data || []).map((r: any) => ({
         id: r.id,
-        cliente: r.cliente,
-        etapa: r.etapa,
+        empresa: r.empresa,
+        etapa: r.etapa_atual,
         status: r.status as ImplantacaoStatus,
         responsavel: r.responsavel || "",
       })),
@@ -577,8 +567,6 @@ const DashboardHome = () => {
 
   useEffect(() => {
     fetchImplantacoes();
-    // Limpa cache local antigo para evitar divergência entre usuários
-    try { localStorage.removeItem(IMPLANTACOES_STORAGE_KEY); } catch {}
 
     // Realtime: propaga alterações para todos os usuários
     const channel = supabase
@@ -605,27 +593,31 @@ const DashboardHome = () => {
   };
 
   const saveImplantacao = async () => {
-    if (!implForm.cliente.trim()) {
+    if (!implForm.empresa.trim()) {
       toast.error("Informe o cliente");
       return;
     }
     const payload = {
-      cliente: implForm.cliente.trim(),
-      etapa: implForm.etapa,
+      empresa: implForm.empresa.trim(),
+      etapa_atual: implForm.etapa,
       status: implForm.status,
       responsavel: implForm.responsavel.trim(),
     };
 
+    console.log("Payload enviado:", payload);
     try {
       if (editingIdx !== null && implantacoes[editingIdx]?.id) {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from("implantacoes")
           .update(payload)
-          .eq("id", implantacoes[editingIdx].id);
-        if (error) throw error;
+          .eq("id", implantacoes[editingIdx].id)
+          .select();
+        console.log("Resposta Supabase (update):", data);
+        if (error) { console.error("Erro Supabase:", error); throw error; }
       } else {
-        const { error } = await supabase.from("implantacoes").insert([payload]);
-        if (error) throw error;
+        const { data, error } = await supabase.from("implantacoes").insert([payload]).select();
+        console.log("Resposta Supabase (insert):", data);
+        if (error) { console.error("Erro Supabase:", error); throw error; }
       }
       await fetchImplantacoes();
       toast.success("Salvo com sucesso!");
@@ -635,6 +627,7 @@ const DashboardHome = () => {
       toast.error(`Erro ao salvar: ${e?.message || "verifique suas permissões"}`);
     }
   };
+
 
   const removeImplantacao = async (idx: number) => {
     const item = implantacoes[idx];
@@ -834,7 +827,7 @@ const DashboardHome = () => {
                 const progresso = etapaIndex >= 0 ? Math.round((etapaIndex / (etapas.length - 1)) * 100) : 0;
                 return (
                   <div
-                    key={`${item.cliente}-${idx}`}
+                    key={`${item.empresa}-${idx}`}
                     className="relative rounded-lg border-2 border-white/10 bg-black/60 p-5 transition-all duration-300 hover:border-white/30 overflow-hidden shadow-md group/impl"
                   >
                     <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor" }} />
@@ -849,7 +842,7 @@ const DashboardHome = () => {
                         </button>
                         <button
                           onClick={() => {
-                            if (window.confirm(`Excluir implantação de "${item.cliente}"?`)) {
+                            if (window.confirm(`Excluir implantação de "${item.empresa}"?`)) {
                               removeImplantacao(idx);
                             }
                           }}
@@ -863,7 +856,7 @@ const DashboardHome = () => {
                     <div className={`flex flex-col md:flex-row md:items-center gap-4 mb-6 pl-3 ${isAdmin ? "pr-24" : "pr-8"}`}>
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <StatusIcon size={20} className={s.color} />
-                        <span className="font-sans text-lg font-bold tracking-wide text-white truncate drop-shadow-sm">{item.cliente}</span>
+                        <span className="font-sans text-lg font-bold tracking-wide text-white truncate drop-shadow-sm">{item.empresa}</span>
                         <span className={`text-xs uppercase font-bold font-sans px-3 py-1 rounded border-2 ${s.border} ${s.color}`}>
                           {s.label}
                         </span>
@@ -921,7 +914,7 @@ const DashboardHome = () => {
               <div className="space-y-4 py-2">
                 <div className="space-y-2">
                   <Label>Cliente</Label>
-                  <Input value={implForm.cliente} onChange={(e) => setImplForm({ ...implForm, cliente: e.target.value })} placeholder="Nome do cliente" />
+                  <Input value={implForm.empresa} onChange={(e) => setImplForm({ ...implForm, empresa: e.target.value })} placeholder="Nome do cliente" />
                 </div>
                 <div className="space-y-2">
                   <Label>Responsável</Label>
