@@ -252,35 +252,42 @@ const Updates = () => {
 
   const categories: (Category | 'Todas')[] = ['Todas', 'Comunicado', 'Boas práticas', 'Aniversário', 'Feriado', 'Bem-estar'];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const postData = {
       ...newPost,
       scheduledDate: shouldSchedule ? newPost.scheduledDate : ''
     };
 
-    if (editingId) {
-      updateUpdate(editingId, postData);
-      setEditingId(null);
-    } else {
-      addUpdate({
-        ...postData,
-        authorName: user?.user_metadata?.full_name || 'Adm Embalsoft',
-        authorPhoto: user?.user_metadata?.avatar_url || '/icon-e.png'
+    try {
+      if (editingId) {
+        await updateUpdate(editingId, postData);
+        setEditingId(null);
+        toast.success('Informativo atualizado');
+      } else {
+        await addUpdate({
+          ...postData,
+          authorName: user?.user_metadata?.full_name || 'Adm Embalsoft',
+          authorPhoto: user?.user_metadata?.avatar_url || '/icon-e.png'
+        });
+        toast.success('Informativo publicado');
+      }
+      setShowPostModal(false);
+      setNewPost({
+        title: '',
+        category: 'Comunicado',
+        shortDescription: '',
+        fullContent: '',
+        imageUrl: '',
+        fileUrl: '',
+        link: '',
+        scheduledDate: ''
       });
+      setShouldSchedule(false);
+    } catch (err: any) {
+      console.error('Falha ao salvar informativo:', err);
+      toast.error(`Erro ao publicar: ${err?.message || 'verifique permissões (RLS)'}`);
     }
-    setShowPostModal(false);
-    setNewPost({
-      title: '',
-      category: 'Comunicado',
-      shortDescription: '',
-      fullContent: '',
-      imageUrl: '',
-      fileUrl: '',
-      link: '',
-      scheduledDate: ''
-    });
-    setShouldSchedule(false);
   };
 
   const handleEdit = (item: UpdateItem) => {
