@@ -827,7 +827,7 @@ const DashboardHome = () => {
                 const progresso = etapaIndex >= 0 ? Math.round((etapaIndex / (etapas.length - 1)) * 100) : 0;
                 return (
                   <div
-                    key={`${item.cliente}-${idx}`}
+                    key={`${item.empresa}-${idx}`}
                     className="relative rounded-lg border-2 border-white/10 bg-black/60 p-5 transition-all duration-300 hover:border-white/30 overflow-hidden shadow-md group/impl"
                   >
                     <div className="absolute left-0 top-0 bottom-0 w-1.5" style={{ backgroundColor: s.color.match(/text-\[(.*?)\]/)?.[1] || "currentColor" }} />
