@@ -123,7 +123,7 @@ export const UpdatesProvider: React.FC<{ children: React.ReactNode }> = ({ child
       minute: '2-digit',
     });
 
-    const { error } = await supabase.from('informativos').insert([{
+    const payload = {
       title: update.title,
       category: update.category,
       date: dateStr,
@@ -135,10 +135,17 @@ export const UpdatesProvider: React.FC<{ children: React.ReactNode }> = ({ child
       author_name: update.authorName || 'Sistema',
       author_photo: update.authorPhoto || null,
       scheduled_date: update.scheduledDate || null,
-    }]);
+    };
+
+    console.log('Payload enviado:', payload);
+    const { data, error } = await supabase
+      .from('informativos')
+      .insert([payload])
+      .select();
+    console.log('Resposta Supabase:', data);
 
     if (error) {
-      console.error('Erro ao criar informativo:', error);
+      console.error('Erro Supabase:', error);
       throw error;
     }
     await fetchUpdates();
