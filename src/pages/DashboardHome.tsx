@@ -548,57 +548,49 @@ const DashboardHome = () => {
     return { chartData, total, hasData, usedFallback };
   }, [chamadosHist, selectedFilter]);
 
-  const [implantacoes, setImplantacoes] = useState<Implantacao[]>(() => {
-    try {
-      const raw = localStorage.getItem(IMPLANTACOES_STORAGE_KEY);
-      if (raw) return JSON.parse(raw) as Implantacao[];
-    } catch {}
-    return implantacoesIniciais;
-  });
+  const [implantacoes, setImplantacoes] = useState<Implantacao[]>([]);
   const [implDialogOpen, setImplDialogOpen] = useState(false);
 
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [implForm, setImplForm] = useState<Implantacao>(emptyImplantacao);
-  const [implSupabaseAvailable, setImplSupabaseAvailable] = useState(false);
 
   const fetchImplantacoes = useCallback(async () => {
-    try {
-      const { data, error } = await supabase
-        .from("implantacoes")
-        .select("*")
-        .order("ordem")
-        .order("created_at");
-      if (error) throw error;
-      setImplSupabaseAvailable(true);
-      if (data && data.length > 0) {
-        setImplantacoes(
-          data.map((r: any) => ({
-            id: r.id,
-            cliente: r.cliente,
-            etapa: r.etapa,
-            status: r.status as ImplantacaoStatus,
-            responsavel: r.responsavel || "",
-          })),
-        );
-      } else {
-        setImplantacoes([]);
-      }
-    } catch (e) {
-      console.warn("Falha ao carregar implantacoes do Supabase, usando localStorage:", e);
-      setImplSupabaseAvailable(false);
+    const { data, error } = await supabase
+      .from("implantacoes")
+      .select("*")
+      .order("ordem")
+      .order("created_at");
+    if (error) {
+      console.error("Erro ao carregar implantacoes:", error);
+      return;
     }
+    setImplantacoes(
+      (data || []).map((r: any) => ({
+        id: r.id,
+        cliente: r.cliente,
+        etapa: r.etapa,
+        status: r.status as ImplantacaoStatus,
+        responsavel: r.responsavel || "",
+      })),
+    );
   }, []);
 
   useEffect(() => {
     fetchImplantacoes();
-  }, [fetchImplantacoes]);
+    // Limpa cache local antigo para evitar divergência entre usuários
+    try { localStorage.removeItem(IMPLANTACOES_STORAGE_KEY); } catch {}
 
-  useEffect(() => {
-    if (implSupabaseAvailable) return; // se está no Supabase, não persiste localmente
-    try {
-      localStorage.setItem(IMPLANTACOES_STORAGE_KEY, JSON.stringify(implantacoes));
-    } catch {}
-  }, [implantacoes, implSupabaseAvailable]);
+    // Realtime: propaga alterações para todos os usuários
+    const channel = supabase
+      .channel("implantacoes-changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "implantacoes" },
+        () => { fetchImplantacoes(); },
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchImplantacoes]);
 
   const openNewImplantacao = () => {
     setEditingIdx(null);
@@ -637,35 +629,29 @@ const DashboardHome = () => {
       }
       await fetchImplantacoes();
       toast.success("Salvo com sucesso!");
-    } catch (e) {
-      console.warn("Falha ao salvar no Supabase, salvando localmente:", e);
-      setImplantacoes((prev) => {
-        if (editingIdx === null) return [...prev, { ...payload }];
-        const next = [...prev];
-        next[editingIdx] = { ...next[editingIdx], ...payload };
-        return next;
-      });
-      toast.success("Salvo localmente");
+      setImplDialogOpen(false);
+    } catch (e: any) {
+      console.error("Erro ao salvar implantação:", e);
+      toast.error(`Erro ao salvar: ${e?.message || "verifique suas permissões"}`);
     }
-    setImplDialogOpen(false);
   };
 
   const removeImplantacao = async (idx: number) => {
     const item = implantacoes[idx];
-    try {
-      if (item?.id) {
-        const { error } = await supabase.from("implantacoes").delete().eq("id", item.id);
-        if (error) throw error;
-        await fetchImplantacoes();
-      } else {
-        setImplantacoes((prev) => prev.filter((_, i) => i !== idx));
-      }
-      toast.success("Removido");
-    } catch (e) {
-      console.warn("Falha ao remover no Supabase:", e);
-      toast.error("Erro ao remover");
+    if (!item?.id) {
+      toast.error("Registro sem id; recarregue a página");
+      return;
     }
-    setImplDialogOpen(false);
+    try {
+      const { error } = await supabase.from("implantacoes").delete().eq("id", item.id);
+      if (error) throw error;
+      await fetchImplantacoes();
+      toast.success("Removido");
+      setImplDialogOpen(false);
+    } catch (e: any) {
+      console.error("Erro ao remover implantação:", e);
+      toast.error(`Erro ao remover: ${e?.message || "verifique suas permissões"}`);
+    }
   };
 
 
