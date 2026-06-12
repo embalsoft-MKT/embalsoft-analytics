@@ -260,61 +260,38 @@ const Team = () => {
       image: form.image || null,
     };
 
+    console.log("Payload enviado (team_members):", payload);
+
     const existingId = editing ? data[editing.sectionIdx].members[editing.memberIdx]?.id : undefined;
 
     try {
+      let resp;
       if (editing && existingId) {
-        const { error } = await supabase.from("team_members").update(payload).eq("id", existingId);
-        if (error) throw error;
+        resp = await supabase.from("team_members").update(payload).eq("id", existingId).select();
       } else {
-        const { error } = await supabase.from("team_members").insert([payload]);
-        if (error) throw error;
+        resp = await supabase.from("team_members").insert([payload]).select();
+      }
+      console.log("Resposta Supabase (team_members):", resp.data);
+      if (resp.error) {
+        console.error("Erro Supabase (team_members):", resp.error);
+        throw resp.error;
       }
       await fetchMembers();
       toast({
         title: editing ? "Colaborador atualizado" : "Colaborador adicionado",
         description: `${payload.name} em ${form.section}`,
       });
+      setOpen(false);
+      setEditing(null);
+      setForm(emptyForm);
     } catch (e: any) {
-      console.warn("Falha ao salvar no Supabase, salvando apenas localmente:", e);
-      // Fallback local (caso tabela ainda não exista)
-      const newMember: Member = {
-        name: payload.name,
-        role: payload.role,
-        isLeader: form.isLeader || undefined,
-        isPJ: form.isPJ || undefined,
-        parceriaDesde: form.isPJ && form.parceriaDesde ? form.parceriaDesde : undefined,
-        sede: form.sede || undefined,
-        admissao: !form.isPJ && form.admissao ? form.admissao : undefined,
-        tempo: !form.isPJ && form.admissao ? calcularTempo(form.admissao) : undefined,
-        aniversario: form.aniversario || undefined,
-        image: form.image || undefined,
-      };
-      setData((prev) => {
-        const next = prev.map((s) => ({ ...s, members: [...s.members] }));
-        const targetIdx = next.findIndex((s) => s.title === form.section);
-        if (targetIdx === -1) return prev;
-        if (editing) {
-          if (next[editing.sectionIdx].title === form.section) {
-            next[editing.sectionIdx].members[editing.memberIdx] = newMember;
-          } else {
-            next[editing.sectionIdx].members.splice(editing.memberIdx, 1);
-            next[targetIdx].members.push(newMember);
-          }
-        } else {
-          next[targetIdx].members.push(newMember);
-        }
-        return next;
-      });
+      console.error("Erro Supabase (team_members) catch:", e);
       toast({
-        title: "Salvo localmente",
-        description: "A tabela team_members ainda não está criada no Supabase.",
+        title: "Erro ao salvar",
+        description: e?.message || "Falha ao gravar no Supabase.",
+        variant: "destructive",
       });
     }
-
-    setOpen(false);
-    setEditing(null);
-    setForm(emptyForm);
   };
 
   const handleDelete = async (sectionIdx: number, memberIdx: number) => {
