@@ -296,25 +296,17 @@ const Team = () => {
 
   const handleDelete = async (sectionIdx: number, memberIdx: number) => {
     const member = data[sectionIdx].members[memberIdx];
-    if (!member) return;
+    if (!member || !member.id) return;
     if (!window.confirm(`Excluir ${member.name}?`)) return;
-    try {
-      if (member.id) {
-        const { error } = await supabase.from("team_members").delete().eq("id", member.id);
-        if (error) throw error;
-        await fetchMembers();
-      } else {
-        setData((prev) => {
-          const next = prev.map((s) => ({ ...s, members: [...s.members] }));
-          next[sectionIdx].members.splice(memberIdx, 1);
-          return next;
-        });
-      }
-      toast({ title: "Colaborador excluído", description: member.name });
-    } catch (e) {
-      console.warn("Falha ao excluir no Supabase:", e);
-      toast({ title: "Erro ao excluir", variant: "destructive" });
+    const { data: resp, error } = await supabase.from("team_members").delete().eq("id", member.id).select();
+    console.log("Resposta Supabase (delete team_members):", resp);
+    if (error) {
+      console.error("Erro Supabase (delete team_members):", error);
+      toast({ title: "Erro ao excluir", description: error.message, variant: "destructive" });
+      return;
     }
+    await fetchMembers();
+    toast({ title: "Colaborador excluído", description: member.name });
   };
 
 
