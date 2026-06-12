@@ -171,64 +171,46 @@ const Team = () => {
   };
   const [form, setForm] = useState<typeof emptyForm>(emptyForm);
 
-  // Carrega membros do Supabase. Se a tabela existir e tiver dados, usa eles.
-  // Caso contrário mantém o seed local (fallback).
+  // Carrega membros exclusivamente do Supabase. Sem fallback local.
   const fetchMembers = useCallback(async () => {
-    try {
-      const { data: rows, error } = await supabase
-        .from("team_members")
-        .select("*")
-        .order("section")
-        .order("ordem");
-      if (error) throw error;
-      if (!rows || rows.length === 0) return; // mantém seed local
+    const { data: rows, error } = await supabase
+      .from("team_members")
+      .select("*")
+      .order("section")
+      .order("ordem");
 
-      // Normalização de cargos legados (Supervisor -> Coordenador; Gisele)
-      const updates: Promise<any>[] = [];
-      rows.forEach((r: any) => {
-        let novoRole: string | null = null;
-        if (r.name === "Gisele Muck" && r.role !== "Gerente Financeiro/Coordenadora ADM") {
-          novoRole = "Gerente Financeiro/Coordenadora ADM";
-        } else if (/supervisor/i.test(r.role || "")) {
-          novoRole = (r.role as string)
-            .replace(/Supervisora/gi, "Coordenadora")
-            .replace(/Supervisor/gi, "Coordenador");
-        }
-        if (novoRole && novoRole !== r.role) {
-          updates.push(Promise.resolve(supabase.from("team_members").update({ role: novoRole }).eq("id", r.id)));
-          r.role = novoRole;
-        }
-      });
-      if (updates.length) await Promise.allSettled(updates);
-
-      const bySection = new Map<string, Member[]>();
-      rows.forEach((r: any) => {
-        const m: Member = {
-          id: r.id,
-          name: r.name,
-          role: r.role,
-          isLeader: r.is_leader || undefined,
-          isPJ: r.is_pj || undefined,
-          parceriaDesde: r.parceria_desde || undefined,
-          sede: r.sede || undefined,
-          admissao: r.admissao || undefined,
-          tempo: r.admissao ? calcularTempo(r.admissao) : undefined,
-          aniversario: r.aniversario || undefined,
-          image: r.image || undefined,
-        };
-        const arr = bySection.get(r.section) || [];
-        arr.push(m);
-        bySection.set(r.section, arr);
-      });
-      setData(
-        sections.map((s) => ({
-          ...s,
-          members: bySection.get(s.title) || [],
-        })),
-      );
-    } catch (e) {
-      console.warn("Falha ao carregar team_members do Supabase, usando dados locais:", e);
+    console.log("Resposta Supabase (fetch team_members):", rows);
+    if (error) {
+      console.error("Erro Supabase (fetch team_members):", error);
+      toast({ title: "Erro ao carregar equipe", description: error.message, variant: "destructive" });
+      return;
     }
+
+    const bySection = new Map<string, Member[]>();
+    (rows || []).forEach((r: any) => {
+      const m: Member = {
+        id: r.id,
+        name: r.name,
+        role: r.role,
+        isLeader: r.is_leader || undefined,
+        isPJ: r.is_pj || undefined,
+        parceriaDesde: r.parceria_desde || undefined,
+        sede: r.sede || undefined,
+        admissao: r.admissao || undefined,
+        tempo: r.admissao ? calcularTempo(r.admissao) : undefined,
+        aniversario: r.aniversario || undefined,
+        image: r.image || undefined,
+      };
+      const arr = bySection.get(r.section) || [];
+      arr.push(m);
+      bySection.set(r.section, arr);
+    });
+    setData(
+      sections.map((s) => ({
+        ...s,
+        members: bySection.get(s.title) || [],
+      })),
+    );
   }, []);
 
   useEffect(() => {
