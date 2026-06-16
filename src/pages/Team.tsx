@@ -111,9 +111,7 @@ const sections: TeamSection[] = [
 const Team = () => {
   const navigate = useNavigate();
   const { isAdmin } = useAuth();
-  const [data, setData] = useState<TeamSection[]>(() =>
-    sections.map((s) => ({ ...s, members: [] })),
-  );
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<{ sectionIdx: number; memberIdx: number } | null>(null);
   const emptyForm = {
@@ -130,10 +128,12 @@ const Team = () => {
   };
   const [form, setForm] = useState<typeof emptyForm>(emptyForm);
 
-  // Fonte única de verdade: Supabase.
-  const fetchMembers = useCallback(async () => {
-    try {
-      const { data: rows, error } = await supabase
+  // Fonte única de verdade: Supabase, com cache em React Query + localStorage
+  // para exibir os colaboradores imediatamente ao reabrir a aba.
+  const { data: rows = [] } = useQuery<TeamRow[]>({
+    queryKey: ["team_members"],
+    queryFn: async () => {
+      const { data, error } = await supabase
         .from("team_members")
         .select("*")
         .order("section")
@@ -141,41 +141,44 @@ const Team = () => {
       if (error) {
         console.error("[team_members] fetch error:", error);
         toast({ title: "Erro ao carregar equipe", description: error.message, variant: "destructive" });
-        return;
+        throw error;
       }
-      const bySection = new Map<string, Member[]>();
-      (rows || []).forEach((r: any) => {
-        const m: Member = {
-          id: r.id,
-          name: r.name,
-          role: r.role,
-          isLeader: r.is_leader || undefined,
-          isPJ: r.is_pj || undefined,
-          parceriaDesde: r.parceria_desde || undefined,
-          sede: r.sede || undefined,
-          admissao: r.admissao || undefined,
-          tempo: r.admissao ? calcularTempo(r.admissao) : undefined,
-          aniversario: r.aniversario || undefined,
-          image: r.image || undefined,
-        };
-        const arr = bySection.get(r.section) || [];
-        arr.push(m);
-        bySection.set(r.section, arr);
-      });
-      setData(
-        sections.map((s) => ({
-          ...s,
-          members: bySection.get(s.title) || [],
-        })),
-      );
-    } catch (e: any) {
-      console.error("[team_members] fetch exception:", e);
-      toast({ title: "Erro ao carregar equipe", description: e?.message || String(e), variant: "destructive" });
-    }
-  }, []);
+      const result = (data || []) as TeamRow[];
+      saveCache(result);
+      return result;
+    },
+    initialData: loadCache,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+
+  const data = useMemo<TeamSection[]>(() => {
+    const bySection = new Map<string, Member[]>();
+    rows.forEach((r) => {
+      const m: Member = {
+        id: r.id,
+        name: r.name,
+        role: r.role,
+        isLeader: r.is_leader || undefined,
+        isPJ: r.is_pj || undefined,
+        parceriaDesde: r.parceria_desde || undefined,
+        sede: r.sede || undefined,
+        admissao: r.admissao || undefined,
+        tempo: r.admissao ? calcularTempo(r.admissao) : undefined,
+        aniversario: r.aniversario || undefined,
+        image: r.image || undefined,
+      };
+      const arr = bySection.get(r.section) || [];
+      arr.push(m);
+      bySection.set(r.section, arr);
+    });
+    return sections.map((s) => ({ ...s, members: bySection.get(s.title) || [] }));
+  }, [rows]);
+
+  const fetchMembers = () =>
+    queryClient.invalidateQueries({ queryKey: ["team_members"] });
 
   useEffect(() => {
-    fetchMembers();
     const channel = supabase
       .channel("team_members_changes")
       .on(
@@ -187,7 +190,8 @@ const Team = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [fetchMembers]);
+  }, []);
+
 
   const openNew = () => {
     setEditing(null);
