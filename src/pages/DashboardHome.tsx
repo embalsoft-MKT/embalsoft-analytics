@@ -310,7 +310,8 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
             {editing ? valorNode : (
               <span className="text-5xl lg:text-7xl font-bold tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">{displayValor}</span>
             )}
-            {displayExtra && (
+            {/* Porcentagem oculta temporariamente por falta de dados históricos suficientes */}
+            {false && displayExtra && (
               <span className={`text-sm lg:text-base font-bold font-sans p-1 rounded border ${extraBadgeClass}`}>{displayExtra}</span>
             )}
           </div>
