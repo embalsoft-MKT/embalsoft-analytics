@@ -139,10 +139,9 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
     return last?.valor_anterior ?? null;
   }, [history]);
 
-  // Override do valor exibido conforme filtro de período (apenas se houver histórico)
   // Regra: se não houver registros no período, usa o registro mais recente disponível.
   // Nunca calcula médias nem usa valores mockados.
-  // Filtros disponíveis: "ÚLTIMOS 30 DIAS" | "ESTE ANO"
+  // Filtros disponíveis: "ÚLTIMOS 30 DIAS" | "ÚLTIMOS 90 DIAS" | "ESTE ANO"
   const filterOverrideValue = useMemo<number | null>(() => {
     if (!history || history.length === 0) return null;
 
@@ -152,11 +151,22 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
 
     if (validRows.length === 0) return null;
 
-    // Fallback: registro mais recente disponível
     const mostRecent = Number(validRows[0].valor_novo);
+    const now = new Date();
+    const thresholdDate = (days: number) => {
+      const d = new Date(now);
+      d.setDate(d.getDate() - days);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    };
 
-    if (selectedFilter === "ÚLTIMOS 30 DIAS") {
-      return mostRecent;
+    if (selectedFilter === "ÚLTIMOS 30 DIAS" || selectedFilter === "ÚLTIMOS 90 DIAS") {
+      const days = selectedFilter === "ÚLTIMOS 30 DIAS" ? 30 : 90;
+      const limit = thresholdDate(days);
+      const rows = validRows.filter((r) => new Date(r.alterado_em) >= limit);
+      // Para janelas recentes, exibe o valor mais recente dentro do período;
+      // se não houver registro no período, usa o registro mais recente disponível.
+      return rows.length > 0 ? Number(rows[0].valor_novo) : mostRecent;
     }
     if (selectedFilter === "ESTE ANO") {
       const year = new Date().getFullYear();
@@ -504,6 +514,14 @@ const DashboardHome = () => {
     let total = 0;
     let usedFallback = false;
 
+    const now = new Date();
+    const thresholdDate = (days: number) => {
+      const d = new Date(now);
+      d.setDate(d.getDate() - days);
+      d.setHours(0, 0, 0, 0);
+      return d;
+    };
+
     if (selectedFilter === "ESTE ANO") {
       const year = new Date().getFullYear();
       const yearRows = validRows.filter((r) => r._date.getFullYear() === year);
@@ -519,10 +537,22 @@ const DashboardHome = () => {
         rows = [];
         total = 0;
       }
-    } else if (selectedFilter === "ÚLTIMOS 30 DIAS") {
-      // Usa o registro mais recente disponível (snapshot atual)
-      rows = mostRecentRow ? [mostRecentRow] : [];
-      total = mostRecentRow ? Number(mostRecentRow.valor_novo) : 0;
+    } else if (selectedFilter === "ÚLTIMOS 30 DIAS" || selectedFilter === "ÚLTIMOS 90 DIAS") {
+      const days = selectedFilter === "ÚLTIMOS 30 DIAS" ? 30 : 90;
+      const limit = thresholdDate(days);
+      const periodRows = validRows.filter((r) => r._date >= limit);
+      if (periodRows.length > 0) {
+        rows = periodRows;
+        total = periodRows.reduce((sum, r) => sum + Number(r.valor_novo), 0);
+      } else if (mostRecentRow) {
+        // Sem dados no período: mostra o registro mais recente disponível
+        rows = [mostRecentRow];
+        total = Number(mostRecentRow.valor_novo);
+        usedFallback = true;
+      } else {
+        rows = [];
+        total = 0;
+      }
     } else {
       // Filtro desconhecido: fallback para mais recente
       rows = mostRecentRow ? [mostRecentRow] : [];
