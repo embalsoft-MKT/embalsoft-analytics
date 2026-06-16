@@ -2,7 +2,7 @@ import { Crown, Briefcase, Headphones, TrendingUp, Code2, User, Settings, CheckC
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +11,43 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+const TEAM_CACHE_KEY = "team_members_cache_v1";
+
+type TeamRow = {
+  id: string;
+  section: string;
+  name: string;
+  role: string;
+  is_leader: boolean | null;
+  is_pj: boolean | null;
+  parceria_desde: string | null;
+  sede: string | null;
+  admissao: string | null;
+  aniversario: string | null;
+  image: string | null;
+  ordem: number | null;
+};
+
+const loadCache = (): TeamRow[] | undefined => {
+  try {
+    const raw = localStorage.getItem(TEAM_CACHE_KEY);
+    if (!raw) return undefined;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const saveCache = (rows: TeamRow[]) => {
+  try {
+    localStorage.setItem(TEAM_CACHE_KEY, JSON.stringify(rows));
+  } catch {
+    /* ignore quota */
+  }
+};
 
 interface Member {
   id?: string;
