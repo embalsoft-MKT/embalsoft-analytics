@@ -59,7 +59,7 @@ values
   -- Desenvolvimento (7)
   ('Desenvolvimento','Ismael Barth Hahn','Coordenador Desenvolvimento',true,false,null,'RS','01/06/2005','09/06/1981','/ismael.png',1),
   ('Desenvolvimento','Pedro Henrique Lemos','Tech Lead',true,false,null,'RS','01/06/2007','03/06/1987','/pedro.png',2),
-  ('Desenvolvimento','Marcelo Luvizotto','Desenvolvedor',false,false,null,'SP','01/06/2023','11/03/1965','/macelo.png',3),
+  ('Desenvolvimento','Marcelo Luvizotto','Desenvolvedor',false,false,null,'SP','01/06/2023','11/03/1965','/marcelo.png',3),
   ('Desenvolvimento','Éverton Cristiano dos Santos','Desenvolvedor',false,false,null,'RS','27/01/2025','06/05/2025','/everton.png',4),
   ('Desenvolvimento','Douglas Gnutzmann Santos','Desenvolvedor',false,false,null,'RS','08/11/2021','24/05/1985','/douglas.png',5),
   ('Desenvolvimento','João Roberto Teixeira Lopes','Desenvolvedor',false,false,null,'SP','01/03/2023','03/06/1986','/joao.png',6),
