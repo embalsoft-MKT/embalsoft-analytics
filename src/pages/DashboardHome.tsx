@@ -93,8 +93,9 @@ const supportData = [
 ];
 
 const devChartConfig: ChartConfig = {
-  entregas: { label: "Entregas", color: "#38b6ff" },
-  retrabalho: { label: "Retrabalho", color: "#f48121" },
+  entregas: { label: "Evolutiva", color: "#38b6ff" },
+  retrabalho: { label: "Corretivas", color: "#f48121" },
+  customizacoes: { label: "Customizações", color: "#a7c64f" },
 };
 
 const supportChartConfig: ChartConfig = {
@@ -229,7 +230,8 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
         categoria = "operacional";
         if (chave === "entregas") ordem = 1;
         else if (chave === "retrabalho") ordem = 2;
-        else if (chave === "chamados") ordem = 3;
+        else if (chave === "customizacoes") ordem = 3;
+        else if (chave === "chamados") ordem = 4;
       }
       
       await updateIndicador(chave, num, computedExtra || null, displayLabel, categoria, ordem);
@@ -769,19 +771,25 @@ const DashboardHome = () => {
                 </div>
                 <ReportButton />
               </div>
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-3 gap-4 mb-6">
                 <EditableIndicator 
                   chave="entregas" 
-                  defaultLabel="Entregas Realizadas" 
+                  defaultLabel="Evolutiva" 
                   defaultValue={45}
                   layout="operacional" 
                 />
                 <EditableIndicator 
                   chave="retrabalho" 
-                  defaultLabel="Retrabalho" 
+                  defaultLabel="Corretivas" 
                   defaultValue={4}
                   defaultValorExtra="%"
                   layout="retrabalho" 
+                />
+                <EditableIndicator 
+                  chave="customizacoes" 
+                  defaultLabel="Customizações" 
+                  defaultValue={0}
+                  layout="operacional" 
                 />
               </div>
               <ChartContainer config={devChartConfig} className="h-[220px] w-full mt-4">
