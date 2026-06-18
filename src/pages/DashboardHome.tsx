@@ -1090,6 +1090,89 @@ const DashboardHome = () => {
             </DialogContent>
           </Dialog>
 
+          {/* Dialog: lista de Customizações em andamento */}
+          <Dialog open={customDialogOpen} onOpenChange={setCustomDialogOpen}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-[#a7c64f]" />
+                  Customizações em andamento
+                  <span className="text-xs font-normal text-white/50">({customizacoes.length})</span>
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-2 max-h-[60vh] overflow-y-auto py-2">
+                {customizacoes.length === 0 && (
+                  <p className="text-sm text-white/50 text-center py-6">Nenhuma customização em andamento.</p>
+                )}
+                {customizacoes.map((c, idx) => (
+                  <div key={c.id || idx} className="relative rounded-md border border-white/10 bg-black/40 p-3 group/cust">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#a7c64f] rounded-l" />
+                    <div className="pl-2 pr-16">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-white text-sm">{c.cliente}</span>
+                        {c.responsavel && (
+                          <span className="text-[10px] uppercase font-bold tracking-wider bg-white/10 text-white/80 px-2 py-0.5 rounded border border-white/10">Resp: {c.responsavel}</span>
+                        )}
+                      </div>
+                      {c.descricao && <p className="text-xs text-white/70 mt-1 whitespace-pre-wrap">{c.descricao}</p>}
+                    </div>
+                    {isAdmin && (
+                      <div className="absolute top-2 right-2 flex items-center gap-1 opacity-60 group-hover/cust:opacity-100 transition-opacity">
+                        <button onClick={() => openEditCustomizacao(idx)} className="p-1 rounded bg-white/5 hover:bg-white/15 text-white/70 hover:text-white" title="Editar"><Edit2 size={13}/></button>
+                        <button onClick={() => { if (window.confirm(`Excluir customização de "${c.cliente}"?`)) removeCustomizacao(idx); }} className="p-1 rounded bg-white/5 hover:bg-red-500/20 text-white/70 hover:text-red-300" title="Excluir"><Trash2 size={13}/></button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <DialogFooter>
+                {isAdmin && (
+                  <Button onClick={openNewCustomizacao} className="bg-[#a7c64f]/20 text-[#a7c64f] border border-[#a7c64f]/40 hover:bg-[#a7c64f]/30">
+                    <Plus size={14} className="mr-1" /> Nova customização
+                  </Button>
+                )}
+                <Button variant="outline" onClick={() => setCustomDialogOpen(false)}>Fechar</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Dialog: formulário de Customização */}
+          <Dialog open={customFormOpen} onOpenChange={(o) => { setCustomFormOpen(o); if (!o) setCustomEditingIdx(null); }}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{customEditingIdx === null ? "Nova customização" : "Editar customização"}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="space-y-2">
+                  <Label>Cliente</Label>
+                  <Input value={customForm.cliente} onChange={(e) => setCustomForm({ ...customForm, cliente: e.target.value })} placeholder="Nome do cliente" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Responsável</Label>
+                  <Input value={customForm.responsavel} onChange={(e) => setCustomForm({ ...customForm, responsavel: e.target.value })} placeholder="Nome do responsável" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Descrição</Label>
+                  <Textarea value={customForm.descricao} onChange={(e) => setCustomForm({ ...customForm, descricao: e.target.value })} placeholder="Detalhes da customização" rows={4} />
+                </div>
+              </div>
+              <DialogFooter className="flex sm:justify-between gap-2">
+                <div>
+                  {customEditingIdx !== null && (
+                    <Button variant="destructive" onClick={() => removeCustomizacao(customEditingIdx)}>
+                      <Trash2 size={14} className="mr-1" /> Excluir
+                    </Button>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setCustomFormOpen(false)}>Cancelar</Button>
+                  <Button onClick={saveCustomizacao}>Salvar</Button>
+                </div>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+
 
         </div>
       </div>
