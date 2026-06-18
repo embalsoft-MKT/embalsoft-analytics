@@ -230,7 +230,8 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
         categoria = "operacional";
         if (chave === "entregas") ordem = 1;
         else if (chave === "retrabalho") ordem = 2;
-        else if (chave === "chamados") ordem = 3;
+        else if (chave === "customizacoes") ordem = 3;
+        else if (chave === "chamados") ordem = 4;
       }
       
       await updateIndicador(chave, num, computedExtra || null, displayLabel, categoria, ordem);
