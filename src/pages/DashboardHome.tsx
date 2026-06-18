@@ -1,4 +1,5 @@
-import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon, TrendingUp, TrendingDown, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon, TrendingUp, TrendingDown, Plus, Trash2, Maximize2, Sparkles } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -574,6 +575,87 @@ const DashboardHome = () => {
   const [implantacoes, setImplantacoes] = useState<Implantacao[]>([]);
   const [implDialogOpen, setImplDialogOpen] = useState(false);
 
+  // ── Customizações em andamento ──
+  interface Customizacao {
+    id?: string;
+    cliente: string;
+    descricao: string;
+    responsavel: string;
+  }
+  const emptyCustomizacao: Customizacao = { cliente: "", descricao: "", responsavel: "" };
+  const [customizacoes, setCustomizacoes] = useState<Customizacao[]>([]);
+  const [customDialogOpen, setCustomDialogOpen] = useState(false);
+  const [customEditingIdx, setCustomEditingIdx] = useState<number | null>(null);
+  const [customForm, setCustomForm] = useState<Customizacao>(emptyCustomizacao);
+  const [customFormOpen, setCustomFormOpen] = useState(false);
+
+  const fetchCustomizacoes = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("customizacoes")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) { console.error("Erro ao carregar customizacoes:", error); return; }
+    setCustomizacoes((data || []).map((r: any) => ({
+      id: r.id, cliente: r.cliente, descricao: r.descricao || "", responsavel: r.responsavel || "",
+    })));
+  }, []);
+
+  useEffect(() => {
+    fetchCustomizacoes();
+    const channel = supabase
+      .channel("customizacoes-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "customizacoes" }, () => { fetchCustomizacoes(); })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchCustomizacoes]);
+
+  const openNewCustomizacao = () => {
+    setCustomEditingIdx(null);
+    setCustomForm(emptyCustomizacao);
+    setCustomFormOpen(true);
+  };
+  const openEditCustomizacao = (idx: number) => {
+    setCustomEditingIdx(idx);
+    setCustomForm({ ...customizacoes[idx] });
+    setCustomFormOpen(true);
+  };
+  const saveCustomizacao = async () => {
+    if (!customForm.cliente.trim()) { toast.error("Informe o cliente"); return; }
+    const payload = {
+      cliente: customForm.cliente.trim(),
+      descricao: customForm.descricao.trim(),
+      responsavel: customForm.responsavel.trim(),
+    };
+    try {
+      if (customEditingIdx !== null && customizacoes[customEditingIdx]?.id) {
+        const { error } = await supabase.from("customizacoes").update(payload).eq("id", customizacoes[customEditingIdx].id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("customizacoes").insert([payload]);
+        if (error) throw error;
+      }
+      await fetchCustomizacoes();
+      toast.success("Salvo com sucesso!");
+      setCustomFormOpen(false);
+    } catch (e: any) {
+      toast.error(`Erro ao salvar: ${e?.message || "verifique suas permissões"}`);
+    }
+  };
+  const removeCustomizacao = async (idx: number) => {
+    const item = customizacoes[idx];
+    if (!item?.id) return;
+    try {
+      const { error } = await supabase.from("customizacoes").delete().eq("id", item.id);
+      if (error) throw error;
+      await fetchCustomizacoes();
+      toast.success("Removido");
+      setCustomFormOpen(false);
+    } catch (e: any) {
+      toast.error(`Erro ao remover: ${e?.message || "verifique suas permissões"}`);
+    }
+  };
+
+
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [implForm, setImplForm] = useState<Implantacao>(emptyImplantacao);
 
@@ -785,12 +867,23 @@ const DashboardHome = () => {
                   defaultValorExtra="%"
                   layout="retrabalho" 
                 />
-                <EditableIndicator 
-                  chave="customizacoes" 
-                  defaultLabel="Customizações" 
-                  defaultValue={0}
-                  layout="operacional" 
-                />
+                <div className="relative rounded-lg border border-dashed border-[#a7c64f]/50 bg-gradient-to-br from-[#a7c64f]/10 via-black/60 to-black/60 p-5 flex flex-col justify-center shadow-[0_0_15px_rgba(167,198,79,0.15)] group">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#a7c64f] to-transparent shadow-[0_0_10px_#a7c64f]" />
+                  <button
+                    onClick={() => setCustomDialogOpen(true)}
+                    className="absolute top-2 right-2 p-1.5 rounded-md bg-[#a7c64f]/15 hover:bg-[#a7c64f]/30 border border-[#a7c64f]/30 text-[#a7c64f] transition-colors z-20"
+                    title="Ver customizações em andamento"
+                  >
+                    <Maximize2 size={14} />
+                  </button>
+                  <div className="flex items-center gap-2 pr-8">
+                    <Sparkles size={12} className="text-[#a7c64f] drop-shadow-[0_0_6px_#a7c64f]" />
+                    <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">Customizações</span>
+                  </div>
+                  <p className="text-5xl font-bold text-[#a7c64f] mt-3 drop-shadow-[0_0_12px_rgba(167,198,79,0.6)]">{customizacoes.length}</p>
+                  <span className="mt-2 text-[10px] font-bold font-sans uppercase tracking-wider text-[#a7c64f]/80">Em andamento</span>
+                </div>
+
               </div>
               <ChartContainer config={devChartConfig} className="h-[220px] w-full mt-4">
                 <BarChart data={devData}>
@@ -996,6 +1089,89 @@ const DashboardHome = () => {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          {/* Dialog: lista de Customizações em andamento */}
+          <Dialog open={customDialogOpen} onOpenChange={setCustomDialogOpen}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-[#a7c64f]" />
+                  Customizações em andamento
+                  <span className="text-xs font-normal text-white/50">({customizacoes.length})</span>
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-2 max-h-[60vh] overflow-y-auto py-2">
+                {customizacoes.length === 0 && (
+                  <p className="text-sm text-white/50 text-center py-6">Nenhuma customização em andamento.</p>
+                )}
+                {customizacoes.map((c, idx) => (
+                  <div key={c.id || idx} className="relative rounded-md border border-white/10 bg-black/40 p-3 group/cust">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#a7c64f] rounded-l" />
+                    <div className="pl-2 pr-16">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-white text-sm">{c.cliente}</span>
+                        {c.responsavel && (
+                          <span className="text-[10px] uppercase font-bold tracking-wider bg-white/10 text-white/80 px-2 py-0.5 rounded border border-white/10">Resp: {c.responsavel}</span>
+                        )}
+                      </div>
+                      {c.descricao && <p className="text-xs text-white/70 mt-1 whitespace-pre-wrap">{c.descricao}</p>}
+                    </div>
+                    {isAdmin && (
+                      <div className="absolute top-2 right-2 flex items-center gap-1 opacity-60 group-hover/cust:opacity-100 transition-opacity">
+                        <button onClick={() => openEditCustomizacao(idx)} className="p-1 rounded bg-white/5 hover:bg-white/15 text-white/70 hover:text-white" title="Editar"><Edit2 size={13}/></button>
+                        <button onClick={() => { if (window.confirm(`Excluir customização de "${c.cliente}"?`)) removeCustomizacao(idx); }} className="p-1 rounded bg-white/5 hover:bg-red-500/20 text-white/70 hover:text-red-300" title="Excluir"><Trash2 size={13}/></button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <DialogFooter>
+                {isAdmin && (
+                  <Button onClick={openNewCustomizacao} className="bg-[#a7c64f]/20 text-[#a7c64f] border border-[#a7c64f]/40 hover:bg-[#a7c64f]/30">
+                    <Plus size={14} className="mr-1" /> Nova customização
+                  </Button>
+                )}
+                <Button variant="outline" onClick={() => setCustomDialogOpen(false)}>Fechar</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Dialog: formulário de Customização */}
+          <Dialog open={customFormOpen} onOpenChange={(o) => { setCustomFormOpen(o); if (!o) setCustomEditingIdx(null); }}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{customEditingIdx === null ? "Nova customização" : "Editar customização"}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="space-y-2">
+                  <Label>Cliente</Label>
+                  <Input value={customForm.cliente} onChange={(e) => setCustomForm({ ...customForm, cliente: e.target.value })} placeholder="Nome do cliente" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Responsável</Label>
+                  <Input value={customForm.responsavel} onChange={(e) => setCustomForm({ ...customForm, responsavel: e.target.value })} placeholder="Nome do responsável" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Descrição</Label>
+                  <Textarea value={customForm.descricao} onChange={(e) => setCustomForm({ ...customForm, descricao: e.target.value })} placeholder="Detalhes da customização" rows={4} />
+                </div>
+              </div>
+              <DialogFooter className="flex sm:justify-between gap-2">
+                <div>
+                  {customEditingIdx !== null && (
+                    <Button variant="destructive" onClick={() => removeCustomizacao(customEditingIdx)}>
+                      <Trash2 size={14} className="mr-1" /> Excluir
+                    </Button>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setCustomFormOpen(false)}>Cancelar</Button>
+                  <Button onClick={saveCustomizacao}>Salvar</Button>
+                </div>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
 
 
         </div>
