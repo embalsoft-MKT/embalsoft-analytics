@@ -867,12 +867,23 @@ const DashboardHome = () => {
                   defaultValorExtra="%"
                   layout="retrabalho" 
                 />
-                <EditableIndicator 
-                  chave="customizacoes" 
-                  defaultLabel="Customizações" 
-                  defaultValue={0}
-                  layout="operacional" 
-                />
+                <div className="relative rounded-lg border border-dashed border-[#a7c64f]/50 bg-gradient-to-br from-[#a7c64f]/10 via-black/60 to-black/60 p-5 flex flex-col justify-center shadow-[0_0_15px_rgba(167,198,79,0.15)] group">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#a7c64f] to-transparent shadow-[0_0_10px_#a7c64f]" />
+                  <button
+                    onClick={() => setCustomDialogOpen(true)}
+                    className="absolute top-2 right-2 p-1.5 rounded-md bg-[#a7c64f]/15 hover:bg-[#a7c64f]/30 border border-[#a7c64f]/30 text-[#a7c64f] transition-colors z-20"
+                    title="Ver customizações em andamento"
+                  >
+                    <Maximize2 size={14} />
+                  </button>
+                  <div className="flex items-center gap-2 pr-8">
+                    <Sparkles size={12} className="text-[#a7c64f] drop-shadow-[0_0_6px_#a7c64f]" />
+                    <span className="text-xs font-bold font-sans text-white/90 uppercase tracking-widest drop-shadow-md">Customizações</span>
+                  </div>
+                  <p className="text-5xl font-bold text-[#a7c64f] mt-3 drop-shadow-[0_0_12px_rgba(167,198,79,0.6)]">{customizacoes.length}</p>
+                  <span className="mt-2 text-[10px] font-bold font-sans uppercase tracking-wider text-[#a7c64f]/80">Em andamento</span>
+                </div>
+
               </div>
               <ChartContainer config={devChartConfig} className="h-[220px] w-full mt-4">
                 <BarChart data={devData}>
