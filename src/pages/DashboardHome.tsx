@@ -770,19 +770,25 @@ const DashboardHome = () => {
                 </div>
                 <ReportButton />
               </div>
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-3 gap-4 mb-6">
                 <EditableIndicator 
                   chave="entregas" 
-                  defaultLabel="Entregas Realizadas" 
+                  defaultLabel="Evolutiva" 
                   defaultValue={45}
                   layout="operacional" 
                 />
                 <EditableIndicator 
                   chave="retrabalho" 
-                  defaultLabel="Retrabalho" 
+                  defaultLabel="Corretivas" 
                   defaultValue={4}
                   defaultValorExtra="%"
                   layout="retrabalho" 
+                />
+                <EditableIndicator 
+                  chave="customizacoes" 
+                  defaultLabel="Customizações" 
+                  defaultValue={0}
+                  layout="operacional" 
                 />
               </div>
               <ChartContainer config={devChartConfig} className="h-[220px] w-full mt-4">
