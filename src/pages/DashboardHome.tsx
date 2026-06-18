@@ -93,8 +93,9 @@ const supportData = [
 ];
 
 const devChartConfig: ChartConfig = {
-  entregas: { label: "Entregas", color: "#38b6ff" },
-  retrabalho: { label: "Retrabalho", color: "#f48121" },
+  entregas: { label: "Evolutiva", color: "#38b6ff" },
+  retrabalho: { label: "Corretivas", color: "#f48121" },
+  customizacoes: { label: "Customizações", color: "#a7c64f" },
 };
 
 const supportChartConfig: ChartConfig = {
