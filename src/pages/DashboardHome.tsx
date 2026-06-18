@@ -575,6 +575,87 @@ const DashboardHome = () => {
   const [implantacoes, setImplantacoes] = useState<Implantacao[]>([]);
   const [implDialogOpen, setImplDialogOpen] = useState(false);
 
+  // ── Customizações em andamento ──
+  interface Customizacao {
+    id?: string;
+    cliente: string;
+    descricao: string;
+    responsavel: string;
+  }
+  const emptyCustomizacao: Customizacao = { cliente: "", descricao: "", responsavel: "" };
+  const [customizacoes, setCustomizacoes] = useState<Customizacao[]>([]);
+  const [customDialogOpen, setCustomDialogOpen] = useState(false);
+  const [customEditingIdx, setCustomEditingIdx] = useState<number | null>(null);
+  const [customForm, setCustomForm] = useState<Customizacao>(emptyCustomizacao);
+  const [customFormOpen, setCustomFormOpen] = useState(false);
+
+  const fetchCustomizacoes = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("customizacoes")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) { console.error("Erro ao carregar customizacoes:", error); return; }
+    setCustomizacoes((data || []).map((r: any) => ({
+      id: r.id, cliente: r.cliente, descricao: r.descricao || "", responsavel: r.responsavel || "",
+    })));
+  }, []);
+
+  useEffect(() => {
+    fetchCustomizacoes();
+    const channel = supabase
+      .channel("customizacoes-changes")
+      .on("postgres_changes", { event: "*", schema: "public", table: "customizacoes" }, () => { fetchCustomizacoes(); })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchCustomizacoes]);
+
+  const openNewCustomizacao = () => {
+    setCustomEditingIdx(null);
+    setCustomForm(emptyCustomizacao);
+    setCustomFormOpen(true);
+  };
+  const openEditCustomizacao = (idx: number) => {
+    setCustomEditingIdx(idx);
+    setCustomForm({ ...customizacoes[idx] });
+    setCustomFormOpen(true);
+  };
+  const saveCustomizacao = async () => {
+    if (!customForm.cliente.trim()) { toast.error("Informe o cliente"); return; }
+    const payload = {
+      cliente: customForm.cliente.trim(),
+      descricao: customForm.descricao.trim(),
+      responsavel: customForm.responsavel.trim(),
+    };
+    try {
+      if (customEditingIdx !== null && customizacoes[customEditingIdx]?.id) {
+        const { error } = await supabase.from("customizacoes").update(payload).eq("id", customizacoes[customEditingIdx].id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("customizacoes").insert([payload]);
+        if (error) throw error;
+      }
+      await fetchCustomizacoes();
+      toast.success("Salvo com sucesso!");
+      setCustomFormOpen(false);
+    } catch (e: any) {
+      toast.error(`Erro ao salvar: ${e?.message || "verifique suas permissões"}`);
+    }
+  };
+  const removeCustomizacao = async (idx: number) => {
+    const item = customizacoes[idx];
+    if (!item?.id) return;
+    try {
+      const { error } = await supabase.from("customizacoes").delete().eq("id", item.id);
+      if (error) throw error;
+      await fetchCustomizacoes();
+      toast.success("Removido");
+      setCustomFormOpen(false);
+    } catch (e: any) {
+      toast.error(`Erro ao remover: ${e?.message || "verifique suas permissões"}`);
+    }
+  };
+
+
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [implForm, setImplForm] = useState<Implantacao>(emptyImplantacao);
 
