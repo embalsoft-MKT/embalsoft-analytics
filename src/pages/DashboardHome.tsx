@@ -229,8 +229,8 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
         ordem = chave === "erp" ? 1 : 2;
       } else {
         categoria = "operacional";
-        if (chave === "entregas") ordem = 1;
-        else if (chave === "retrabalho") ordem = 2;
+        if (chave === "op_entregas") ordem = 1;
+        else if (chave === "op_retrabalho") ordem = 2;
         else if (chave === "customizacoes") ordem = 3;
         else if (chave === "chamados") ordem = 4;
       }
@@ -855,13 +855,13 @@ const DashboardHome = () => {
               </div>
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <EditableIndicator 
-                  chave="entregas" 
+                  chave="op_entregas" 
                   defaultLabel="Evolutivas" 
                   defaultValue={45}
                   layout="operacional" 
                 />
                 <EditableIndicator 
-                  chave="retrabalho" 
+                  chave="op_retrabalho" 
                   defaultLabel="Corretivas" 
                   defaultValue={4}
                   defaultValorExtra="%"
