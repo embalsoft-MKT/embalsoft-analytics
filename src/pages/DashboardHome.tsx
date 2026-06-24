@@ -94,7 +94,7 @@ const supportData = [
 ];
 
 const devChartConfig: ChartConfig = {
-  entregas: { label: "Evolutiva", color: "#38b6ff" },
+  entregas: { label: "Evolutivas", color: "#38b6ff" },
   retrabalho: { label: "Corretivas", color: "#f48121" },
   customizacoes: { label: "Customizações", color: "#a7c64f" },
 };
@@ -856,7 +856,7 @@ const DashboardHome = () => {
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <EditableIndicator 
                   chave="entregas" 
-                  defaultLabel="Evolutiva" 
+                  defaultLabel="Evolutivas" 
                   defaultValue={45}
                   layout="operacional" 
                 />

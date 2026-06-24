@@ -87,10 +87,16 @@ insert into public.indicadores (chave, label, categoria, valor, valor_extra, ord
   ('av_crm',              'CRM 2.0',             'avancos',    80,  null,   1),
   ('av_bi',               'BI nativo do ERP',    'avancos',    10,  null,   2),
   ('av_ia',               'Agentes de IA',       'avancos',    5,   null,   3),
-  ('op_entregas',         'Entregas Realizadas', 'operacional',155, null,   1),
-  ('op_retrabalho',       'Retrabalho',          'operacional',8.5, '%',    2),
+  ('op_entregas',         'Evolutivas',          'operacional',155, null,   1),
+  ('op_retrabalho',       'Corretivas',          'operacional',8.5, '%',    2),
   ('op_chamados',         'Chamados Atendidos',  'operacional',555, '↑12%', 3)
 on conflict (chave) do nothing;
+
+-- Atualiza labels já existentes no banco (renomeação)
+update public.indicadores set label = 'Evolutivas'  where chave = 'op_entregas'  and label = 'Entregas Realizadas';
+update public.indicadores set label = 'Corretivas'  where chave = 'op_retrabalho' and label = 'Retrabalho';
+update public.indicadores set label = 'Evolutivas'  where chave = 'entregas'  and label = 'Entregas Realizadas';
+update public.indicadores set label = 'Corretivas'  where chave = 'retrabalho' and label = 'Retrabalho';
 
 -- ============================================================
 -- Tabela: informativos (Updates / Avisos)
