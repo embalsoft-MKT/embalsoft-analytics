@@ -35,7 +35,7 @@ const enrichWithNames = async <T extends { updated_by?: string | null; alterado_
   const ids = Array.from(new Set(rows.map((r: any) => r[field]).filter(Boolean))) as string[];
   if (ids.length === 0) return rows;
   const { data } = await supabase.from("profiles").select('id, "Nome"').in("id", ids);
-  const map = new Map((data || []).map((p: any) => [p.id, p.'id, "Nome"']));
+  const map = new Map((data || []).map((p: any) => [p.id, p.Nome']));
   return rows.map((r: any) => ({ ...r, [nameField]: r[field] ? (map.get(r[field]) ?? null) : null }));
 };
 
