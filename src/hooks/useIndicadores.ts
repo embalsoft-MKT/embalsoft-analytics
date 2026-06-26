@@ -53,7 +53,13 @@ export const useIndicadores = () => {
       return;
     }
     const enriched = await enrichWithNames(data || [], "updated_by", "updated_by_name");
-    console.log("Indicadores carregados:", enriched);
+    console.log(
+      enriched.map((i) => ({
+        chave: i.chave,
+        label: i.label,
+        valor: i.valor,
+      })),
+    );
     setIndicadores(enriched as Indicador[]);
     setLoading(false);
   }, []);
