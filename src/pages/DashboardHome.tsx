@@ -79,10 +79,10 @@ const statusConfig = {
 };
 
 const devData = [
-  { week: "S1", entregas: 32, retrabalho: 8 },
-  { week: "S2", entregas: 40, retrabalho: 5 },
-  { week: "S3", entregas: 38, retrabalho: 7 },
-  { week: "S4", entregas: 45, retrabalho: 4 },
+  { week: "S1", evolutivas: 32, corretivas: 8 },
+  { week: "S2", evolutivas: 40, corretivas: 5 },
+  { week: "S3", evolutivas: 38, corretivas: 7 },
+  { week: "S4", evolutivas: 45, corretivas: 4 },
 ];
 
 const supportData = [
@@ -93,8 +93,8 @@ const supportData = [
 ];
 
 const devChartConfig: ChartConfig = {
-  entregas: { label: "Evolutivas", color: "#38b6ff" },
-  retrabalho: { label: "Corretivas", color: "#f48121" },
+  evolutivas: { label: "Evolutivas", color: "#38b6ff" },
+  corretivas: { label: "Corretivas", color: "#f48121" },
 };
 
 const supportChartConfig: ChartConfig = {
@@ -242,7 +242,10 @@ const EditableIndicator = ({ chave, defaultLabel, defaultValue, defaultValorExtr
     }
   };
 
-  const displayLabel = indicador?.label || defaultLabel;
+  const displayLabel = 
+    chave === "op_entregas" ? "Evolutivas" :
+    chave === "op_retrabalho" ? "Corretivas" :
+    (indicador?.label || defaultLabel);
   const baseValor = indicador?.valor !== null && indicador?.valor !== undefined ? indicador.valor : defaultValue;
   const displayValor =
     overrideValue !== undefined && overrideValue !== null
@@ -790,8 +793,8 @@ const DashboardHome = () => {
                   <XAxis dataKey="week" stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
                   <YAxis stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="entregas" fill="#38b6ff" radius={[4, 4, 0, 0]} barSize={28} />
-                  <Bar dataKey="retrabalho" fill="#f48121" radius={[4, 4, 0, 0]} barSize={28} />
+                  <Bar dataKey="evolutivas" fill="#38b6ff" radius={[4, 4, 0, 0]} barSize={28} />
+                  <Bar dataKey="corretivas" fill="#f48121" radius={[4, 4, 0, 0]} barSize={28} />
                 </BarChart>
               </ChartContainer>
             </div>
