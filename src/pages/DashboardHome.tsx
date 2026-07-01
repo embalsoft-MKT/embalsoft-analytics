@@ -721,9 +721,9 @@ const DashboardHome = () => {
                 {/* Fábrica */}
                 <EditableIndicator 
                   chave="fabrica" 
-                  defaultLabel="Serviços Tech (em andamento)" 
-                  defaultValue={8}
-                  defaultValorExtra="+10%"
+                  defaultLabel="Serviços TEC (em andamento)" 
+                  defaultValue={1}
+                  defaultValorExtra="-50%"
                   layout="commercial" 
                   groupHoverBorder="group-hover:border-[#38b6ff]/50" 
                 />

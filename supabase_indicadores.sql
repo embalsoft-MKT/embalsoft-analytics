@@ -82,8 +82,8 @@ for each row execute function public.log_indicador_change();
 
 -- Seed inicial (somente se não existir)
 insert into public.indicadores (chave, label, categoria, valor, valor_extra, ordem) values
-  ('com_novos_erp',       'Novos Clientes ERP',  'comercial',  12,  '+15%', 1),
-  ('com_novos_fabrica',   'Fábrica de Software', 'comercial',  5,   '+8%',  2),
+  ('erp',                 'Novos Clientes ERP',          'comercial',  12,  '+15%', 1),
+  ('fabrica',             'Serviços TEC (em andamento)', 'comercial',  1,   '-50%',  2),
   ('av_crm',              'CRM 2.0',             'avancos',    80,  null,   1),
   ('av_bi',               'BI nativo do ERP',    'avancos',    10,  null,   2),
   ('av_ia',               'Agentes de IA',       'avancos',    5,   null,   3),
@@ -92,11 +92,23 @@ insert into public.indicadores (chave, label, categoria, valor, valor_extra, ord
   ('op_chamados',         'Chamados Atendidos',  'operacional',555, '↑12%', 3)
 on conflict (chave) do nothing;
 
--- Atualiza labels já existentes no banco (renomeação)
+-- Atualiza labels e chaves já existentes no banco (renomeação)
+do $$
+begin
+  if exists (select 1 from public.indicadores where chave = 'com_novos_erp') and not exists (select 1 from public.indicadores where chave = 'erp') then
+    update public.indicadores set chave = 'erp' where chave = 'com_novos_erp';
+  end if;
+
+  if exists (select 1 from public.indicadores where chave = 'com_novos_fabrica') and not exists (select 1 from public.indicadores where chave = 'fabrica') then
+    update public.indicadores set chave = 'fabrica', label = 'Serviços TEC (em andamento)' where chave = 'com_novos_fabrica';
+  end if;
+end $$;
+
 update public.indicadores set label = 'Evolutivas'  where chave = 'op_entregas'  and label = 'Entregas Realizadas';
 update public.indicadores set label = 'Corretivas'  where chave = 'op_retrabalho' and label = 'Retrabalho';
 update public.indicadores set label = 'Evolutivas'  where chave = 'entregas'  and label = 'Entregas Realizadas';
 update public.indicadores set label = 'Corretivas'  where chave = 'retrabalho' and label = 'Retrabalho';
+update public.indicadores set label = 'Serviços TEC (em andamento)', valor = 1, valor_extra = '-50%' where chave = 'fabrica';
 
 -- ============================================================
 -- Tabela: informativos (Updates / Avisos)
@@ -251,4 +263,27 @@ select i.id, 'op_chamados', v.valor_anterior, null, v.valor_novo, null, v.altera
     (289::numeric,  286::numeric, '2025-05-31 23:59:00-03'::timestamptz)
   ) as v(valor_anterior, valor_novo, alterado_em)
  where i.chave = 'op_chamados';
+
+
+-- ============================================================
+-- Histórico de "Serviços TEC (em andamento)" (chave: fabrica)
+-- ============================================================
+
+-- Garante valor atualizado
+update public.indicadores
+   set valor = 1,
+       valor_extra = '-50%'
+ where chave = 'fabrica';
+
+-- Limpa históricos manuais anteriores (idempotente)
+delete from public.indicadores_historico
+ where chave = 'fabrica';
+
+-- Insere registro histórico (Ano Passado=2, Atual=1)
+insert into public.indicadores_historico
+  (indicador_id, chave, valor_anterior, valor_extra_anterior,
+   valor_novo, valor_extra_novo, alterado_em)
+select id, 'fabrica', 2, null, 1, '-50%', now() - interval '6 months'
+  from public.indicadores
+ where chave = 'fabrica';
 
