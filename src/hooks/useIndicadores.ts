@@ -30,13 +30,13 @@ export interface IndicadorHistorico {
 const enrichWithNames = async <T extends { updated_by?: string | null; alterado_por?: string | null }>(
   rows: T[],
   field: "updated_by" | "alterado_por",
-  nameField: string
+  nameField: string,
 ): Promise<any[]> => {
   const ids = Array.from(new Set(rows.map((r: any) => r[field]).filter(Boolean))) as string[];
   if (ids.length === 0) return rows;
-  const { data } = await supabase.from("profiles").select("id, full_name").in("id", ids);
-  const map = new Map((data || []).map((p: any) => [p.id, p.full_name]));
-  return rows.map((r: any) => ({ ...r, [nameField]: r[field] ? map.get(r[field]) ?? null : null }));
+  const { data } = await supabase.from("profiles").select('id, "Nome"').in("id", ids);
+  const map = new Map((data || []).map((p: any) => [p.id, p["Nome"]]));
+  return rows.map((r: any) => ({ ...r, [nameField]: r[field] ? (map.get(r[field]) ?? null) : null }));
 };
 
 export const useIndicadores = () => {
@@ -46,17 +46,20 @@ export const useIndicadores = () => {
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("indicadores")
-      .select("*")
-      .order("categoria")
-      .order("ordem");
+    const { data, error } = await supabase.from("indicadores").select("*").order("categoria").order("ordem");
     if (error) {
       setError(error.message);
       setLoading(false);
       return;
     }
     const enriched = await enrichWithNames(data || [], "updated_by", "updated_by_name");
+    console.log(
+      enriched.map((i) => ({
+        chave: i.chave,
+        label: i.label,
+        valor: i.valor,
+      })),
+    );
     setIndicadores(enriched as Indicador[]);
     setLoading(false);
   }, []);
@@ -72,27 +75,27 @@ export const useIndicadores = () => {
       valor_extra: string | null,
       label: string,
       categoria: "comercial" | "avancos" | "operacional",
-      ordem: number
+      ordem: number,
     ) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      const { error } = await supabase
-        .from("indicadores")
-        .upsert(
-          {
-            chave,
-            label,
-            categoria,
-            valor,
-            valor_extra,
-            updated_by: user?.id ?? null,
-            ordem
-          },
-          { onConflict: "chave" }
-        );
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { error } = await supabase.from("indicadores").upsert(
+        {
+          chave,
+          label,
+          categoria,
+          valor,
+          valor_extra,
+          updated_by: user?.id ?? null,
+          ordem,
+        },
+        { onConflict: "chave" },
+      );
       if (error) throw error;
       await fetchAll();
     },
-    [fetchAll]
+    [fetchAll],
   );
 
   const byChave = (chave: string) => indicadores.find((i) => i.chave === chave);
