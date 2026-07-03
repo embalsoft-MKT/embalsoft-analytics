@@ -28,7 +28,7 @@ const DashboardLayout = () => {
   const [collapsed, setCollapsed] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("ÚLTIMOS 30 DIAS");
+  const [selectedFilter, setSelectedFilter] = useState("ESTE ANO");
   const navigate = useNavigate();
   const location = useLocation();
   const { unreadCount } = useUpdates();
