@@ -76,24 +76,12 @@ const statusConfig = {
   atrasado: { color: "text-red-400", bg: "bg-red-400/15", border: "border-red-400/30", label: "Atrasado", icon: AlertTriangle },
 };
 
-const devData = [
-  { week: "S1", evolutivas: 32, corretivas: 8 },
-  { week: "S2", evolutivas: 40, corretivas: 5 },
-  { week: "S3", evolutivas: 38, corretivas: 7 },
-  { week: "S4", evolutivas: 45, corretivas: 4 },
-];
-
 const supportData = [
   { week: "S1", atendimentos: 120 },
   { week: "S2", atendimentos: 145 },
   { week: "S3", atendimentos: 132 },
   { week: "S4", atendimentos: 158 },
 ];
-
-const devChartConfig: ChartConfig = {
-  evolutivas: { label: "Evolutivas", color: "#38b6ff" },
-  corretivas: { label: "Corretivas", color: "#f48121" },
-};
 
 const supportChartConfig: ChartConfig = {
   atendimentos: { label: "Atendimentos", color: "#38b6ff" },
