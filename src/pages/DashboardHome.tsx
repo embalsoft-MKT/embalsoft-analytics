@@ -717,6 +717,7 @@ const DashboardHome = () => {
                   defaultValorExtra="+15%"
                   layout="commercial" 
                   groupHoverBorder="group-hover:border-[#a7c64f]/50" 
+                  overrideExtra=""
                 />
                 {/* Fábrica */}
                 <EditableIndicator 
@@ -726,6 +727,7 @@ const DashboardHome = () => {
                   defaultValorExtra="-50%"
                   layout="commercial" 
                   groupHoverBorder="group-hover:border-[#38b6ff]/50" 
+                  overrideExtra=""
                 />
               </div>
             </div>
