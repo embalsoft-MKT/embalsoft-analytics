@@ -128,8 +128,8 @@ const Team = () => {
   };
   const [form, setForm] = useState<typeof emptyForm>(emptyForm);
 
-  // Fonte única de verdade: Supabase, com cache em React Query + localStorage
-  // para exibir os colaboradores imediatamente ao reabrir a aba.
+  // Fonte única de verdade: Supabase. O cache local só aparece enquanto
+  // a consulta atualizada é refeita, para não manter dados antigos.
   const { data: rows = [] } = useQuery<TeamRow[]>({
     queryKey: ["team_members"],
     queryFn: async () => {
@@ -148,8 +148,9 @@ const Team = () => {
       return result;
     },
     initialData: loadCache,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
+    staleTime: 0,
+    refetchOnMount: "always",
+    refetchOnWindowFocus: true,
   });
 
   const data = useMemo<TeamSection[]>(() => {
