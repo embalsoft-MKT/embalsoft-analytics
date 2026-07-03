@@ -764,47 +764,42 @@ const DashboardHome = () => {
                 {/* Glow decorativo */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#38b6ff]/10 rounded-full blur-3xl pointer-events-none" />
 
-                {/* Ilustração: dashboard + analytics */}
-                <div className="relative w-40 h-40 mb-4">
-                  {/* Elementos decorativos */}
-                  <div className="absolute top-2 left-0 w-2 h-2 rounded-full bg-[#38b6ff]/60 animate-pulse" />
-                  <div className="absolute top-8 right-2 w-2 h-2 rounded-full bg-[#38b6ff]/40 animate-pulse delay-75" />
-                  <div className="absolute bottom-8 left-4 w-2 h-2 rounded-full bg-[#38b6ff]/50 animate-pulse delay-150" />
-                  <div className="absolute top-4 left-1/2 w-4 h-4 text-[#38b6ff]/60 rotate-45">+</div>
-                  <div className="absolute bottom-12 right-6 w-4 h-4 text-[#38b6ff]/40 rotate-45">+</div>
-
-                  {/* Monitor/browser */}
-                  <svg viewBox="0 0 120 120" className="w-full h-full drop-shadow-[0_0_20px_rgba(56,182,255,0.3)]">
+                {/* Ilustração: relógio centralizado */}
+                <div className="relative w-40 h-40 mb-4 flex items-center justify-center">
+                  <svg viewBox="0 0 120 120" className="w-full h-full drop-shadow-[0_0_25px_rgba(56,182,255,0.35)]">
                     <defs>
-                      <linearGradient id="screenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <linearGradient id="clockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="rgba(56,182,255,0.25)" />
                         <stop offset="100%" stopColor="rgba(56,182,255,0.05)" />
                       </linearGradient>
-                      <linearGradient id="barGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#38b6ff" />
-                        <stop offset="100%" stopColor="#0ea5e9" />
-                      </linearGradient>
                     </defs>
-                    {/* Janela do browser */}
-                    <rect x="18" y="20" width="84" height="62" rx="8" fill="url(#screenGrad)" stroke="rgba(56,182,255,0.5)" strokeWidth="1.5" />
-                    {/* Barra superior */}
-                    <rect x="18" y="20" width="84" height="12" rx="8" fill="rgba(56,182,255,0.15)" />
-                    <circle cx="27" cy="26" r="2" fill="rgba(56,182,255,0.6)" />
-                    <circle cx="34" cy="26" r="2" fill="rgba(56,182,255,0.4)" />
-                    <circle cx="41" cy="26" r="2" fill="rgba(56,182,255,0.3)" />
-                    {/* Gráfico de barras */}
-                    <rect x="32" y="52" width="10" height="22" rx="2" fill="url(#barGrad)" />
-                    <rect x="48" y="42" width="10" height="32" rx="2" fill="url(#barGrad)" />
-                    <rect x="64" y="48" width="10" height="26" rx="2" fill="url(#barGrad)" />
-                    {/* Linha base */}
-                    <line x1="28" y1="78" x2="92" y2="78" stroke="rgba(56,182,255,0.3)" strokeWidth="1" />
-                    {/* Base do monitor */}
-                    <path d="M 48 84 L 72 84 L 68 94 L 52 94 Z" fill="rgba(56,182,255,0.2)" stroke="rgba(56,182,255,0.4)" strokeWidth="1" />
-                    <rect x="38" y="94" width="44" height="4" rx="2" fill="rgba(56,182,255,0.2)" stroke="rgba(56,182,255,0.4)" strokeWidth="1" />
-                    {/* Relógio */}
-                    <circle cx="92" cy="88" r="14" fill="rgba(15,23,42,0.9)" stroke="rgba(56,182,255,0.6)" strokeWidth="1.5" />
-                    <line x1="92" y1="88" x2="92" y2="80" stroke="#38b6ff" strokeWidth="1.5" strokeLinecap="round" />
-                    <line x1="92" y1="88" x2="98" y2="88" stroke="#38b6ff" strokeWidth="1.5" strokeLinecap="round" />
+                    {/* Marcas do relógio */}
+                    {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle) => {
+                      const rad = (angle * Math.PI) / 180;
+                      const isCardinal = angle % 90 === 0;
+                      const r1 = isCardinal ? 44 : 48;
+                      const r2 = isCardinal ? 52 : 54;
+                      return (
+                        <line
+                          key={angle}
+                          x1={60 + r1 * Math.cos(rad)}
+                          y1={60 + r1 * Math.sin(rad)}
+                          x2={60 + r2 * Math.cos(rad)}
+                          y2={60 + r2 * Math.sin(rad)}
+                          stroke={isCardinal ? "rgba(56,182,255,0.8)" : "rgba(56,182,255,0.4)"}
+                          strokeWidth={isCardinal ? 2 : 1}
+                          strokeLinecap="round"
+                        />
+                      );
+                    })}
+                    {/* Borda do relógio */}
+                    <circle cx="60" cy="60" r="54" fill="url(#clockGrad)" stroke="rgba(56,182,255,0.5)" strokeWidth="2" />
+                    <circle cx="60" cy="60" r="48" stroke="rgba(56,182,255,0.2)" strokeWidth="1" />
+                    {/* Ponteiros */}
+                    <line x1="60" y1="60" x2="60" y2="28" stroke="#38b6ff" strokeWidth="3" strokeLinecap="round" />
+                    <line x1="60" y1="60" x2="82" y2="60" stroke="#38b6ff" strokeWidth="2.5" strokeLinecap="round" />
+                    {/* Centro */}
+                    <circle cx="60" cy="60" r="4" fill="#38b6ff" />
                   </svg>
                 </div>
 
