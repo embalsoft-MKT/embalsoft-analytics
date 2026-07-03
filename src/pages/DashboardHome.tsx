@@ -8,8 +8,6 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
