@@ -181,7 +181,13 @@ const UpdateCard: React.FC<{ item: UpdateItem, onEdit: (item: UpdateItem) => voi
         <div className={cn("grid transition-all duration-300 ease-in-out", isExpanded ? "grid-rows-[1fr] opacity-100 mt-6" : "grid-rows-[0fr] opacity-0")}>
           <div className="overflow-hidden">
             <div className="pt-6 border-t border-white/10 text-white/90 font-sans leading-relaxed text-sm md:text-base space-y-4">
-              <p>{item.fullContent}</p>
+              <div className="space-y-3">
+                {item.fullContent.split('\n').map((paragraph, index) => (
+                  paragraph.trim() === ''
+                    ? <div key={index} className="h-3" />
+                    : <p key={index} className="whitespace-pre-wrap">{paragraph}</p>
+                ))}
+              </div>
               
               {item.link && (
                 <a 
