@@ -766,7 +766,7 @@ const DashboardHome = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
             {/* Desenvolvimento */}
-            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300">
+            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300 min-h-[340px] flex flex-col">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
                   <Code2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
@@ -774,31 +774,9 @@ const DashboardHome = () => {
                 </div>
                 <ReportButton />
               </div>
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <EditableIndicator 
-                  chave="op_entregas" 
-                  defaultLabel="Evolutivas" 
-                  defaultValue={45}
-                  layout="operacional" 
-                />
-                <EditableIndicator 
-                  chave="op_retrabalho" 
-                  defaultLabel="Corretivas" 
-                  defaultValue={4}
-                  defaultValorExtra="%"
-                  layout="retrabalho" 
-                />
+              <div className="flex-1 flex items-center justify-center">
+                <span className="text-lg font-bold font-sans text-white/80 uppercase tracking-widest">Dados em breve.</span>
               </div>
-              <ChartContainer config={devChartConfig} className="h-[220px] w-full mt-4">
-                <BarChart data={devData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" vertical={false} />
-                  <XAxis dataKey="week" stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
-                  <YAxis stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="evolutivas" fill="#38b6ff" radius={[4, 4, 0, 0]} barSize={28} />
-                  <Bar dataKey="corretivas" fill="#f48121" radius={[4, 4, 0, 0]} barSize={28} />
-                </BarChart>
-              </ChartContainer>
             </div>
 
             {/* Suporte */}
