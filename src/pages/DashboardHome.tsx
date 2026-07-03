@@ -760,8 +760,60 @@ const DashboardHome = () => {
                 </div>
                 <ReportButton />
               </div>
-              <div className="flex-1 flex items-center justify-center">
-                <span className="text-lg font-bold font-sans text-white/80 uppercase tracking-widest">Dados em breve.</span>
+              <div className="flex-1 flex flex-col items-center justify-center text-center relative">
+                {/* Glow decorativo */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#38b6ff]/10 rounded-full blur-3xl pointer-events-none" />
+
+                {/* Ilustração: dashboard + analytics */}
+                <div className="relative w-40 h-40 mb-4">
+                  {/* Elementos decorativos */}
+                  <div className="absolute top-2 left-0 w-2 h-2 rounded-full bg-[#38b6ff]/60 animate-pulse" />
+                  <div className="absolute top-8 right-2 w-2 h-2 rounded-full bg-[#38b6ff]/40 animate-pulse delay-75" />
+                  <div className="absolute bottom-8 left-4 w-2 h-2 rounded-full bg-[#38b6ff]/50 animate-pulse delay-150" />
+                  <div className="absolute top-4 left-1/2 w-4 h-4 text-[#38b6ff]/60 rotate-45">+</div>
+                  <div className="absolute bottom-12 right-6 w-4 h-4 text-[#38b6ff]/40 rotate-45">+</div>
+
+                  {/* Monitor/browser */}
+                  <svg viewBox="0 0 120 120" className="w-full h-full drop-shadow-[0_0_20px_rgba(56,182,255,0.3)]">
+                    <defs>
+                      <linearGradient id="screenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="rgba(56,182,255,0.25)" />
+                        <stop offset="100%" stopColor="rgba(56,182,255,0.05)" />
+                      </linearGradient>
+                      <linearGradient id="barGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#38b6ff" />
+                        <stop offset="100%" stopColor="#0ea5e9" />
+                      </linearGradient>
+                    </defs>
+                    {/* Janela do browser */}
+                    <rect x="18" y="20" width="84" height="62" rx="8" fill="url(#screenGrad)" stroke="rgba(56,182,255,0.5)" strokeWidth="1.5" />
+                    {/* Barra superior */}
+                    <rect x="18" y="20" width="84" height="12" rx="8" fill="rgba(56,182,255,0.15)" />
+                    <circle cx="27" cy="26" r="2" fill="rgba(56,182,255,0.6)" />
+                    <circle cx="34" cy="26" r="2" fill="rgba(56,182,255,0.4)" />
+                    <circle cx="41" cy="26" r="2" fill="rgba(56,182,255,0.3)" />
+                    {/* Gráfico de barras */}
+                    <rect x="32" y="52" width="10" height="22" rx="2" fill="url(#barGrad)" />
+                    <rect x="48" y="42" width="10" height="32" rx="2" fill="url(#barGrad)" />
+                    <rect x="64" y="48" width="10" height="26" rx="2" fill="url(#barGrad)" />
+                    {/* Linha base */}
+                    <line x1="28" y1="78" x2="92" y2="78" stroke="rgba(56,182,255,0.3)" strokeWidth="1" />
+                    {/* Base do monitor */}
+                    <path d="M 48 84 L 72 84 L 68 94 L 52 94 Z" fill="rgba(56,182,255,0.2)" stroke="rgba(56,182,255,0.4)" strokeWidth="1" />
+                    <rect x="38" y="94" width="44" height="4" rx="2" fill="rgba(56,182,255,0.2)" stroke="rgba(56,182,255,0.4)" strokeWidth="1" />
+                    {/* Relógio */}
+                    <circle cx="92" cy="88" r="14" fill="rgba(15,23,42,0.9)" stroke="rgba(56,182,255,0.6)" strokeWidth="1.5" />
+                    <line x1="92" y1="88" x2="92" y2="80" stroke="#38b6ff" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="92" y1="88" x2="98" y2="88" stroke="#38b6ff" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                </div>
+
+                <h5 className="text-lg md:text-xl font-bold font-sans text-white tracking-wide drop-shadow-md mb-2">
+                  Os indicadores deste módulo<br className="hidden sm:block" /> serão disponibilizados em breve.
+                </h5>
+                <p className="text-sm text-white/60 font-sans max-w-xs">
+                  Estamos estruturando as métricas de Desenvolvimento e QA para você acompanhar a evolução dos projetos.
+                </p>
               </div>
             </div>
 
