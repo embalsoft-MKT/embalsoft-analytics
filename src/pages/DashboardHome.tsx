@@ -8,8 +8,6 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 import {
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -70,7 +68,7 @@ interface Implantacao {
   responsavel: string;
 }
 
-const etapas = ["Kick-off", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Go Live"];
+const etapas = ["Kick-off", "Levantamento", "Imersão Geral", "Configuração", "Treinamento", "Testes", "Simulado", "Go Live", "Pós-Go Live"];
 
 const statusConfig = {
   em_dia: { color: "text-[#a7c64f]", bg: "bg-[#a7c64f]/15", border: "border-[#a7c64f]/30", label: "Em dia", icon: CheckCircle2 },
@@ -78,24 +76,12 @@ const statusConfig = {
   atrasado: { color: "text-red-400", bg: "bg-red-400/15", border: "border-red-400/30", label: "Atrasado", icon: AlertTriangle },
 };
 
-const devData = [
-  { week: "S1", evolutivas: 32, corretivas: 8 },
-  { week: "S2", evolutivas: 40, corretivas: 5 },
-  { week: "S3", evolutivas: 38, corretivas: 7 },
-  { week: "S4", evolutivas: 45, corretivas: 4 },
-];
-
 const supportData = [
   { week: "S1", atendimentos: 120 },
   { week: "S2", atendimentos: 145 },
   { week: "S3", atendimentos: 132 },
   { week: "S4", atendimentos: 158 },
 ];
-
-const devChartConfig: ChartConfig = {
-  evolutivas: { label: "Evolutivas", color: "#38b6ff" },
-  corretivas: { label: "Corretivas", color: "#f48121" },
-};
 
 const supportChartConfig: ChartConfig = {
   atendimentos: { label: "Atendimentos", color: "#38b6ff" },
@@ -717,6 +703,7 @@ const DashboardHome = () => {
                   defaultValorExtra="+15%"
                   layout="commercial" 
                   groupHoverBorder="group-hover:border-[#a7c64f]/50" 
+                  overrideExtra=""
                 />
                 {/* Fábrica */}
                 <EditableIndicator 
@@ -726,6 +713,7 @@ const DashboardHome = () => {
                   defaultValorExtra="-50%"
                   layout="commercial" 
                   groupHoverBorder="group-hover:border-[#38b6ff]/50" 
+                  overrideExtra=""
                 />
               </div>
             </div>
@@ -764,7 +752,7 @@ const DashboardHome = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
             {/* Desenvolvimento */}
-            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300">
+            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300 min-h-[340px] flex flex-col">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
                   <Code2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
@@ -772,31 +760,9 @@ const DashboardHome = () => {
                 </div>
                 <ReportButton />
               </div>
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <EditableIndicator 
-                  chave="op_entregas" 
-                  defaultLabel="Evolutivas" 
-                  defaultValue={45}
-                  layout="operacional" 
-                />
-                <EditableIndicator 
-                  chave="op_retrabalho" 
-                  defaultLabel="Corretivas" 
-                  defaultValue={4}
-                  defaultValorExtra="%"
-                  layout="retrabalho" 
-                />
+              <div className="flex-1 flex items-center justify-center">
+                <span className="text-lg font-bold font-sans text-white/80 uppercase tracking-widest">Dados em breve.</span>
               </div>
-              <ChartContainer config={devChartConfig} className="h-[220px] w-full mt-4">
-                <BarChart data={devData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" vertical={false} />
-                  <XAxis dataKey="week" stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
-                  <YAxis stroke="rgba(255,255,255,0.7)" fontSize={13} fontWeight="bold" tickLine={false} axisLine={false} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="evolutivas" fill="#38b6ff" radius={[4, 4, 0, 0]} barSize={28} />
-                  <Bar dataKey="corretivas" fill="#f48121" radius={[4, 4, 0, 0]} barSize={28} />
-                </BarChart>
-              </ChartContainer>
             </div>
 
             {/* Suporte */}
