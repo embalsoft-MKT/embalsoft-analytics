@@ -764,37 +764,17 @@ const DashboardHome = () => {
                 {/* Glow decorativo */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#38b6ff]/10 rounded-full blur-3xl pointer-events-none" />
 
-                {/* Ilustração: relógio centralizado */}
-                <div className="relative w-40 h-40 mb-4 flex items-center justify-center">
-                  <svg viewBox="0 0 120 120" className="w-full h-full drop-shadow-[0_0_25px_rgba(56,182,255,0.35)]">
+                {/* Ilustração: relógio simples e pequeno */}
+                <div className="relative w-16 h-16 mb-3 flex items-center justify-center">
+                  <svg viewBox="0 0 120 120" className="w-full h-full drop-shadow-[0_0_15px_rgba(56,182,255,0.3)]">
                     <defs>
                       <linearGradient id="clockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" stopColor="rgba(56,182,255,0.25)" />
                         <stop offset="100%" stopColor="rgba(56,182,255,0.05)" />
                       </linearGradient>
                     </defs>
-                    {/* Marcas do relógio */}
-                    {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle) => {
-                      const rad = (angle * Math.PI) / 180;
-                      const isCardinal = angle % 90 === 0;
-                      const r1 = isCardinal ? 44 : 48;
-                      const r2 = isCardinal ? 52 : 54;
-                      return (
-                        <line
-                          key={angle}
-                          x1={60 + r1 * Math.cos(rad)}
-                          y1={60 + r1 * Math.sin(rad)}
-                          x2={60 + r2 * Math.cos(rad)}
-                          y2={60 + r2 * Math.sin(rad)}
-                          stroke={isCardinal ? "rgba(56,182,255,0.8)" : "rgba(56,182,255,0.4)"}
-                          strokeWidth={isCardinal ? 2 : 1}
-                          strokeLinecap="round"
-                        />
-                      );
-                    })}
                     {/* Borda do relógio */}
                     <circle cx="60" cy="60" r="54" fill="url(#clockGrad)" stroke="rgba(56,182,255,0.5)" strokeWidth="2" />
-                    <circle cx="60" cy="60" r="48" stroke="rgba(56,182,255,0.2)" strokeWidth="1" />
                     {/* Ponteiros */}
                     <line x1="60" y1="60" x2="60" y2="28" stroke="#38b6ff" strokeWidth="3" strokeLinecap="round" />
                     <line x1="60" y1="60" x2="82" y2="60" stroke="#38b6ff" strokeWidth="2.5" strokeLinecap="round" />
