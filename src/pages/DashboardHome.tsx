@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock, AlertTriangle, Code2, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon, TrendingUp, TrendingDown, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Clock, AlertTriangle, Headphones, Info, Download, Edit2, Loader2, Check, X, Save, User as UserIcon, TrendingUp, TrendingDown, Plus, Trash2 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
@@ -751,46 +751,6 @@ const DashboardHome = () => {
 
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
-            {/* Desenvolvimento */}
-            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300 min-h-[340px] flex flex-col">
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <Code2 size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
-                  <h4 className="font-sans text-base font-bold tracking-normal text-[#38b6ff] drop-shadow-md">Desenvolvimento e QA</h4>
-                </div>
-                <ReportButton />
-              </div>
-              <div className="flex-1 flex flex-col items-center justify-center text-center relative">
-                {/* Glow decorativo */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[#38b6ff]/10 rounded-full blur-3xl pointer-events-none" />
-
-                {/* Ilustração: relógio simples e pequeno */}
-                <div className="relative w-16 h-16 mb-3 flex items-center justify-center">
-                  <svg viewBox="0 0 120 120" className="w-full h-full drop-shadow-[0_0_15px_rgba(56,182,255,0.3)]">
-                    <defs>
-                      <linearGradient id="clockGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="rgba(56,182,255,0.25)" />
-                        <stop offset="100%" stopColor="rgba(56,182,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    {/* Borda do relógio */}
-                    <circle cx="60" cy="60" r="54" fill="url(#clockGrad)" stroke="rgba(56,182,255,0.5)" strokeWidth="2" />
-                    {/* Ponteiros */}
-                    <line x1="60" y1="60" x2="60" y2="28" stroke="#38b6ff" strokeWidth="3" strokeLinecap="round" />
-                    <line x1="60" y1="60" x2="82" y2="60" stroke="#38b6ff" strokeWidth="2.5" strokeLinecap="round" />
-                    {/* Centro */}
-                    <circle cx="60" cy="60" r="4" fill="#38b6ff" />
-                  </svg>
-                </div>
-
-                <h5 className="text-lg md:text-xl font-bold font-sans text-white tracking-wide drop-shadow-md mb-2">
-                  Os indicadores deste módulo<br className="hidden sm:block" /> serão disponibilizados em breve.
-                </h5>
-                <p className="text-sm text-white/60 font-sans max-w-xs">
-                  Estamos estruturando as métricas de Desenvolvimento e QA para você acompanhar a evolução dos projetos.
-                </p>
-              </div>
-            </div>
 
             {/* Suporte */}
             <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300">
