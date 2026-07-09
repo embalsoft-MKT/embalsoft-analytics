@@ -741,7 +741,7 @@ const DashboardHome = () => {
             </div>
           </div>
 
-          {/* ── Linha 2: Operacional ── */}
+          {/* ── Linha 2: Suporte ── */}
           <div className="flex items-center justify-between mt-10 mb-6">
             <div className="flex items-center gap-3">
               <div className="w-2 h-6 bg-[#38b6ff] rounded-sm shadow-[0_0_12px_#38b6ff]" />
@@ -753,7 +753,7 @@ const DashboardHome = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
 
             {/* Suporte */}
-            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300">
+            <div className="relative overflow-hidden rounded-xl border-2 border-white/20 p-6 bg-card/80 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] group hover:border-[#38b6ff]/80 transition-all duration-300 lg:col-span-2">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
                   <Headphones size={18} className="text-[#38b6ff] drop-shadow-[0_0_8px_#38b6ff]" />
