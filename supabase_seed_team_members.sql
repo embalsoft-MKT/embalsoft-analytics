@@ -39,10 +39,9 @@ values
   ('Sócios','Rose Muck','Cofundadora',false,false,null,'RS',null,null,'/rose.png',2),
   ('Sócios','Gerson Muck','Cofundador',false,false,null,'RS',null,null,'/gerson.png',3),
 
-  -- Administrativo (3)
+  -- Administrativo (2)
   ('Administrativo','Gisele Muck','Gerente Financeiro/Coordenadora ADM',true,false,null,'SP','29/01/2020','10/01/1983','/gisele.png',1),
   ('Administrativo','Juliana de Oliveira Dias Charão','Generalista de RH',false,false,null,'RS','01/03/2022','26/10/1982','/juliana.png',2),
-  ('Administrativo','Patricia Fernandes Barbosa','Marketing',false,false,null,'RS','18/09/2023','23/04/1999','/patricia.png',3),
 
   -- Suporte (4)
   ('Suporte','Júnior Muck','Coordenador',true,false,null,null,null,null,'/junior.png',1),
