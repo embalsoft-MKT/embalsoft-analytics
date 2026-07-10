@@ -70,7 +70,7 @@ const Login = () => {
         <div className="max-w-md w-full mx-auto">
           {/* Logo */}
           <div className="flex justify-start md:justify-center mb-10">
-            <img src={logoEmbalsoft} alt="Embalsoft" className="h-14 md:h-12 object-contain" />
+            <img src={logoEmbalsoft} alt="Embalsoft" className="h-18 md:h-16 object-contain" />
           </div>
 
           {/* Title */}
