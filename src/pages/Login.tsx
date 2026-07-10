@@ -160,16 +160,6 @@ const Login = () => {
               )}
             </button>
 
-            {/* Forgot */}
-            <div className="text-center pt-2">
-              <a
-                href="mailto:patricia.fernandes@embalsoft.com.br"
-                className="text-sm text-primary hover:text-primary/80 transition-colors hover:underline inline-flex items-center gap-2"
-              >
-                <Mail size={16} />
-                Dificuldades de acesso? Contate o administrador.
-              </a>
-            </div>
           </form>
         </div>
       </div>
